@@ -1,0 +1,53 @@
+version: 2.1
+
+executors:
+  ruby-executor:
+    docker:
+      - image: circleci/ruby:3.1.2-node
+    working_directory: ~/repo
+
+jobs:
+  rubocop:
+    executor: ruby-executor
+    steps:
+      - checkout
+      - run: bundle install
+      - run: bundle exec rubocop
+
+  rspec:
+    executor: ruby-executor
+    steps:
+      - checkout
+      - run: bundle install
+      - run: bundle exec rspec
+
+  deploy:
+    executor: ruby-executor
+    steps:
+      - checkout
+      - run:
+          name: Install Heroku CLI
+          command: |
+            curl https://cli-assets.heroku.com/install.sh | sh
+      - run:
+          name: Deploy to Heroku
+          command: |
+            echo "$HEROKU_API_KEY" | heroku auth:token
+            heroku git:remote -a your-heroku-app-name
+            git push heroku main
+
+workflows:
+  version: 2
+  test_and_deploy:
+    jobs:
+      - rubocop
+      - rspec:
+          requires:
+            - rubocop
+      - deploy:
+          requires:
+            - rspec
+          filters:
+            branches:
+              only:
+                - main
