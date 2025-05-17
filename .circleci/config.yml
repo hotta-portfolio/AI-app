@@ -3,7 +3,7 @@ version: 2.1
 executors:
   ruby-executor:
     docker:
-      - image: cimg/ruby:3.1.2-node
+      - image: cimg/ruby:3.3.3-node
     working_directory: ~/repo
 
 jobs:
