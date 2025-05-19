@@ -1,0 +1,18 @@
+<%= form_with url: knowhows_path, method: :get, local: true do |f| %>
+  <%= f.text_field :keyword, placeholder: "キーワード検索" %>
+  <%= f.submit "検索" %>
+<% end %>
+
+<div class="knowhows-list">
+  <% @knowhows.each do |knowhow| %>
+    <div class="knowhow-card">
+      <% if knowhow.media_files.attached? %>
+        <%= image_tag url_for(knowhow.media_files.first), alt: knowhow.title, width: 200 %>
+      <% end %>
+      <h3><%= link_to knowhow.title, knowhow %></h3>
+      <p>価格: ¥<%= knowhow.price %></p>
+      <p><%= truncate(knowhow.description, length: 80) %></p>
+      <p>投稿者: <%= knowhow.user.email %></p>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,28 @@
+<h1><%= @knowhow.title %></h1>
+
+<% if @knowhow.media_files.attached? %>
+  <% @knowhow.media_files.each do |file| %>
+    <% if file.image? %>
+      <%= image_tag url_for(file), width: 400 %>
+    <% elsif file.video? %>
+      <video width="400" controls>
+        <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
+      </video>
+    <% elsif file.audio? %>
+      <audio controls>
+        <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
+      </audio>
+    <% end %>
+  <% end %>
+<% end %>
+
+<p><%= @knowhow.description %></p>
+<p>価格: ¥<%= @knowhow.price %></p>
+<p>投稿者: <%= @knowhow.user.email %></p>
+
+<% if @purchased %>
+  <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @knowhow.chat_room) %>
+  <%= link_to "ノウハウ詳細を見る", "#" %> <!-- 詳細閲覧ページへ -->
+<% else %>
+  <%= link_to "購入する", new_knowhow_purchase_path(@knowhow) %>
+<% end %>

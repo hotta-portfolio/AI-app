@@ -1,0 +1,25 @@
+<%= form_with model: @knowhow, local: true, multipart: true do |f| %>
+  <div>
+    <%= f.label :title %><br>
+    <%= f.text_field :title %>
+  </div>
+
+  <div>
+    <%= f.label :description %><br>
+    <%= f.text_area :description %>
+  </div>
+
+  <div>
+    <%= f.label :price %><br>
+    <%= f.number_field :price %>
+  </div>
+
+  <div>
+    <%= f.label :media_files, "生成物（画像・動画・音声）アップロード" %><br>
+    <%= f.file_field :media_files, multiple: true, direct_upload: true %>
+  </div>
+
+  <div>
+    <%= f.submit %>
+  </div>
+<% end %>
