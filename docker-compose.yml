@@ -20,6 +20,7 @@ services:
     depends_on:
       - db
     environment:
+      RAILS_ENV: development
       DATABASE_URL: postgres://postgres:password@db:5432/ai_app_development
       SECRET_KEY_BASE: 0e4ee026f9f9bfde1774d9c0e97edb3b7c1fa72ee4c8d7b60e0c0819c64ec9aa9af6b004f58afeacfc8abb23f2493bfcfb9b1598bb86081ab955d9ecf93d52be
 
