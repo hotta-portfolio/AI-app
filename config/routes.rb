@@ -1,14 +1,14 @@
 Rails.application.routes.draw do
-  root "home#index"
+  get "home/index"
 
   # devise_for :users
 
-  # resources :knowhows do
-  #   resources :purchases, only: [:new, :create]
-  #   resources :chat_rooms, only: [:show]
-  # end
+  resources :knowhows do
+    resources :purchases, only: [:new, :create]
+    resources :chat_rooms, only: [:show]
+  end
 
-  # resources :users, only: [:show]
+  resources :users, only: [:show]
 
   # チャット用に直接チャットルームやメッセージを設けてもよい
   # resources :chat_rooms, only: [:index, :show] do
