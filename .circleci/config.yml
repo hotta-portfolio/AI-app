@@ -12,9 +12,7 @@ jobs:
     steps:
       - checkout
       - run: bundle install
-      - run:
-          name: Run Rubocop (with autocorrect)
-          command: bundle exec rubocop --auto-correct-all
+      - run: bundle exec rubocop
 
   rspec:
     executor: ruby-executor
