@@ -1,35 +1,55 @@
-# This config was automatically generated from your source code
-# Stacks detected: cicd:github-actions:.github/workflows,deps:ruby:.
 version: 2.1
-orbs:
-  ruby: circleci/ruby@2.0.1
-jobs:
-  test-ruby:
-    # Install gems, run rails tests
+
+executors:
+  ruby-executor:
     docker:
-      - image: cimg/ruby:3.2-node
+      - image: cimg/ruby:3.3.3-node
+    working_directory: ~/repo
+
+jobs:
+  rubocop:
+    executor: ruby-executor
     steps:
       - checkout
-      - ruby/install-deps
+      - run: bundle install
       - run:
-          name: rails test
-          command: bundle exec rails test
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
+          name: Run Rubocop (with autocorrect)
+          command: bundle exec rubocop --auto-correct-all
+
+  rspec:
+    executor: ruby-executor
     steps:
-      # Replace this with steps to deploy to users
+      - checkout
+      - run: bundle install
+      - run: bundle exec rspec
+
+  deploy:
+    executor: ruby-executor
+    steps:
+      - checkout
       - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+          name: Install Heroku CLI
+          command: |
+            curl https://cli-assets.heroku.com/install.sh | sh
       - run:
-          name: found github actions config
-          command: ':'
+          name: Deploy to Heroku
+          command: |
+            echo "$HEROKU_API_KEY" | heroku auth:token
+            heroku git:remote -a your-heroku-app-name
+            git push heroku main
+
 workflows:
-  build-and-test:
+  version: 2
+  test_and_deploy:
     jobs:
-      - test-ruby
-    # - deploy:
-    #     requires:
-    #       - test-ruby
+      - rubocop
+      - rspec:
+          requires:
+            - rubocop
+      - deploy:
+          requires:
+            - rspec
+          filters:
+            branches:
+              only:
+                - main
