@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get "home/index"
 
-  # devise_for :users
+  devise_for :users
 
   resources :knowhows do
     resources :purchases, only: [:new, :create]

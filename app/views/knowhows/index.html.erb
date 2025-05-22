@@ -1,3 +1,5 @@
+<%= link_to "新規登録", new_knowhow_path, class: "btn btn-primary" %>
+
 <%= form_with url: knowhows_path, method: :get, local: true do |f| %>
   <%= f.text_field :keyword, placeholder: "キーワード検索" %>
   <%= f.submit "検索" %>

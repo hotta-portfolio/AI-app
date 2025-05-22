@@ -21,20 +21,20 @@ jobs:
       - run: bundle install
       - run: bundle exec rspec
 
-  # deploy:
-  #   executor: ruby-executor
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Install Heroku CLI
-  #         command: |
-  #           curl https://cli-assets.heroku.com/install.sh | sh
-  #     - run:
-  #         name: Deploy to Heroku
-  #         command: |
-  #           echo "$HEROKU_API_KEY" | heroku auth:token
-  #           heroku git:remote -a your-heroku-app-name
-  #           git push heroku main
+  deploy:
+    executor: ruby-executor
+    steps:
+      - checkout
+      - run:
+          name: Install Heroku CLI
+          command: |
+            curl https://cli-assets.heroku.com/install.sh | sh
+      - run:
+          name: Deploy to Heroku
+          command: |
+            echo "$HEROKU_API_KEY" | heroku auth:token
+            heroku git:remote -a your-heroku-app-name
+            git push heroku main
 
 workflows:
   version: 2
