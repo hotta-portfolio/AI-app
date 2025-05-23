@@ -1,2 +1,11 @@
-<h1>Home#index</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+<h1>AIノウハウプラットフォーム</h1>
+
+<% if user_signed_in? %>
+  <%= link_to 'マイページ', user_path %>
+  <%= link_to 'ログアウト', destroy_user_session_path, method: :delete %>
+<% else %>
+  <%= link_to 'ログイン', new_user_session_path %>
+  <%= link_to '新規登録', new_user_registration_path %>
+<% end %>
+
+<%= link_to 'ノウハウ一覧', knowhows_path %>
