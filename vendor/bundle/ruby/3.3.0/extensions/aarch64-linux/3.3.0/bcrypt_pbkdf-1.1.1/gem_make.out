@@ -1,0 +1,9 @@
+current directory: /rails/vendor/bundle/ruby/3.3.0/gems/bcrypt_pbkdf-1.1.1/ext/mri
+/usr/local/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /rails/vendor/bundle/ruby/3.3.0/gems/bcrypt_pbkdf-1.1.1/ext/mri
+make DESTDIR\= sitearchdir\=./.gem.20250524-200-wlnfqn sitelibdir\=./.gem.20250524-200-wlnfqn clean
+current directory: /rails/vendor/bundle/ruby/3.3.0/gems/bcrypt_pbkdf-1.1.1/ext/mri
+make DESTDIR\= sitearchdir\=./.gem.20250524-200-wlnfqn sitelibdir\=./.gem.20250524-200-wlnfqn
+make failedNo such file or directory - make
