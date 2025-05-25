@@ -22,5 +22,8 @@ services:
     environment:
       RAILS_ENV: development
       DATABASE_URL: postgres://postgres:password@db:5432/ai_app_development
+    env_file:
+      - .env  # ← ここを追加
+
 volumes:
   postgres_data:
