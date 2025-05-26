@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("payment-form");
   if (!form) return;
 
-  const stripe = await loadStripe("pk_test_51RSJ7wEPsRB0U4byp94cIRKqxeEpSjAVMm5u86rMaooQXugKT2lZ5aiyoAmkCux9myvhbtPdGKKXM7C5NBj5dAUi003IJEjXqo");
+  const stripe = await loadStripe("pk_test_51RSJ85CiZTWiTlHHr2vJxpJZMJd2HS0s6XAdeq961c9QGKcuPAte4WhNWtnzafdg3IVDrswAAW6BsoW95Ze98oaj00KozsLBsX");
 
   const elements = stripe.elements();
   const cardElement = elements.create("card");

@@ -7,9 +7,6 @@
   CVC: <code>123</code><br>
 </p>
 
-<!-- Stripe.js を読み込み -->
-<script src="https://js.stripe.com/v3/"></script>
-
 <%= form_with url: knowhow_purchases_path(@knowhow), method: :post, id: "payment-form", local: true do %>
   <div id="card-element" style="margin-bottom: 1em;"></div>
   <div id="card-errors" style="color: red;"></div>
