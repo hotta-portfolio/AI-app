@@ -7,9 +7,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("payment-form");
   if (!form) return;
 
-// Railsのビューで埋め込んだ<meta name="stripe-public-key" content="公開鍵">タグを取得。
-  const publicKeyMeta = document.querySelector("meta[name='stripe-public-key']");
-  const publicKey = publicKeyMeta?.content;
+// // Railsのビューで埋め込んだ<meta name="stripe-public-key" content="公開鍵">タグを取得。
+//   const publicKeyMeta = document.querySelector("meta[name='stripe-public-key']");
+//   const publicKey = publicKeyMeta?.content;
+
+  // 🔧 Stripe 公開鍵を直書き（開発用）
+  const publicKey = "pk_test_51RSJ7wEPsRB0U4byp94cIRKqxeEpSjAVMm5u86rMaooQXugKT2lZ5aiyoAmkCux9myvhbtPdGKKXM7C5NBj5dAUi003IJEjXqo";
 
   if (!publicKey) {
     console.error("Stripe public key not found in meta tag.");

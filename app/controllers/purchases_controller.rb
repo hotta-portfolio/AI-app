@@ -4,7 +4,7 @@ class PurchasesController < ApplicationController
 
   def new
     # 購入確認画面用の処理（Stripeのpublishable_keyを渡したい場合ここでセット）
-    @stripe_public_key = Rails.application.credentials.dig(:stripe, :public_key)
+    @stripe_public_key = "pk_test_51RSJ7wEPsRB0U4byp94cIRKqxeEpSjAVMm5u86rMaooQXugKT2lZ5aiyoAmkCux9myvhbtPdGKKXM7C5NBj5dAUi003IJEjXqo"
   end
 
   def create
