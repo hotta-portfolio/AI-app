@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_23_101610) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_27_144816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -46,6 +46,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_101610) do
     t.bigint "purchase_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "knowhow_id", null: false
+    t.index ["knowhow_id"], name: "index_chat_rooms_on_knowhow_id"
     t.index ["purchase_id"], name: "index_chat_rooms_on_purchase_id"
   end
 
@@ -65,6 +67,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_101610) do
     t.bigint "knowhow_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "stripe_charge_id"
     t.index ["knowhow_id"], name: "index_purchases_on_knowhow_id"
     t.index ["user_id"], name: "index_purchases_on_user_id"
   end
@@ -85,6 +88,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_101610) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "chat_rooms", "knowhows"
   add_foreign_key "chat_rooms", "purchases"
   add_foreign_key "knowhows", "users"
   add_foreign_key "purchases", "knowhows"

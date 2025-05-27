@@ -16,8 +16,8 @@ class KnowhowsController < ApplicationController
 
   # ノウハウ詳細ページ
   def show
-    # 現在のユーザーがこのノウハウを購入済みかどうかを判定
-    @purchased = current_user&.purchases&.exists?(knowhow_id: @knowhow.id)
+    @purchase = current_user&.purchases&.find_by(knowhow_id: @knowhow.id)
+    @purchased = @purchase.present?
   end
 
   # 新規投稿フォーム表示

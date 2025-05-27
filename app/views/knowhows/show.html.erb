@@ -20,9 +20,9 @@
 <p>価格: ¥<%= @knowhow.price %></p>
 <p>投稿者: <%= @knowhow.user.email %></p>
 
-<% if @purchased %>
-  <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @knowhow.chat_room) %>
-  <%= link_to "ノウハウ詳細を見る", "#" %> <!-- 詳細閲覧ページへ -->
+<% if @purchased && @purchase.chat_room.present? %>
+  <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @purchase.chat_room) %>
+  <%= link_to "ノウハウ詳細を見る", "#" %>
 <% else %>
   <%= link_to "購入する", new_knowhow_purchase_path(@knowhow) %>
 <% end %>

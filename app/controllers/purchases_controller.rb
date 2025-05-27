@@ -9,33 +9,33 @@ class PurchasesController < ApplicationController
 
   def create
     token = params[:stripe_token]
-
+  
     begin
-      # 例: 料金はKnowhowモデルに price カラムがある前提で、単位は円
-      amount = (@knowhow.price * 100).to_i  # Stripeは「最小通貨単位」なので円→セント換算（JPYはセントなしだけど100掛けて整数化するのが普通）
-
+      amount = (@knowhow.price * 100).to_i
+  
       charge = Stripe::Charge.create(
         amount: amount,
         currency: 'jpy',
         source: token,
         description: "Knowhow purchase: #{@knowhow.title} by user #{current_user.id}"
       )
-
-      # 決済成功したら購入レコードを作成
+  
       @purchase = current_user.purchases.new(knowhow: @knowhow, stripe_charge_id: charge.id)
-
+  
       if @purchase.save
-        redirect_to chat_room_path(@purchase.chat_room), notice: "購入が完了しました。チャットルームに移動します。"
+        @chat_room = @purchase.create_chat_room(knowhow: @knowhow)
+        redirect_to chat_room_path(@chat_room), notice: "購入が完了しました。チャットルームに移動します。"
       else
         flash.now[:alert] = "購入に失敗しました。"
-        render :new
+        redirect_to new_knowhow_purchases_path(@knowhow)
       end
-
+  
     rescue Stripe::CardError => e
       flash.now[:alert] = e.message
-      render :new
+      redirect_to new_knowhow_purchases_path(@knowhow)
     end
   end
+  
 
   private
 
