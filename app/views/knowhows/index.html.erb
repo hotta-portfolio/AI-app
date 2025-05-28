@@ -1,19 +1,36 @@
-<%= link_to "新規登録", new_knowhow_path, class: "btn btn-primary" %>
+<%= link_to "新規登録", new_knowhow_path, class: "btn btn-primary mb-3" %>
 
 <%= form_with url: knowhows_path, method: :get, local: true do |f| %>
-  <%= f.text_field :keyword, placeholder: "キーワード検索" %>
-  <%= f.submit "検索" %>
+  <%= f.text_field :keyword, placeholder: "キーワード検索", class: "form-control d-inline-block w-50 me-2" %>
+  <%= f.submit "検索", class: "btn btn-outline-secondary" %>
 <% end %>
 
-<div class="knowhows-list">
+<div class="knowhows-list mt-4">
   <% @knowhows.each do |knowhow| %>
-    <div class="knowhow-card">
+    <div class="knowhow-card border p-3 mb-4 rounded">
       <% if knowhow.media_files.attached? %>
-        <%= image_tag url_for(knowhow.media_files.first), alt: knowhow.title, width: 200 %>
+        <div class="media-scroll-container mb-2">
+          <% knowhow.media_files.each do |file| %>
+            <div class="media-item">
+              <% if file.image? %>
+                <%= image_tag url_for(file), class: "img-fluid", style: "max-height: 200px;" %>
+              <% elsif file.video? %>
+                <video controls style="max-height: 200px; width: auto;">
+                  <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
+                </video>
+              <% elsif file.audio? %>
+                <audio controls style="width: 200px;">
+                  <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
+                </audio>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
       <% end %>
+
       <h3><%= link_to knowhow.title, knowhow %></h3>
-      <p>価格: ¥<%= knowhow.price %></p>
       <p><%= truncate(knowhow.description, length: 80) %></p>
+      <p>価格: ¥<%= knowhow.price %></p>
       <p>投稿者: <%= knowhow.user.email %></p>
     </div>
   <% end %>

@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 //   const publicKeyMeta = document.querySelector("meta[name='stripe-public-key']");
 //   const publicKey = publicKeyMeta?.content;
 
-  // 🔧 Stripe 公開鍵を直書き（開発用）
-  const publicKey = "pk_test_51RSJ85CiZTWiTlHHr2vJxpJZMJd2HS0s6XAdeq961c9QGKcuPAte4WhNWtnzafdg3IVDrswAAW6BsoW95Ze98oaj00KozsLBsX";
+  const publicKeyMeta = document.querySelector("meta[name='stripe-public-key']");
+  const publicKey = publicKeyMeta?.content;
 
   if (!publicKey) {
     console.error("Stripe public key not found in meta tag.");

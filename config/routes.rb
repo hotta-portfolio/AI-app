@@ -12,6 +12,11 @@ Rails.application.routes.draw do
   resources :knowhows do
     resources :purchases, only: [:new, :create]
     resources :chat_rooms, only: [:show]
+
+    # ここに追加！
+    member do
+      delete :delete_media
+    end
   end
 
   # グローバルチャット（複数のチャットルーム想定）

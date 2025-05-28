@@ -3,9 +3,9 @@ class PurchasesController < ApplicationController
   before_action :set_knowhow
 
   def new
-    # 購入確認画面用の処理（Stripeのpublishable_keyを渡したい場合ここでセット）
-    @stripe_public_key = "pk_test_51RSJ85CiZTWiTlHHr2vJxpJZMJd2HS0s6XAdeq961c9QGKcuPAte4WhNWtnzafdg3IVDrswAAW6BsoW95Ze98oaj00KozsLBsX"
+    @stripe_public_key = ENV['STRIPE_PUBLIC_KEY']
   end
+  
 
   def create
     token = params[:stripe_token]

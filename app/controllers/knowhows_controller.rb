@@ -72,6 +72,13 @@ class KnowhowsController < ApplicationController
     end
   end
 
+  def delete_media
+    authorize_user!
+    file = @knowhow.media_files.find(params[:file_id])
+    file.purge_later
+    redirect_to edit_knowhow_path(@knowhow), notice: "ファイルを削除しました"
+  end
+
   private
 
   # ストロングパラメータ（フォームから受け取る安全な値だけを許可）
@@ -83,5 +90,9 @@ class KnowhowsController < ApplicationController
   # 共通で使うノウハウ取得メソッド
   def set_knowhow
     @knowhow = Knowhow.find(params[:id])
+  end
+
+  def authorize_user!
+    redirect_to knowhows_path, alert: "編集権限がありません" unless @knowhow.user == current_user
   end
 end

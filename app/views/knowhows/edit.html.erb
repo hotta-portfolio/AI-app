@@ -1,4 +1,4 @@
-<%= form_with model: @knowhow, local: true, multipart: true do |f| %>
+<%= form_with model: @knowhow, local: true, html: { multipart: true } do |f| %>
   <div>
     <%= f.label :title %><br>
     <%= f.text_field :title %>
@@ -14,12 +14,26 @@
     <%= f.number_field :price %>
   </div>
 
+  <% if @knowhow.media_files.attached? %>
+    <div>
+      <p>既存のファイル:</p>
+      <ul>
+        <% @knowhow.media_files.each do |file| %>
+          <li>
+            <%= link_to file.filename, url_for(file), target: "_blank" %>
+            <%= button_to '削除', delete_media_knowhow_path(@knowhow, file_id: file.id), method: :delete, data: { confirm: "このファイルを削除しますか？" } %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <div>
-    <%= f.label :media_files, "生成物（画像・動画・音声）アップロード" %><br>
+    <%= f.label :media_files, "生成物（画像・動画・音声）追加アップロード" %><br>
     <%= f.file_field :media_files, multiple: true, direct_upload: true %>
   </div>
 
   <div>
-    <%= f.submit %>
+    <%= f.submit "保存" %>
   </div>
 <% end %>
