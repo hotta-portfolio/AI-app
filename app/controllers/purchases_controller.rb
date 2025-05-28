@@ -4,7 +4,7 @@ class PurchasesController < ApplicationController
 
   def new
     # 購入確認画面用の処理（Stripeのpublishable_keyを渡したい場合ここでセット）
-    @stripe_public_key = "pk_test_51RSJ7wEPsRB0U4byp94cIRKqxeEpSjAVMm5u86rMaooQXugKT2lZ5aiyoAmkCux9myvhbtPdGKKXM7C5NBj5dAUi003IJEjXqo"
+    @stripe_public_key = "pk_test_51RSJ85CiZTWiTlHHr2vJxpJZMJd2HS0s6XAdeq961c9QGKcuPAte4WhNWtnzafdg3IVDrswAAW6BsoW95Ze98oaj00KozsLBsX"
   end
 
   def create
@@ -27,12 +27,12 @@ class PurchasesController < ApplicationController
         redirect_to chat_room_path(@chat_room), notice: "購入が完了しました。チャットルームに移動します。"
       else
         flash.now[:alert] = "購入に失敗しました。"
-        redirect_to new_knowhow_purchases_path(@knowhow)
+        redirect_to new_knowhow_purchase_path(@knowhow)
       end
   
     rescue Stripe::CardError => e
       flash.now[:alert] = e.message
-      redirect_to new_knowhow_purchases_path(@knowhow)
+      redirect_to new_knowhow_purchase_path(@knowhow)
     end
   end
   

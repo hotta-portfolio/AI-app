@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 //   const publicKey = publicKeyMeta?.content;
 
   // 🔧 Stripe 公開鍵を直書き（開発用）
-  const publicKey = "pk_test_51RSJ7wEPsRB0U4byp94cIRKqxeEpSjAVMm5u86rMaooQXugKT2lZ5aiyoAmkCux9myvhbtPdGKKXM7C5NBj5dAUi003IJEjXqo";
+  const publicKey = "pk_test_51RSJ85CiZTWiTlHHr2vJxpJZMJd2HS0s6XAdeq961c9QGKcuPAte4WhNWtnzafdg3IVDrswAAW6BsoW95Ze98oaj00KozsLBsX";
 
   if (!publicKey) {
     console.error("Stripe public key not found in meta tag.");

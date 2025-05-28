@@ -1,7 +1,7 @@
 # app/controllers/users_controller.rb
 class UsersController < ApplicationController
   def show
-    @user = current_user
+    @posted_knowhows = current_user.knowhows.order(created_at: :desc)
   end
 
   def edit

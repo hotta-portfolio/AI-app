@@ -1,2 +1,19 @@
-<h1>Users#show</h1>
-<p>Find me in app/views/users/show.html.erb</p>
+<h2>マイページ</h2>
+
+<section>
+  <h3>自分の投稿ノウハウ一覧</h3>
+  <% if @posted_knowhows.any? %>
+    <ul>
+      <% @posted_knowhows.each do |knowhow| %>
+        <li>
+          <%= link_to knowhow.title, knowhow_path(knowhow) %>
+          （投稿日：<%= l(knowhow.created_at, format: :short) %>）
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>投稿したノウハウはありません。</p>
+  <% end %>
+    <%= link_to "プロフィールを編集する", edit_user_path %>
+</section>
+
