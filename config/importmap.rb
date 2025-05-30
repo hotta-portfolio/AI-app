@@ -7,3 +7,4 @@ pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
 pin_all_from "app/javascript/controllers", under: "controllers"
 pin "@stripe/stripe-js", to: "@stripe--stripe-js.js" # @7.3.0
 pin "stripe_payment"
+pin "@rails/ujs", to: "rails-ujs.js"

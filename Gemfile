@@ -55,6 +55,10 @@ group :development, :test do
 
   # 環境変数を簡単に扱うためのgem
   gem "dotenv-rails"
+
+  # pry関連のgemを追加
+  gem "pry-rails"
+  gem "pry-byebug"
 end
 
 group :development do
@@ -71,4 +75,3 @@ end
 
 gem "devise", "~> 4.9"
 gem "stripe"
-

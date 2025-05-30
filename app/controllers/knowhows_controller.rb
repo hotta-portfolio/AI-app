@@ -4,7 +4,7 @@ class KnowhowsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
   
   # show/edit/update/destroyで共通して使うノウハウ取得処理をまとめる
-  before_action :set_knowhow, only: [:show, :edit, :update, :destroy]
+  before_action :set_knowhow, only: [:show, :edit, :update, :destroy, :delete_media]
 
   # ノウハウ一覧ページ
   def index
@@ -54,13 +54,21 @@ class KnowhowsController < ApplicationController
       redirect_to knowhows_path, alert: "編集権限がありません"
       return
     end
-
-    if @knowhow.update(knowhow_params)
+  
+    permitted_params = knowhow_params
+  
+    # media_files が空なら削除されてしまうので、除外する
+    if params[:knowhow][:media_files].blank?
+      binding.pry
+      permitted_params = permitted_params.except(:media_files)
+    end
+  
+    if @knowhow.update(permitted_params)
       redirect_to @knowhow, notice: "ノウハウを更新しました"
     else
       render :edit
     end
-  end
+  end  
 
   # 削除処理
   def destroy

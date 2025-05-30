@@ -21,7 +21,7 @@
         <% @knowhow.media_files.each do |file| %>
           <li>
             <%= link_to file.filename, url_for(file), target: "_blank" %>
-            <%= button_to '削除', delete_media_knowhow_path(@knowhow, file_id: file.id), method: :delete, data: { confirm: "このファイルを削除しますか？" } %>
+            <%= link_to '削除', delete_media_knowhow_path(@knowhow, file_id: file.id), data: { turbo_method: :delete, turbo_confirm: '本当に削除しますか？' } %>
           </li>
         <% end %>
       </ul>
