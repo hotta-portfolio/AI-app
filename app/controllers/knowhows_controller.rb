@@ -55,20 +55,21 @@ class KnowhowsController < ApplicationController
       return
     end
   
-    permitted_params = knowhow_params
-  
-    # media_files が空なら削除されてしまうので、除外する
-    if params[:knowhow][:media_files].blank?
-      binding.pry
-      permitted_params = permitted_params.except(:media_files)
-    end
+    permitted_params = knowhow_params.except(:media_files)
   
     if @knowhow.update(permitted_params)
+      # 新規ファイルがある場合のみ追加
+      if params[:knowhow][:media_files].present?
+        @knowhow.media_files.attach(params[:knowhow][:media_files])
+      end
+  
       redirect_to @knowhow, notice: "ノウハウを更新しました"
     else
       render :edit
     end
-  end  
+  end
+  
+  
 
   # 削除処理
   def destroy
