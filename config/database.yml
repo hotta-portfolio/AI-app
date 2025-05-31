@@ -19,8 +19,4 @@ test:
   host: localhost
 
 production:
-  <<: *default
-  database: ai_app_production
-  username: <%= ENV['PROD_DB_USERNAME'] %>
-  password: <%= ENV['PROD_DB_PASSWORD'] %>
-  host: <%= ENV['PROD_DB_HOST'] %>
+  url: <%= ENV['DATABASE_URL'] %>
