@@ -52,6 +52,7 @@ group :development, :test do
   gem "rspec-rails"
   gem "rubocop", require: false
   gem "rubocop-rails", require: false
+  
 
   # 環境変数を簡単に扱うためのgem
   gem "dotenv-rails"
