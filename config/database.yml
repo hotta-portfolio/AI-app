@@ -27,4 +27,8 @@ production:
 
   cable:
     adapter: postgresql
-    url: <%= ENV["CABLE_DATABASE_URL"] || ENV["DATABASE_URL"] %>
+    url: <%= ENV["CABLE_DATABASE_URL"] || ENV["DATABASE_URL"] %> 
+
+  queue: 
+    <<: *default
+    url: <%= ENV['SOLID_QUEUE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
