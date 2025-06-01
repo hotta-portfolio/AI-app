@@ -69,8 +69,6 @@ class KnowhowsController < ApplicationController
     end
   end
   
-  
-
   # 削除処理
   def destroy
     if @knowhow.user == current_user
