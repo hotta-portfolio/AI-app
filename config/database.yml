@@ -21,10 +21,10 @@ test:
   host: localhost
 
 production:
-  <<: *default
-
   primary:
+    <<: *default
     url: <%= ENV['DATABASE_URL'] %>
 
   cable:
+    adapter: postgresql
     url: <%= ENV["CABLE_DATABASE_URL"] || ENV["DATABASE_URL"] %>
