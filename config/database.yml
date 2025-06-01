@@ -1,10 +1,8 @@
-
 default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   port: 5432
-  
 
 development:
   <<: *default
@@ -21,18 +19,22 @@ test:
   host: localhost
 
 production:
+  # メインのDB（Supabase）
   primary:
     <<: *default
-    url: <%= ENV['DATABASE_URL'] %>
+    url: <%= ENV['DATABASE_URL'] %> # Supabase の接続URLを Render に設定して使う
 
+  # ActionCable用（必要なら同じDBを使える）
   cable:
     adapter: postgresql
-    url: <%= ENV["CABLE_DATABASE_URL"] || ENV["DATABASE_URL"] %> 
+    url: <%= ENV["CABLE_DATABASE_URL"] || ENV["DATABASE_URL"] %>
 
-  queue: 
+  # ActiveJob(SolidQueue)用（必要に応じて）
+  queue:
     <<: *default
     url: <%= ENV['SOLID_QUEUE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
 
+  # Cache Store用（必要に応じて）
   cache:
     <<: *default
     url: <%= ENV["CACHE_DATABASE_URL"] || ENV["DATABASE_URL"] %>
