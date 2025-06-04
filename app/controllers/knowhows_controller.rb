@@ -28,9 +28,14 @@ class KnowhowsController < ApplicationController
 
   # 新規投稿処理
   def create
+    binding.pry
+    puts "AWS_ACCESS_KEY_ID: #{ENV['AWS_ACCESS_KEY_ID']}"
+    puts "AWS_SECRET_ACCESS_KEY: #{ENV['AWS_SECRET_ACCESS_KEY']}"
+    puts "AWS_REGION: #{ENV['AWS_REGION']}"
+    
     @knowhow = current_user.knowhows.new(knowhow_params)
-
     if @knowhow.save
+      
       if params[:knowhow][:media_files].present?
         @knowhow.media_files.attach(params[:knowhow][:media_files])
       end
