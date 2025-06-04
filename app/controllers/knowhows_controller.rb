@@ -27,12 +27,7 @@ class KnowhowsController < ApplicationController
   end
 
   # 新規投稿処理
-  def create
-    binding.pry
-    puts "AWS_ACCESS_KEY_ID: #{ENV['AWS_ACCESS_KEY_ID']}"
-    puts "AWS_SECRET_ACCESS_KEY: #{ENV['AWS_SECRET_ACCESS_KEY']}"
-    puts "AWS_REGION: #{ENV['AWS_REGION']}"
-    
+  def create    
     @knowhow = current_user.knowhows.new(knowhow_params)
     if @knowhow.save
       
