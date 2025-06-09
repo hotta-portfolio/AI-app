@@ -7,14 +7,14 @@ class MessagesController < ApplicationController
 
     ActionCable.server.broadcast(
       "chat_room_#{@message.chat_room_id}",
-      content: render_message(@message)
-    )
+      { content: render_message(@message) }
+    )    
   end
 
   private
 
   def render_message(message)
-    ApplicationController.renderer.render(partial: "chat_room_messages/message", locals: { message: message })
+    ApplicationController.renderer.render(partial: "messages/message", locals: { message: message })
   end
 end
 
