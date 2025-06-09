@@ -1,2 +1,10 @@
-<h1>ChatRooms#show</h1>
-<p>Find me in app/views/chat_rooms/show.html.erb</p>
+<div id="chat-room" data-room-id="<%= @chat_room.id %>"></div>
+
+<div id="messages">
+  <%= render @messages %>
+</div>
+
+<%= form_with model: [@chat_room, Message.new], local: true do |f| %>
+  <%= f.text_area :content, rows: 2 %>
+  <%= f.submit "Send" %>
+<% end %>

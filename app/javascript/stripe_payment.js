@@ -3,7 +3,7 @@ import { loadStripe } from "@stripe/stripe-js";
 
 // 決済フォームの<form id="payment-form">を取得。
 // フォームが存在しなければ何もしません（他ページでは処理しないための安全策）。
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("turbo:load", async () => {
   const form = document.getElementById("payment-form");
   if (!form) return;
 

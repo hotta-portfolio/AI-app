@@ -5,4 +5,5 @@ class User < ApplicationRecord
 
   has_many :knowhows, dependent: :destroy
   has_many :purchases, dependent: :destroy
+  has_many :messages, dependent: :destroy
 end

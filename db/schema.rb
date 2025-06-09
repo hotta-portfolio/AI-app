@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_27_144816) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_07_113105) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -47,6 +47,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_144816) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "knowhow_id", null: false
+    t.string "name"
     t.index ["knowhow_id"], name: "index_chat_rooms_on_knowhow_id"
     t.index ["purchase_id"], name: "index_chat_rooms_on_purchase_id"
   end
@@ -60,6 +61,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_144816) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_knowhows_on_user_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.text "content"
+    t.bigint "user_id", null: false
+    t.bigint "chat_room_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_room_id"], name: "index_messages_on_chat_room_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "purchases", force: :cascade do |t|
@@ -91,6 +102,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_144816) do
   add_foreign_key "chat_rooms", "knowhows"
   add_foreign_key "chat_rooms", "purchases"
   add_foreign_key "knowhows", "users"
+  add_foreign_key "messages", "chat_rooms"
+  add_foreign_key "messages", "users"
   add_foreign_key "purchases", "knowhows"
   add_foreign_key "purchases", "users"
 end

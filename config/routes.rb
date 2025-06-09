@@ -21,6 +21,6 @@ Rails.application.routes.draw do
 
   # グローバルチャット（複数のチャットルーム想定）
   resources :chat_rooms, only: [:index, :show] do
-    resources :chat_messages, only: [:create]
+    resources :messages, only: [:create]
   end
 end

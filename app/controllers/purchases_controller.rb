@@ -23,8 +23,7 @@ class PurchasesController < ApplicationController
       @purchase = current_user.purchases.new(knowhow: @knowhow, stripe_charge_id: charge.id)
   
       if @purchase.save
-        @chat_room = @purchase.create_chat_room(knowhow: @knowhow)
-        redirect_to chat_room_path(@chat_room), notice: "購入が完了しました。チャットルームに移動します。"
+        redirect_to chat_room_path(@purchase.chat_room), notice: "購入が完了しました。チャットルームに移動します。"
       else
         flash.now[:alert] = "購入に失敗しました。"
         redirect_to new_knowhow_purchase_path(@knowhow)
@@ -36,7 +35,6 @@ class PurchasesController < ApplicationController
     end
   end
   
-
   private
 
   def set_knowhow

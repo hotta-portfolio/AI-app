@@ -27,7 +27,7 @@ class KnowhowsController < ApplicationController
   end
 
   # 新規投稿処理
-  def create    
+  def create  
     @knowhow = current_user.knowhows.new(knowhow_params)
     if @knowhow.save
       
