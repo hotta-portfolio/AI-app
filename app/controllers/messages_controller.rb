@@ -7,8 +7,9 @@ class MessagesController < ApplicationController
 
     ActionCable.server.broadcast(
       "chat_room_#{@message.chat_room_id}",
-      { content: render_message(@message) }
-    )    
+      { message: render_message(@message) }
+    )
+    head :ok
   end
 
   private
