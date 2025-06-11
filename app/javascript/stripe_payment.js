@@ -2,15 +2,11 @@
 import { loadStripe } from "@stripe/stripe-js";
 
 // 決済フォームの<form id="payment-form">を取得。
-// フォームが存在しなければ何もしません（他ページでは処理しないための安全策）。
 document.addEventListener("turbo:load", async () => {
   const form = document.getElementById("payment-form");
   if (!form) return;
 
-// // Railsのビューで埋め込んだ<meta name="stripe-public-key" content="公開鍵">タグを取得。
-//   const publicKeyMeta = document.querySelector("meta[name='stripe-public-key']");
-//   const publicKey = publicKeyMeta?.content;
-
+// // <meta name="stripe-public-key" content="公開鍵">タグを取得。
   const publicKeyMeta = document.querySelector("meta[name='stripe-public-key']");
   const publicKey = publicKeyMeta?.content;
 
@@ -20,10 +16,10 @@ document.addEventListener("turbo:load", async () => {
   }
 
 // 取得した公開鍵を使ってStripeオブジェクトを初期化します。
-// これによりStripeのAPIと通信できる状態になります。
+// これによりStripeのAPIと連携
   const stripe = await loadStripe(publicKey);
 
-//   StripeのUIコンポーネント群（Elements）を作成。
+//   stripe.elements() を使って、Stripe提供のUIパーツを作れるようにします
 // 「カード情報入力フォーム（card）」を作成し、HTML内の<div id="card-element">に差し込みます。
 // このカード入力UIはStripeが管理するので、カード情報は安全に取り扱われます。
   const elements = stripe.elements();
@@ -46,7 +42,10 @@ document.addEventListener("turbo:load", async () => {
     } else {
       const token = result.token.id;
 
-// フォームに非表示の<input>を動的に追加し、トークンIDをセットします。
+// トークンをRailsに送るために必要
+// 見えない入力欄をJavaScriptで作って
+// そこに Stripe からもらった トークン（＝使い捨てのカードID） をセットして
+// それをフォームにくっつけて、Railsにフォームを送信している
       const hiddenInput = document.createElement("input");
       hiddenInput.setAttribute("type", "hidden");
       hiddenInput.setAttribute("name", "stripe_token");

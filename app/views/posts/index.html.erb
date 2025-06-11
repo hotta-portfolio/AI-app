@@ -1,0 +1,53 @@
+<%# app/views/posts/index.html.erb %>
+
+<h1>AIノウハウプラットフォーム</h1>
+<h2>投稿検索</h2>
+
+<%# 検索フォーム %>
+<%= search_form_for @q, url: posts_path, method: :get do |f| %>
+
+  <%# 投稿のタイトル(title)で部分一致検索 %>
+  <%= f.label :title_cont, 'タイトル' %>
+  <%= f.search_field :title_cont %>
+  <br> <%# 改行を追加 %>
+
+  <%# 投稿の本文(body)で部分一致検索 %>
+  <%= f.label :body_cont, '本文' %>
+  <%= f.search_field :body_cont %>
+  <br> <%# 改行を追加 %>
+
+  <%= f.submit '検索' %>
+
+<% end %>
+
+<hr>
+
+<%# 検索結果の表示 %>
+<h2>検索結果</h2>
+<% if @posts.any? %> <%# 投稿が存在する場合のみ表示 %>
+  <% @posts.each do |post| %>
+    <div>
+      <h3><%= link_to post.title, post_path(post) %></h3> <%# タイトルをクリックすると投稿詳細へ遷移 %>
+      <p><%= truncate(post.body, length: 150) %></p> <%# 本文が長い場合は省略表示 %>
+      <%= link_to '詳細を見る', post_path(post) %>
+    </div>
+    <hr>
+  <% end %>
+<% else %>
+  <p>該当する投稿はありません。</p>
+<% end %>
+
+<hr>
+
+<%# ユーザー認証関連のリンク %>
+<% if user_signed_in? %>
+  <%= link_to '新規投稿', new_post_path %> |
+  <%= link_to 'マイページ', user_path(current_user) %> | <%# current_userを使う %>
+  <%= link_to 'ログアウト', destroy_user_session_path, data: { turbo_method: :delete } %>
+<% else %>
+  <%= link_to 'ログイン', new_user_session_path %> |
+  <%= link_to '新規登録', new_user_registration_path %>
+<% end %>
+
+<br>
+<%= link_to 'すべてのノウハウ', posts_path %> <%# ノウハウ一覧に戻るリンク（検索をリセット） %>
