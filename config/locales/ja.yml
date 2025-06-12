@@ -1,0 +1,8 @@
+ja:
+  enum:
+    knowhow:
+      category_type:
+        document: ドキュメント
+        video: 動画
+        image: 画像
+        audio: 音声

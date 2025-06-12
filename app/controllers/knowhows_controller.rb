@@ -7,12 +7,13 @@ class KnowhowsController < ApplicationController
   before_action :set_knowhow, only: [:show, :edit, :update, :destroy, :delete_media]
 
   # ノウハウ一覧ページ
-  def index
-    # N+1問題を避けるために関連テーブルも読み込む
-    @knowhows = Knowhow.includes(:user, media_files_attachments: :blob).order(created_at: :desc)
-    
-    # 後で検索や並び替え機能をここに追加予定
-  end
+def index
+  # 1. Ransackの検索オブジェクトを作成
+  @q = Knowhow.ransack(params[:q])
+  # 2. 検索結果を取得し、N+1問題を考慮してページネーションなどを適用
+  #    order(created_at: :desc) は検索結果に適用
+  @knowhows = @q.result(distinct: true).includes(:user, media_files_attachments: :blob).order(created_at: :desc)
+end
 
   # ノウハウ詳細ページ
   def show

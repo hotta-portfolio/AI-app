@@ -6,4 +6,14 @@ class User < ApplicationRecord
   has_many :knowhows, dependent: :destroy
   has_many :purchases, dependent: :destroy
   has_many :messages, dependent: :destroy
+
+    # 🔒 検索可能なカラムを明示的に指定
+  def self.ransackable_attributes(auth_object = nil)
+    %w[name email created_at updated_at]
+  end
+
+  # 🔍 必要なら関連の検索許可も追加（今回は不要かも）
+  def self.ransackable_associations(auth_object = nil)
+    []
+  end
 end
