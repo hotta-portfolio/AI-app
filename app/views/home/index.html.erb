@@ -1,5 +1,26 @@
 <h1>AIノウハウプラットフォーム</h1>
 
+<%= link_to "新規登録", new_knowhow_path, class: "btn btn-primary mb-3" %>
+
+<%= search_form_for @q, url: knowhows_path, method: :get do |f| %>
+  <div>
+    <%= f.search_field :title_or_user_name_or_user_email_cont, placeholder: "キーワードや投稿者名で検索" %>
+  </div>
+
+  <div>
+    <%= f.select :category_type_eq, 
+      options_for_select(
+        Knowhow.category_types.map { |k, v| [t("enum.knowhow.category_type.#{k}"), v] },
+        @q.category_type_eq
+      ),
+      { include_blank: 'すべて' } %>
+  </div>
+
+  <div>
+    <%= f.submit "検索" %>
+  </div>
+<% end %>
+
 <% if user_signed_in? %>
   <%= link_to 'マイページ', user_path %>
   <%= link_to 'ログアウト', destroy_user_session_path, data: { turbo_method: :delete } %>

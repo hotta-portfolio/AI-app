@@ -5,12 +5,12 @@ class Knowhow < ApplicationRecord
   has_one :chat_room, dependent: :destroy
 
   # 属性名を category_type に変更
-  enum category_type: {
+  enum :category_type, {
     document: 0,
     video: 1,
     image: 2,
     audio: 3
-  }, _suffix: true
+  }
 
   # 🔍 Ransackで検索可能なカラムを明示
   def self.ransackable_attributes(auth_object = nil)

@@ -17,6 +17,7 @@
 <% end %>
 
 <p><%= @knowhow.description %></p>
+<p>カテゴリ: <%= t("enum.knowhow.category_type.#{@knowhow.category_type}") %></p>
 <p>価格: ¥<%= @knowhow.price %></p>
 <p>投稿者: <%= @knowhow.user.email %></p>
 

@@ -96,7 +96,7 @@ end
   # ストロングパラメータ（フォームから受け取る安全な値だけを許可）
   def knowhow_params
     # media_filesは複数アップロードできるので配列で許可
-    params.require(:knowhow).permit(:title, :description, :price, media_files: [], tag_ids: [])
+    params.require(:knowhow).permit(:title, :description, :price, :category_type, media_files: [], tag_ids: [])
   end
 
   # 共通で使うノウハウ取得メソッド

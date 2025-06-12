@@ -5,6 +5,13 @@
   </div>
 
   <div>
+    <%= f.label :category_type, "カテゴリ" %><br>
+    <%= f.select :category_type,
+          Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
+          { include_blank: "選択してください" } %>
+  </div>
+
+  <div>
     <%= f.label :description %><br>
     <%= f.text_area :description %>
   </div>

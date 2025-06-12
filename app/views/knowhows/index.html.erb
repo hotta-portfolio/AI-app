@@ -2,22 +2,17 @@
 
 <%= search_form_for @q, url: knowhows_path, method: :get do |f| %>
   <div>
-    <%= f.label :title_cont, "タイトルに含む" %>
-    <%= f.search_field :title_cont %>
+    <%= f.search_field :title_or_user_name_or_user_email_cont, placeholder: "キーワードや投稿者名で検索" %>
   </div>
 
-<div>
-  <%= f.label :user_name_or_user_email_cont, "投稿者名またはEmail" %>
-  <%= f.search_field :user_name_or_user_email_cont %>
-</div>
-
-<div>
-  <%= f.label :category_eq, "カテゴリ" %>
-  <%# `category_eq` は「categoryが選択値と完全に一致する」という検索条件 %>
-  <%= f.select :category_eq, 
-                options_for_select(Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] } @q.category_eq), 
-                { include_blank: 'すべて' } %>
-</div>
+  <div>
+    <%= f.select :category_type_eq, 
+      options_for_select(
+        Knowhow.category_types.map { |k, v| [t("enum.knowhow.category_type.#{k}"), v] },
+        @q.category_type_eq
+      ),
+      { include_blank: 'すべて' } %>
+  </div>
 
   <div>
     <%= f.submit "検索" %>
@@ -49,6 +44,7 @@
 
       <h3><%= link_to knowhow.title, knowhow %></h3>
       <p><%= truncate(knowhow.description, length: 80) %></p>
+      <p>カテゴリ: <%= t("enum.knowhow.category_type.#{knowhow.category_type}") %></p>
       <p>価格: ¥<%= knowhow.price %></p>
       <p>投稿者: <%= knowhow.user.name || knowhow.user.email %></p>
     </div>
