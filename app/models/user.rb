@@ -16,4 +16,13 @@ class User < ApplicationRecord
   def self.ransackable_associations(auth_object = nil)
     []
   end
+
+    # 登録完了後に welcome メール送信
+  after_create :send_welcome_email
+
+  private
+
+  def send_welcome_email
+    UserMailer.welcome_email(self).deliver_later
+  end
 end
