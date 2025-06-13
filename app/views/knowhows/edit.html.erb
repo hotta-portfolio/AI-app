@@ -15,6 +15,12 @@
           Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
           { include_blank: "選択してください" } %>
   </div>
+
+  <div>
+    <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %><br>
+    <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), placeholder: "例: Rails, Ruby, 初心者" %>
+  </div>
+  
   
   <div>
     <%= f.label :price %><br>

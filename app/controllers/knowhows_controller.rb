@@ -12,7 +12,7 @@ def index
   @q = Knowhow.ransack(params[:q])
   # 2. 検索結果を取得し、N+1問題を考慮してページネーションなどを適用
   #    order(created_at: :desc) は検索結果に適用
-  @knowhows = @q.result(distinct: true).includes(:user, media_files_attachments: :blob).order(created_at: :desc)
+  @knowhows = @q.result(distinct: true).includes(:user, :tags, media_files_attachments: :blob).order(created_at: :desc)
 end
 
   # ノウハウ詳細ページ
@@ -96,7 +96,7 @@ end
   # ストロングパラメータ（フォームから受け取る安全な値だけを許可）
   def knowhow_params
     # media_filesは複数アップロードできるので配列で許可
-    params.require(:knowhow).permit(:title, :description, :price, :category_type, media_files: [], tag_ids: [])
+    params.require(:knowhow).permit(:title, :description, :price, :category_type,:tag_list, media_files: [], tag_ids: [])
   end
 
   # 共通で使うノウハウ取得メソッド

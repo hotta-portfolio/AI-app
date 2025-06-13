@@ -15,6 +15,10 @@
   </div>
 
   <div>
+    <%= f.search_field :tags_name_cont, placeholder: "タグで検索" %>
+  </div>
+
+  <div>
     <%= f.submit "検索" %>
   </div>
 <% end %>
@@ -47,6 +51,13 @@
       <p>カテゴリ: <%= t("enum.knowhow.category_type.#{knowhow.category_type}") %></p>
       <p>価格: ¥<%= knowhow.price %></p>
       <p>投稿者: <%= knowhow.user.name || knowhow.user.email %></p>
+      <% if knowhow.tags.any? %>
+        <p>タグ: 
+          <% knowhow.tags.each do |tag| %>
+            <span class="badge bg-secondary me-1"><%= tag.name %></span>
+          <% end %>
+        </p>
+      <% end %>
     </div>
   <% end %>
 </div>

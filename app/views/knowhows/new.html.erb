@@ -12,6 +12,11 @@
   </div>
 
   <div>
+    <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %><br>
+    <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), placeholder: "例: Rails, Ruby, 初心者" %>
+  </div>
+
+  <div>
     <%= f.label :description %><br>
     <%= f.text_area :description %>
   </div>
