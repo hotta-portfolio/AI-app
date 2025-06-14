@@ -1,0 +1,10 @@
+<p><%= @user.name %>さん、こんにちは。</p>
+
+<p>以下のノウハウを購入しました：</p>
+
+<ul>
+  <li>タイトル: <%= @knowhow.title %></li>
+  <li>価格: <%= number_to_currency(@knowhow.price) %></li>
+</ul>
+
+<p>ご購入ありがとうございました！</p>
