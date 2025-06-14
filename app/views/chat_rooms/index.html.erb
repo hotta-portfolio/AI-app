@@ -1,0 +1,19 @@
+<h1>マイチャット一覧</h1>
+
+<div>
+  <%= link_to "購入者用チャット", chat_rooms_path(role: 'buyer'), class: "btn btn-outline-primary #{params[:role] == 'buyer' ? 'active' : ''}" %>
+  <%= link_to "販売者用チャット", chat_rooms_path(role: 'seller'), class: "btn btn-outline-primary #{params[:role] == 'seller' ? 'active' : ''}" %>
+</div>
+
+<ul class="mt-3">
+  <% @chat_rooms.each do |chat_room| %>
+    <li>
+      <%= link_to "チャットルーム ##{chat_room.id}", chat_room_path(chat_room) %>
+      <% if params[:role] == 'buyer' %>
+        - <%= chat_room.knowhow.title %>
+      <% else %>
+        - 購入者: <%= chat_room.purchase.user.name || chat_room.purchase.user.email %> / ノウハウ: <%= chat_room.knowhow.title %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
