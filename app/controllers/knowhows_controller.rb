@@ -31,11 +31,6 @@ end
   def create  
     @knowhow = current_user.knowhows.new(knowhow_params)
     if @knowhow.save
-      
-      if params[:knowhow][:media_files].present?
-        @knowhow.media_files.attach(params[:knowhow][:media_files])
-      end
-
       # 保存成功したら詳細ページへリダイレクトし、メッセージを表示
       redirect_to @knowhow, notice: "ノウハウを投稿しました"
     else
