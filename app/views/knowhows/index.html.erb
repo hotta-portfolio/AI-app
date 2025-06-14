@@ -2,7 +2,7 @@
 
 <%= search_form_for @q, url: knowhows_path, method: :get do |f| %>
   <div>
-    <%= f.search_field :title_or_user_name_or_user_email_cont, placeholder: "キーワードや投稿者名で検索" %>
+    <%= f.search_field :title_or_description_or_user_name_or_user_email_cont, placeholder: "キーワードや投稿者名で検索" %>
   </div>
 
   <div>
@@ -19,6 +19,11 @@
   </div>
 
   <div>
+    <%= f.number_field :price_gteq, placeholder: "最低価格（円）" %>
+    <%= f.number_field :price_lteq, placeholder: "最高価格（円）" %>
+  </div>
+
+  <div>
     <%= f.submit "検索" %>
   </div>
 <% end %>
@@ -26,6 +31,7 @@
 <div class="knowhows-list mt-4">
   <% @knowhows.each do |knowhow| %>
     <div class="knowhow-card border p-3 mb-4 rounded">
+    <h3><%= link_to knowhow.title, knowhow %></h3>
       <% if knowhow.media_files.attached? %>
         <div class="media-scroll-container mb-2">
           <% knowhow.media_files.each do |file| %>
@@ -46,15 +52,17 @@
         </div>
       <% end %>
 
-      <h3><%= link_to knowhow.title, knowhow %></h3>
       <p><%= truncate(knowhow.description, length: 80) %></p>
       <p>カテゴリ: <%= t("enum.knowhow.category_type.#{knowhow.category_type}") %></p>
       <p>価格: ¥<%= knowhow.price %></p>
-      <p>投稿者: <%= knowhow.user.name || knowhow.user.email %></p>
+      <p>投稿者: 
+        <%= link_to (knowhow.user.name || knowhow.user.email), knowhows_path(q: { user_name_or_user_email_cont: knowhow.user.name || knowhow.user.email }) %>
+      </p>
+
       <% if knowhow.tags.any? %>
         <p>タグ: 
           <% knowhow.tags.each do |tag| %>
-            <span class="badge bg-secondary me-1"><%= tag.name %></span>
+            <%= link_to "##{tag.name}", knowhows_path(q: { tags_name_cont: tag.name }), class: "badge bg-secondary me-1" %>
           <% end %>
         </p>
       <% end %>

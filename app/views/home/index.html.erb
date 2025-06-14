@@ -4,7 +4,7 @@
 
 <%= search_form_for @q, url: knowhows_path, method: :get do |f| %>
   <div>
-    <%= f.search_field :title_or_user_name_or_user_email_cont, placeholder: "キーワードや投稿者名で検索" %>
+    <%= f.search_field :title_or_description_or_user_name_or_user_email_cont, placeholder: "キーワードや投稿者名で検索" %>
   </div>
 
   <div>
@@ -18,6 +18,11 @@
 
   <div>
     <%= f.search_field :tags_name_cont, placeholder: "タグで検索" %>
+  </div>
+
+  <div>
+    <%= f.number_field :price_gteq, placeholder: "最低価格（円）" %>
+    <%= f.number_field :price_lteq, placeholder: "最高価格（円）" %>
   </div>
 
   <div>
