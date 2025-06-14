@@ -1,7 +1,5 @@
 <h1>AIノウハウプラットフォーム</h1>
 
-<%= link_to "新規登録", new_knowhow_path, class: "btn btn-primary mb-3" %>
-
 <%= search_form_for @q, url: knowhows_path, method: :get do |f| %>
   <div>
     <%= f.search_field :title_or_description_or_user_name_or_user_email_cont, placeholder: "キーワードや投稿者名で検索" %>
@@ -29,13 +27,3 @@
     <%= f.submit "検索" %>
   </div>
 <% end %>
-
-<% if user_signed_in? %>
-  <%= link_to 'マイページ', user_path %>
-  <%= link_to 'ログアウト', destroy_user_session_path, data: { turbo_method: :delete } %>
-<% else %>
-  <%= link_to 'ログイン', new_user_session_path %>
-  <%= link_to '新規登録', new_user_registration_path %>
-<% end %>
-
-<%= link_to 'ノウハウ一覧', knowhows_path %>

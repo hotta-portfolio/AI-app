@@ -1,0 +1,36 @@
+<header class="navbar navbar-expand-lg bg-white shadow-sm px-4 py-3 border-bottom" style="font-family: 'Arial Black', 'BIZ UDPGothic', sans-serif;">
+  <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center">
+    
+    <!-- ロゴ -->
+    <%= link_to "AIノウハウ", root_path, class: "navbar-brand text-dark fw-bold fs-3 me-4" %>
+
+    <!-- メニュー -->
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav ms-auto d-flex align-items-center gap-3 text-nowrap">
+        <li class="nav-item">
+          <%= link_to 'ノウハウ一覧', knowhows_path, class: "nav-link fw-bold text-dark" %>
+        </li>
+
+        <% if user_signed_in? %>
+          <li class="nav-item">
+            <%= link_to "マイページ", user_path(current_user), class: "nav-link fw-bold text-dark" %>
+          </li>
+          
+          <li class="nav-item">
+            <%= link_to "ノウハウ投稿", new_knowhow_path, class: "btn btn-warning btn-sm fw-bold shadow-sm rounded-pill px-3" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn-outline-danger btn-sm fw-bold shadow-sm rounded-pill px-3" %>
+          </li>
+        <% else %>
+          <li class="nav-item">
+            <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline-dark btn-sm fw-bold shadow-sm rounded-pill px-3" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "新規登録", new_user_registration_path, class: "btn btn-success btn-sm fw-bold shadow-sm rounded-pill px-3" %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</header>

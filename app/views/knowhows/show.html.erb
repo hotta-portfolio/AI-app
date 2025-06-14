@@ -20,8 +20,9 @@
 <p>カテゴリ: <%= t("enum.knowhow.category_type.#{@knowhow.category_type}") %></p>
 <p>価格: ¥<%= @knowhow.price %></p>
 <p>投稿者: 
-<%= link_to (@knowhow.user.name || @knowhow.user.email), knowhows_path(q: { user_name_or_user_email_cont: @knowhow.user.name || @knowhow.user.email }) %>
+  <%= link_to (@knowhow.user.name || @knowhow.user.email), knowhows_path(q: { user_name_or_user_email_cont: @knowhow.user.name || @knowhow.user.email }) %>
 </p>
+
 <% if @knowhow.tags.any? %>
   <p>タグ: 
     <% @knowhow.tags.each do |tag| %>
@@ -30,14 +31,16 @@
   </p>
 <% end %>
 
-<% if @purchased && @purchase.chat_room.present? %>
-  <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @purchase.chat_room) %>
+<% if @knowhow.user != current_user %>
+  <% if @purchased && @purchase.chat_room.present? %>
+    <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @purchase.chat_room), class: "btn btn-primary" %>
+  <% else %>
+    <%= link_to "購入する", new_knowhow_purchase_path(@knowhow), class: "btn btn-success" %>
+  <% end %>
 <% else %>
-  <%= link_to "購入する", new_knowhow_purchase_path(@knowhow) %>
-<% end %>
-
-<% if @knowhow.user == current_user %>
-  <%= link_to '編集', edit_knowhow_path(@knowhow) %>
+  <p class="text-muted">※これはあなたの投稿です。</p>
+  <%= link_to '編集', edit_knowhow_path(@knowhow), class: "btn btn-secondary me-2" %>
   <%= link_to '削除', knowhow_path(@knowhow),
-            data: { turbo_method: :delete, turbo_confirm: '本当に削除しますか？' } %>
+        data: { turbo_method: :delete, turbo_confirm: '本当に削除しますか？' },
+        class: "btn btn-danger" %>
 <% end %>

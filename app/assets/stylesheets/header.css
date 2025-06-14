@@ -1,0 +1,34 @@
+header.navbar {
+  font-family: 'Arial Black', 'BIZ UDPGothic', sans-serif;
+  background-color: #fff;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+header.navbar .container-fluid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header.navbar .navbar-nav {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 1rem;
+  padding-left: 0;
+  margin-bottom: 0;
+  align-items: center;
+}
+
+header.navbar .navbar-nav .nav-item {
+  list-style: none;
+}
+
+header.navbar .navbar-nav .nav-link,
+header.navbar .navbar-nav .btn {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}

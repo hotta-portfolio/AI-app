@@ -1,5 +1,3 @@
-<%= link_to "新規登録", new_knowhow_path, class: "btn btn-primary mb-3" %>
-
 <%= search_form_for @q, url: knowhows_path, method: :get do |f| %>
   <div>
     <%= f.search_field :title_or_description_or_user_name_or_user_email_cont, placeholder: "キーワードや投稿者名で検索" %>
@@ -37,9 +35,9 @@
           <% knowhow.media_files.each do |file| %>
             <div class="media-item">
               <% if file.image? %>
-                <%= image_tag url_for(file), class: "img-fluid knowhow-media-image" %>
+                <%= image_tag url_for(file),width: 400, class: "img-fluid knowhow-media-image" %>
               <% elsif file.video? %>
-                <video controls class="knowhow-media-video">
+                <video width="400" controls,controls class="knowhow-media-video">
                   <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
                 </video>
               <% elsif file.audio? %>
