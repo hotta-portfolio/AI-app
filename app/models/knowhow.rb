@@ -1,4 +1,9 @@
 class Knowhow < ApplicationRecord
+  # --- 関連付け (Associations) ---
+  belongs_to :user
+  has_many :purchases, dependent: :destroy
+  has_many :chat_rooms, dependent: :destroy
+
   # --- 定数・Enum ---
   enum :category_type, {
     document: 0,
@@ -6,11 +11,6 @@ class Knowhow < ApplicationRecord
     image: 2,
     audio: 3
   }
-
-  # --- 関連付け (Associations) ---
-  belongs_to :user
-  has_many :purchases, dependent: :destroy
-  has_one :chat_room, dependent: :destroy
 
   # Active Storage (ファイルアップロード)
   has_many_attached :media_files
@@ -42,8 +42,7 @@ class Knowhow < ApplicationRecord
     %w[user tags]
   end
 
-  # --- インスタンスメソッド (Instance Methods) ---
-  # (必要に応じてここに追加)
+  after_create :create_default_chat_room
 
   private
 
@@ -62,5 +61,9 @@ class Knowhow < ApplicationRecord
     
     # この投稿(Knowhow)に、見つけてきた、あるいは新規作成したタグを関連付ける
     self.tags = new_tags
+  end
+
+  def create_default_chat_room
+    ChatRoom.create!(knowhow: self, user: self.user)
   end
 end

@@ -4,24 +4,12 @@ class ChatRoomsController < ApplicationController
   before_action :authorize_user!, only: [:show]
 
   def index
-    case params[:role]
-    when 'buyer'
-      @chat_rooms = ChatRoom.joins(:purchase)
-                            .where(purchases: { user_id: current_user.id })
-                            .includes(:knowhow)
-    when 'seller'
-      @chat_rooms = ChatRoom.joins(:knowhow)
-                            .where(knowhows: { user_id: current_user.id })
-                            .includes(:purchase)
-    else
-      # 両方まとめて表示も可能（購入者＋販売者両方のchat_roomを取得）
-      @chat_rooms = ChatRoom.joins(:purchase, :knowhow)
-                            .where('purchases.user_id = :user_id OR knowhows.user_id = :user_id', user_id: current_user.id)
-                            .distinct
-                            .includes(:purchase, :knowhow)
-    end
+    @chat_rooms = ChatRoom
+      .includes(:knowhow)
+      .where("chat_rooms.user_id = :id OR knowhows.user_id = :id", id: current_user.id)
+      .references(:knowhow)
   end
-
+  
   def show
     @message = Message.new
     @messages = @chat_room.messages.includes(:user)
@@ -34,7 +22,7 @@ class ChatRoomsController < ApplicationController
   end
 
   def authorize_user!
-    unless current_user.id == @chat_room.purchase.user_id || current_user.id == @chat_room.knowhow.user_id
+    unless current_user.id == @chat_room.user_id || current_user.id == @chat_room.knowhow.user_id
       redirect_to root_path, alert: "アクセス権がありません。"
     end
   end

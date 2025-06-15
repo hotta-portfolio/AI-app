@@ -7,13 +7,13 @@ class KnowhowsController < ApplicationController
   before_action :set_knowhow, only: [:show, :edit, :update, :destroy, :delete_media]
 
   # ノウハウ一覧ページ
-def index
-  # 1. Ransackの検索オブジェクトを作成
-  @q = Knowhow.ransack(params[:q])
-  # 2. 検索結果を取得し、N+1問題を考慮してページネーションなどを適用
-  #    order(created_at: :desc) は検索結果に適用
-  @knowhows = @q.result(distinct: true).includes(:user, :tags, media_files_attachments: :blob).order(created_at: :desc)
-end
+  def index
+    # 1. Ransackの検索オブジェクトを作成
+    @q = Knowhow.ransack(params[:q])
+    # 2. 検索結果を取得し、N+1問題を考慮してページネーションなどを適用
+    #    order(created_at: :desc) は検索結果に適用
+    @knowhows = @q.result(distinct: true).includes(:user, :tags, media_files_attachments: :blob).order(created_at: :desc)
+  end
 
   # ノウハウ詳細ページ
   def show

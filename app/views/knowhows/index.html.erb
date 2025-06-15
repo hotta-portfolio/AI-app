@@ -64,6 +64,11 @@
           <% end %>
         </p>
       <% end %>
+      
+      <% if room = knowhow.chat_rooms.find_by(user: current_user) %>
+        <%= link_to "チャットへ", knowhow_chat_room_path(knowhow, room), class: "btn btn-primary" %>
+      <% end %>
+
     </div>
   <% end %>
 </div>
