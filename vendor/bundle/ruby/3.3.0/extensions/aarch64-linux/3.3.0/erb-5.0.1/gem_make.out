@@ -1,9 +1,0 @@
-current directory: /rails/vendor/bundle/ruby/3.3.0/gems/erb-5.0.1/ext/erb/escape
-/usr/local/bin/ruby extconf.rb
-creating Makefile
-
-current directory: /rails/vendor/bundle/ruby/3.3.0/gems/erb-5.0.1/ext/erb/escape
-make DESTDIR\= sitearchdir\=./.gem.20250531-190-2ltx95 sitelibdir\=./.gem.20250531-190-2ltx95 clean
-current directory: /rails/vendor/bundle/ruby/3.3.0/gems/erb-5.0.1/ext/erb/escape
-make DESTDIR\= sitearchdir\=./.gem.20250531-190-2ltx95 sitelibdir\=./.gem.20250531-190-2ltx95
-make failedNo such file or directory - make
