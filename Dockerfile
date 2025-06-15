@@ -17,7 +17,8 @@ RUN apt-get update -qq && \
 # Set development environment
 # BUNDLE_WITHOUT is removed to install development gems
 ENV RAILS_ENV="development" \
-    BUNDLE_PATH="/usr/local/bundle"
+    BUNDLE_PATH="/bundle"
+
     # BUNDLE_DEPLOYMENT is not set for development
 
 # Throw-away build stage to reduce size of final image (still useful for caching gem installation)
