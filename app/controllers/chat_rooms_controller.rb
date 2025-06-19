@@ -14,7 +14,6 @@ class ChatRoomsController < ApplicationController
                             .where(knowhows: { user_id: current_user.id })
                             .includes(:purchase)
     else
-      # 両方まとめて表示も可能（購入者＋販売者両方のchat_roomを取得）
       @chat_rooms = ChatRoom.joins(:purchase, :knowhow)
                             .where('purchases.user_id = :user_id OR knowhows.user_id = :user_id', user_id: current_user.id)
                             .distinct
@@ -27,6 +26,19 @@ class ChatRoomsController < ApplicationController
     @messages = @chat_room.messages.includes(:user)
   end
 
+  # ここから追加
+  def create
+    knowhow = Knowhow.find(params[:knowhow_id])
+    purchase = current_user.purchases.find_by(knowhow_id: knowhow.id)
+
+    @chat_room = ChatRoom.find_or_create_by(
+      knowhow: knowhow,
+      purchase: purchase
+    )
+
+    redirect_to @chat_room
+  end
+
   private
 
   def set_chat_room
@@ -34,7 +46,7 @@ class ChatRoomsController < ApplicationController
   end
 
   def authorize_user!
-    unless current_user.id == @chat_room.purchase.user_id || current_user.id == @chat_room.knowhow.user_id
+    unless current_user.id == @chat_room.purchase&.user_id || current_user.id == @chat_room.knowhow.user_id
       redirect_to root_path, alert: "アクセス権がありません。"
     end
   end

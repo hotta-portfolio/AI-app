@@ -12,7 +12,11 @@
       <% if params[:role] == 'buyer' %>
         - <%= chat_room.knowhow.title %>
       <% else %>
-        - 購入者: <%= chat_room.purchase.user.name || chat_room.purchase.user.email %> / ノウハウ: <%= chat_room.knowhow.title %>
+        <% if chat_room.purchase&.user.present? %>
+          - 購入者: <%= chat_room.purchase.user.name.presence || chat_room.purchase.user.email %> / ノウハウ: <%= chat_room.knowhow.title %>
+        <% else %>
+          - ノウハウ: <%= chat_room.knowhow.title %>（購入前チャット）
+        <% end %>
       <% end %>
     </li>
   <% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_13_030827) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_19_141150) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,13 +43,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_030827) do
   end
 
   create_table "chat_rooms", force: :cascade do |t|
-    t.bigint "purchase_id", null: false
+    t.bigint "purchase_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "knowhow_id", null: false
     t.string "name"
+    t.bigint "user_id"
     t.index ["knowhow_id"], name: "index_chat_rooms_on_knowhow_id"
     t.index ["purchase_id"], name: "index_chat_rooms_on_purchase_id"
+    t.index ["user_id"], name: "index_chat_rooms_on_user_id"
   end
 
   create_table "knowhow_tags", force: :cascade do |t|
@@ -124,6 +126,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_030827) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "chat_rooms", "knowhows"
   add_foreign_key "chat_rooms", "purchases"
+  add_foreign_key "chat_rooms", "users"
   add_foreign_key "knowhow_tags", "knowhows"
   add_foreign_key "knowhow_tags", "tags"
   add_foreign_key "knowhows", "users"

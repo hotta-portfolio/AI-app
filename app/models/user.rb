@@ -5,6 +5,7 @@ class User < ApplicationRecord
 
   has_many :knowhows, dependent: :destroy
   has_many :purchases, dependent: :destroy
+  has_many :chat_rooms, through: :knowhows
   has_many :messages, dependent: :destroy
 
     # 🔒 検索可能なカラムを明示的に指定

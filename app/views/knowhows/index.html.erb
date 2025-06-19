@@ -64,6 +64,7 @@
           <% end %>
         </p>
       <% end %>
+      <%= link_to "チャットする", chat_rooms_path(knowhow_id: knowhow.id), method: :post, class: "btn btn-outline-primary btn-sm" %>
     </div>
   <% end %>
 </div>

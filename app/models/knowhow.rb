@@ -10,7 +10,7 @@ class Knowhow < ApplicationRecord
   # --- 関連付け (Associations) ---
   belongs_to :user
   has_many :purchases, dependent: :destroy
-  has_one :chat_room, dependent: :destroy
+  has_many :chat_rooms, dependent: :destroy
 
   # Active Storage (ファイルアップロード)
   has_many_attached :media_files
