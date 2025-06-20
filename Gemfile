@@ -60,6 +60,10 @@ group :development, :test do
   # pry関連のgemを追加
   gem "pry-rails"
   gem "pry-byebug"
+
+  # テスト
+  gem "factory_bot_rails"
+  gem "faker"
 end
 
 group :development do
@@ -76,6 +80,6 @@ end
 
 gem "devise", "~> 4.9"
 gem "stripe"
-gem 'aws-sdk-s3', require: false
-gem 'ransack'
+gem "aws-sdk-s3", require: false
+gem "ransack"
 gem "tailwindcss-rails"
