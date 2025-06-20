@@ -48,10 +48,6 @@ class Knowhow < ApplicationRecord
 
   private
 
-  def create_chat_room
-    self.create_chat_room
-  end
-
   # `tag_list`の文字列を解析して、タグを保存・関連付けするメソッド
   def save_tags
     return unless self.tag_list.present?
