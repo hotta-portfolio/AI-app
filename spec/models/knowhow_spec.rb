@@ -1,5 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe Knowhow, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe 'callbacks' do
+    subject { knowhow.save! }
+
+    let(:knowhow) { build(:knowhow, user:, tag_list: tag_list) }
+    let(:user) { create(:user) }
+    let(:tag_list) { [] }
+
+    it { is_expected.to be_truthy }
+
+    describe 'tag_list' do
+      let(:tag_list) { 'タグ_A,タグ_B' }
+
+      it '引数の tag_list に該当する Tag が登録される' do
+        subject
+        expect(knowhow.tags.pluck(:name)).to match_array(%w[タグ_A タグ_B])
+      end
+    end
+  end
 end
