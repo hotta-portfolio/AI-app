@@ -19,12 +19,12 @@
 <p><%= @knowhow.description %></p>
 <p>カテゴリ: <%= t("enum.knowhow.category_type.#{@knowhow.category_type}") %></p>
 <p>価格: ¥<%= @knowhow.price %></p>
-<p>投稿者: 
+<p>投稿者:
   <%= link_to (@knowhow.user.name || @knowhow.user.email), knowhows_path(q: { user_name_or_user_email_cont: @knowhow.user.name || @knowhow.user.email }) %>
 </p>
 
 <% if @knowhow.tags.any? %>
-  <p>タグ: 
+  <p>タグ:
     <% @knowhow.tags.each do |tag| %>
       <%= link_to "##{tag.name}", knowhows_path(q: { tags_name_cont: tag.name }), class: "badge bg-secondary me-1" %>
     <% end %>
@@ -32,8 +32,8 @@
 <% end %>
 
 <% if @knowhow.user != current_user %>
-  <% if @purchased && @purchase.chat_room.present? %>
-    <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @purchase.chat_room), class: "btn btn-primary" %>
+  <% if @purchased && @purchase.knowhow.chat_room.present? %>
+    <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @purchase.knowhow.chat_room), class: "btn btn-primary" %>
   <% else %>
     <%= link_to "購入する", new_knowhow_purchase_path(@knowhow), class: "btn btn-success" %>
   <% end %>

@@ -7,17 +7,26 @@
 
 <ul class="mt-3">
   <% @chat_rooms.each do |chat_room| %>
-    <li>
+    <li class="mb-2">
+      <% knowhow = chat_room.knowhow %>
       <%= link_to "チャットルーム ##{chat_room.id}", chat_room_path(chat_room) %>
       <% if params[:role] == 'buyer' %>
         - <%= chat_room.knowhow.title %>
       <% else %>
-        <% if chat_room.purchase&.user.present? %>
-          - 購入者: <%= chat_room.purchase.user.name.presence || chat_room.purchase.user.email %> / ノウハウ: <%= chat_room.knowhow.title %>
-        <% else %>
-          - ノウハウ: <%= chat_room.knowhow.title %>（購入前チャット）
+        - ノウハウ: <%= chat_room.knowhow.title %>
+        <%= content_tag(:ul) do %>
+          <% if knowhow.purchases.any? %>
+            <% knowhow.purchases.each do |purchase| %>
+              <%= content_tag(:li) do %>
+                <%# FIXME: 購入したことが当事者以外に伝わってしまう問題を解決する %>
+                購入者: <%= purchase.user.name.presence || purchase.user.email %>
+              <% end %>
+            <% end %>
+          <% else %>
+          （購入前チャット）
+          <% end %>
         <% end %>
       <% end %>
-    </li>
-  <% end %>
+    <% end %>
+  </li>
 </ul>

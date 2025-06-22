@@ -64,7 +64,9 @@
           <% end %>
         </p>
       <% end %>
-      <%= link_to "チャットする", chat_rooms_path(knowhow_id: knowhow.id), method: :post, class: "btn btn-outline-primary btn-sm" %>
+      <% if current_user && (knowhow.user_id == current_user.id || knowhow.purchases.exists?(user_id: current_user.id)) %>
+        <%= link_to "チャットする", chat_room_path(knowhow.chat_room),class: "btn btn-outline-primary btn-sm" %>
+      <% end %>
     </div>
   <% end %>
 </div>

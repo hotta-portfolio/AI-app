@@ -82,4 +82,3 @@ gem "devise", "~> 4.9"
 gem "stripe"
 gem "aws-sdk-s3", require: false
 gem "ransack"
-gem "tailwindcss-rails"

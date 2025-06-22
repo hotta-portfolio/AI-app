@@ -32,7 +32,7 @@ class ChatRoomsController < ApplicationController
   end
 
   def authorize_user!
-    unless current_user.id == @chat_room.purchase&.user_id || current_user.id == @chat_room.knowhow.user_id
+    unless current_user.id == @chat_room.knowhow.purchases&.detect { |purchase| purchase.user_id == current_user.id }&.user_id || current_user.id == @chat_room.knowhow.user_id
       redirect_to root_path, alert: "アクセス権がありません。"
     end
   end

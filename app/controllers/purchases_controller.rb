@@ -3,38 +3,38 @@ class PurchasesController < ApplicationController
   before_action :set_knowhow
 
   def new
-    @stripe_public_key = ENV['STRIPE_PUBLIC_KEY']
+    @stripe_public_key = ENV["STRIPE_PUBLIC_KEY"]
   end
-  
+
 
   def create
     token = params[:stripe_token]
-  
+
     begin
       amount = (@knowhow.price * 100).to_i
-  
+
       charge = Stripe::Charge.create(
         amount: amount,
-        currency: 'jpy',
+        currency: "jpy",
         source: token,
         description: "Knowhow purchase: #{@knowhow.title} by user #{current_user.id}"
       )
-  
+
       @purchase = current_user.purchases.new(knowhow: @knowhow, stripe_charge_id: charge.id)
-  
+
       if @purchase.save
-        redirect_to chat_room_path(@purchase.chat_room), notice: "購入が完了しました。チャットルームに移動します。"
+        redirect_to chat_room_path(@knowhow.chat_room), notice: "購入が完了しました。チャットルームに移動します。"
       else
         flash.now[:alert] = "購入に失敗しました。"
         redirect_to new_knowhow_purchase_path(@knowhow)
       end
-  
+
     rescue Stripe::CardError => e
       flash.now[:alert] = e.message
       redirect_to new_knowhow_purchase_path(@knowhow)
     end
   end
-  
+
   private
 
   def set_knowhow
