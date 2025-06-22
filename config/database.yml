@@ -9,14 +9,14 @@ development:
   database: ai_app_development
   username: postgres
   password: password
-  host: localhost
+  host: db
 
 test:
   <<: *default
   database: ai_app_test
   username: postgres
   password: password
-  host: localhost
+  host: db
 
 production:
   # メインのDB（Supabase）

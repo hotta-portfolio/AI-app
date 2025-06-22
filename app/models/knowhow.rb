@@ -10,7 +10,7 @@ class Knowhow < ApplicationRecord
   # --- 関連付け (Associations) ---
   belongs_to :user
   has_many :purchases, dependent: :destroy
-  has_many :chat_rooms, dependent: :destroy
+  has_one :chat_room, dependent: :destroy
 
   # Active Storage (ファイルアップロード)
   has_many_attached :media_files
@@ -29,6 +29,7 @@ class Knowhow < ApplicationRecord
   # --- コールバック (Callbacks) ---
   # データ保存後に、タグを保存・関連付けする処理を呼び出す
   after_save :save_tags
+  after_create :create_chat_room!
 
   # --- クラスメソッド (Class Methods) ---
   # Ransackで検索可能な「属性」を明示
@@ -53,13 +54,13 @@ class Knowhow < ApplicationRecord
 
     # 現在のタグとの関連を一旦全て削除（更新時のため）
     self.tags.clear
-    
+
     # 受け取った文字列をカンマで分割し、前後の空白を削除し、重複を除外
-    tag_names = self.tag_list.split(',').map(&:strip).uniq
-    
+    tag_names = self.tag_list.split(",").map(&:strip).uniq
+
     # 各タグ名について、DBに存在すればそれを使い、なければ新規作成
     new_tags = tag_names.map { |name| Tag.find_or_create_by!(name: name) }
-    
+
     # この投稿(Knowhow)に、見つけてきた、あるいは新規作成したタグを関連付ける
     self.tags = new_tags
   end

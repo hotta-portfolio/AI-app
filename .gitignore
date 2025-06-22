@@ -5,7 +5,8 @@
 # `$XDG_CONFIG_HOME/git/ignore` or `~/.config/git/ignore`
 
 # Ignore bundler config.
-/.bundle
+# /.bundle
+/vendor/bundle
 
 # Ignore all environment files.
 /.env*
@@ -34,6 +35,7 @@
 /config/master.key
 
 .env
-
 /app/assets/builds/*
 !/app/assets/builds/.keep
+.DS_Store
+.byebug_history
