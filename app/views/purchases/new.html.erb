@@ -12,7 +12,7 @@
 </p>
 
 <%= form_with url: knowhow_purchases_path(@knowhow), method: :post, id: "payment-form", local: true do %>
-  <div id="card-element" style="margin-bottom: 1em;"></div>
+  <div id="card-element" style="margin-bottom: 1em; min-height: 40px;"></div>
   <div id="card-errors" style="color: red; margin-bottom: 1em;"></div>
   <%= submit_tag "購入する" %>
 <% end %>

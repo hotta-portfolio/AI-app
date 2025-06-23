@@ -82,3 +82,6 @@ gem "devise", "~> 4.9"
 gem "stripe"
 gem "aws-sdk-s3", require: false
 gem "ransack"
+gem "dartsass-rails"
+gem "bootstrap", "~> 5.3.3"
+gem "mini_racer"

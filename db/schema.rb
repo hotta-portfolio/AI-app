@@ -11,8 +11,22 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.0].define(version: 2025_06_20_121804) do
+  create_schema "auth"
+  create_schema "extensions"
+  create_schema "graphql"
+  create_schema "graphql_public"
+  create_schema "pgbouncer"
+  create_schema "realtime"
+  create_schema "storage"
+  create_schema "vault"
+
   # These are extensions that must be enabled in order to support this database
+  enable_extension "extensions.pg_stat_statements"
+  enable_extension "extensions.pgcrypto"
+  enable_extension "extensions.uuid-ossp"
+  enable_extension "graphql.pg_graphql"
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "vault.supabase_vault"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -42,14 +56,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_20_121804) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "ai-app", id: :bigint, default: nil, force: :cascade do |t|
+    t.timestamptz "created_at", default: -> { "now()" }, null: false
+  end
+
   create_table "chat_rooms", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "knowhow_id", null: false
     t.string "name"
-    t.bigint "user_id"
     t.index ["knowhow_id"], name: "index_chat_rooms_on_knowhow_id"
-    t.index ["user_id"], name: "index_chat_rooms_on_user_id"
   end
 
   create_table "knowhow_tags", force: :cascade do |t|
@@ -123,7 +139,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_20_121804) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "chat_rooms", "knowhows"
-  add_foreign_key "chat_rooms", "users"
   add_foreign_key "knowhow_tags", "knowhows"
   add_foreign_key "knowhow_tags", "tags"
   add_foreign_key "knowhows", "users"

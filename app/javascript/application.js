@@ -3,3 +3,5 @@ import "@hotwired/turbo-rails";
 import "controllers";
 import "stripe_payment";
 import "channels"
+import "@hotwired/turbo-rails"
+import "controllers"
