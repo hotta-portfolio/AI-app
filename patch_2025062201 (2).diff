@@ -1,0 +1,117 @@
+diff --git a/app/controllers/chat_rooms_controller.rb b/app/controllers/chat_rooms_controller.rb
+index 4e386c9..105bc65 100644
+--- a/app/controllers/chat_rooms_controller.rb
++++ b/app/controllers/chat_rooms_controller.rb
+@@ -32,7 +32,7 @@ class ChatRoomsController < ApplicationController
+   end
+ 
+   def authorize_user!
+-    unless current_user.id == @chat_room.purchase&.user_id || current_user.id == @chat_room.knowhow.user_id
++    unless current_user.id == @chat_room.knowhow.purchases.detect { |purchase| purchase.user_id == current_user.id } || current_user.id == @chat_room.knowhow.user_id
+       redirect_to root_path, alert: "アクセス権がありません。"
+     end
+   end
+diff --git a/app/controllers/purchases_controller.rb b/app/controllers/purchases_controller.rb
+index 2b101c2..e9e6b1a 100644
+--- a/app/controllers/purchases_controller.rb
++++ b/app/controllers/purchases_controller.rb
+@@ -3,38 +3,38 @@ class PurchasesController < ApplicationController
+   before_action :set_knowhow
+ 
+   def new
+-    @stripe_public_key = ENV['STRIPE_PUBLIC_KEY']
++    @stripe_public_key = ENV["STRIPE_PUBLIC_KEY"]
+   end
+-  
++
+ 
+   def create
+     token = params[:stripe_token]
+-  
++
+     begin
+       amount = (@knowhow.price * 100).to_i
+-  
++
+       charge = Stripe::Charge.create(
+         amount: amount,
+-        currency: 'jpy',
++        currency: "jpy",
+         source: token,
+         description: "Knowhow purchase: #{@knowhow.title} by user #{current_user.id}"
+       )
+-  
++
+       @purchase = current_user.purchases.new(knowhow: @knowhow, stripe_charge_id: charge.id)
+-  
++
+       if @purchase.save
+-        redirect_to chat_room_path(@purchase.chat_room), notice: "購入が完了しました。チャットルームに移動します。"
++        redirect_to chat_room_path(@knowhow.chat_room), notice: "購入が完了しました。チャットルームに移動します。"
+       else
+         flash.now[:alert] = "購入に失敗しました。"
+         redirect_to new_knowhow_purchase_path(@knowhow)
+       end
+-  
++
+     rescue Stripe::CardError => e
+       flash.now[:alert] = e.message
+       redirect_to new_knowhow_purchase_path(@knowhow)
+     end
+   end
+-  
++
+   private
+ 
+   def set_knowhow
+diff --git a/app/views/chat_rooms/index.html.erb b/app/views/chat_rooms/index.html.erb
+index 18be9cb..228160b 100644
+--- a/app/views/chat_rooms/index.html.erb
++++ b/app/views/chat_rooms/index.html.erb
+@@ -12,10 +12,12 @@
+       <% if params[:role] == 'buyer' %>
+         - <%= chat_room.knowhow.title %>
+       <% else %>
+-        <% if chat_room.purchase&.user.present? %>
+-          - 購入者: <%= chat_room.purchase.user.name.presence || chat_room.purchase.user.email %> / ノウハウ: <%= chat_room.knowhow.title %>
+-        <% else %>
+-          - ノウハウ: <%= chat_room.knowhow.title %>（購入前チャット）
++        <% chat_room.knowhow&.purchases&.each do |purchase| %>
++          <% if purchase.present? %>
++            - 購入者: <%= purchase.user.name.presence || purchase.user.email %> / ノウハウ: <%= chat_room.knowhow.title %>
++          <% else %>
++            - ノウハウ: <%= chat_room.knowhow.title %>（購入前チャット）
++          <% end %>
+         <% end %>
+       <% end %>
+     </li>
+diff --git a/app/views/knowhows/show.html.erb b/app/views/knowhows/show.html.erb
+index 30af364..8dfa3b8 100644
+--- a/app/views/knowhows/show.html.erb
++++ b/app/views/knowhows/show.html.erb
+@@ -19,12 +19,12 @@
+ <p><%= @knowhow.description %></p>
+ <p>カテゴリ: <%= t("enum.knowhow.category_type.#{@knowhow.category_type}") %></p>
+ <p>価格: ¥<%= @knowhow.price %></p>
+-<p>投稿者: 
++<p>投稿者:
+   <%= link_to (@knowhow.user.name || @knowhow.user.email), knowhows_path(q: { user_name_or_user_email_cont: @knowhow.user.name || @knowhow.user.email }) %>
+ </p>
+ 
+ <% if @knowhow.tags.any? %>
+-  <p>タグ: 
++  <p>タグ:
+     <% @knowhow.tags.each do |tag| %>
+       <%= link_to "##{tag.name}", knowhows_path(q: { tags_name_cont: tag.name }), class: "badge bg-secondary me-1" %>
+     <% end %>
+@@ -32,8 +32,8 @@
+ <% end %>
+ 
+ <% if @knowhow.user != current_user %>
+-  <% if @purchased && @purchase.chat_room.present? %>
+-    <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @purchase.chat_room), class: "btn btn-primary" %>
++  <% if @purchased && @purchase.knowhow.chat_room.present? %>
++    <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @purchase.knowhow.chat_room), class: "btn btn-primary" %>
+   <% else %>
+     <%= link_to "購入する", new_knowhow_purchase_path(@knowhow), class: "btn btn-success" %>
+   <% end %>

@@ -1,40 +1,58 @@
-<header class="navbar navbar-expand-lg bg-white shadow-sm px-4 py-3 border-bottom" style="font-family: 'Arial Black', 'BIZ UDPGothic', sans-serif;">
-  <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center">
-    
-    <!-- ロゴ -->
-    <%= link_to "AIノウハウ", root_path, class: "navbar-brand text-dark fw-bold fs-3 me-4" %>
+<header class="navbar navbar-expand-lg bg-white shadow-sm px-4 py-3 border-bottom" style="font-family: 'BIZ UDPGothic', sans-serif;">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
 
-    <!-- メニュー -->
-    <div class="collapse navbar-collapse" id="navbarContent">
-      <ul class="navbar-nav ms-auto d-flex align-items-center gap-3 text-nowrap">
-        <li class="nav-item">
-          <%= link_to 'ノウハウ一覧', knowhows_path, class: "nav-link fw-bold text-dark" %>
-        </li>
-
-        <% if user_signed_in? %>
-          <li class="nav-item">
-            <%= link_to "マイページ", user_path(current_user), class: "nav-link fw-bold text-dark" %>
-          </li>
-          
-          <li class="nav-item">
-            <%= link_to "マイチャット", chat_rooms_path, class: "nav-link fw-bold text-dark" %>
-          </li>
-        
-          <li class="nav-item">
-            <%= link_to "ノウハウ投稿", new_knowhow_path, class: "btn btn-warning btn-sm fw-bold shadow-sm rounded-pill px-3" %>
-          </li>
-          <li class="nav-item">
-            <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn-outline-danger btn-sm fw-bold shadow-sm rounded-pill px-3" %>
-          </li>
-        <% else %>
-          <li class="nav-item">
-            <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline-dark btn-sm fw-bold shadow-sm rounded-pill px-3" %>
-          </li>
-          <li class="nav-item">
-            <%= link_to "新規登録", new_user_registration_path, class: "btn btn-success btn-sm fw-bold shadow-sm rounded-pill px-3" %>
-          </li>
-        <% end %>
-      </ul>
+    <!-- 左ロゴ -->
+    <div class="d-flex align-items-center">
+      <%= link_to root_path, class: "d-flex align-items-center text-decoration-none" do %>
+        <%= image_tag "logo.png", alt: "GenHacks Logo", class: "me-2", style: "height: 40px;" %>
+      <% end %>
     </div>
+
+    <!-- 右メニュー -->
+    <div class="d-flex align-items-center">
+    <%= link_to knowhows_path, class: "text-decoration-none text-dark fw-bold me-4 d-inline-block", style: "position: relative; left: -30px;" do %>
+        <div class="mt-1" style="font-size: 0.9rem;">AI生成一覧</div>
+      <% end %>
+
+      <% if user_signed_in? %>
+        <!-- 投稿ボタン -->
+        <%= link_to new_knowhow_path, class: "d-flex flex-column align-items-center text-decoration-none text-dark me-3" do %>
+          <div class="btn btn-outline-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 1rem;">
+            ＋
+          </div>
+          <div class="mt-1 fw-semibold" style="font-size: 0.8rem;">投稿する</div>
+        <% end %>
+
+        <!-- ユーザーメニュー（ドロップダウン） -->
+        <div class="dropdown d-flex flex-column align-items-center ms-3">
+          <button class="btn p-0 border-0 bg-transparent d-flex flex-column align-items-center"
+                  type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+            <!-- 丸いアイコン -->
+            <div class="btn btn-dark rounded-circle d-flex align-items-center justify-content-center"
+                 style="width: 30px; height: 30px;">
+              <%= current_user.name[0].upcase %>
+            </div>
+            <!-- テキスト -->
+            <div class="fw-semibold mt-1" style="font-size: 0.8rem;">マイページ</div>
+          </button>
+
+          <!-- ドロップダウンメニュー -->
+          <ul class="dropdown-menu dropdown-menu-end text-nowrap mt-2" aria-labelledby="userMenu">
+            <li class="dropdown-header fw-bold"><%= current_user.name || "ユーザー名" %></li>
+            <li><%= link_to "プロフィール", user_path(current_user), class: "dropdown-item" %></li>
+            <li><%= link_to "プロフィールを編集", edit_user_registration_path, class: "dropdown-item" %></li>
+            <li><%= link_to "お支払い情報", "#", class: "dropdown-item" %></li>
+            <li><%= link_to "投稿一覧", user_path(current_user), class: "dropdown-item" %></li>
+            <li><%= link_to "購入済み一覧", "#", class: "dropdown-item" %></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item text-danger" %></li>
+          </ul>
+        </div>
+      <% else %>
+        <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline-dark fw-bold rounded-pill px-3 me-3" %>
+        <%= link_to "新規登録", new_user_registration_path, class: "btn btn-success fw-bold rounded-pill px-3" %>
+      <% end %>
+    </div>
+
   </div>
 </header>
