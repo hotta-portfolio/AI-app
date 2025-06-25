@@ -10,7 +10,7 @@
 
     <!-- 右メニュー -->
     <div class="d-flex align-items-center">
-    <%= link_to knowhows_path, class: "text-decoration-none text-dark fw-bold me-4 d-inline-block", style: "position: relative; left: -30px;" do %>
+      <%= link_to knowhows_path, class: "text-decoration-none text-dark fw-bold me-4 d-inline-block", style: "position: relative; left: -30px;" do %>
         <div class="mt-1" style="font-size: 0.9rem;">AI生成一覧</div>
       <% end %>
 
@@ -28,17 +28,21 @@
           <button class="btn p-0 border-0 bg-transparent d-flex flex-column align-items-center"
                   type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
             <!-- 丸いアイコン -->
-            <div class="btn btn-dark rounded-circle d-flex align-items-center justify-content-center"
-                 style="width: 30px; height: 30px;">
-              <%= current_user.name[0].upcase %>
-            </div>
+            <% if current_user.avatar.attached? %>
+              <%= image_tag current_user.avatar.variant(resize_to_fill: [30, 30]), class: "rounded-circle", style: "width: 30px; height: 30px; object-fit: cover;" %>
+            <% else %>
+              <div class="btn btn-dark rounded-circle d-flex align-items-center justify-content-center"
+                   style="width: 30px; height: 30px;">
+                <%= current_user.name.present? ? current_user.name[0].upcase : "？" %>
+              </div>
+            <% end %>
             <!-- テキスト -->
             <div class="fw-semibold mt-1" style="font-size: 0.8rem;">マイページ</div>
           </button>
 
           <!-- ドロップダウンメニュー -->
           <ul class="dropdown-menu dropdown-menu-end text-nowrap mt-2" aria-labelledby="userMenu">
-            <li class="dropdown-header fw-bold"><%= current_user.name || "ユーザー名" %></li>
+            <li class="dropdown-header fw-bold"><%= current_user.name.presence || "ユーザー名" %></li>
             <li><%= link_to "プロフィール", user_path(current_user), class: "dropdown-item" %></li>
             <li><%= link_to "プロフィールを編集", edit_user_registration_path, class: "dropdown-item" %></li>
             <li><%= link_to "お支払い情報", "#", class: "dropdown-item" %></li>

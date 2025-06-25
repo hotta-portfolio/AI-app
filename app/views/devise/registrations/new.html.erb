@@ -15,6 +15,11 @@
     <%= f.text_area :profile, rows: 3 %>
   </div>
 
+  <div class="field">
+    <%= f.label :avatar, "アバター画像（プロフィール画像）" %><br />
+    <%= f.file_field :avatar %>
+  </div>
+
   <!-- メール -->
   <div class="field">
     <%= f.label :email, "メールアドレス" %><br />
