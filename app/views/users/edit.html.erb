@@ -1,6 +1,6 @@
 <h2>プロフィール編集</h2>
 
-<%= form_with model: @user, url: user_path, method: :patch, local: true do |f| %>
+<%= form_with model: @user, url: user_path, method: :patch, local: true, multipart: true do |f| %>
   <div>
     <%= f.label :name, "ニックネーム" %><br>
     <%= f.text_field :name %>
@@ -8,8 +8,20 @@
 
   <div>
     <%= f.label :bio, "自己紹介" %><br>
-    <%= f.text_area :bio %>
+    <%= f.text_area :profile, rows: 3 %>
   </div>
+
+  <div>
+    <%= f.label :avatar, "アバター画像（プロフィール画像）" %><br>
+    <%= f.file_field :avatar %>
+
+    <% if @user.avatar.attached? %>
+      <div class="mt-2">
+        <%= image_tag url_for(@user.avatar.variant(resize_to_fill: [100, 100])), class: "rounded-circle", style: "object-fit: cover;" %>
+      </div>
+    <% end %>
+  </div>
+
 
   <div>
     <%= f.submit "更新する" %>
