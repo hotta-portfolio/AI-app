@@ -9,7 +9,7 @@ class User < ApplicationRecord
   has_many :chat_rooms, through: :knowhows
   has_many :messages, dependent: :destroy
 
-    # 🔒 検索可能なカラムを明示的に指定
+  # 🔒 検索可能なカラムを明示的に指定
   def self.ransackable_attributes(auth_object = nil)
     %w[name email created_at updated_at]
   end
@@ -19,7 +19,7 @@ class User < ApplicationRecord
     []
   end
 
-    # 登録完了後に welcome メール送信
+  # 登録完了後に welcome メール送信
   after_create :send_welcome_email
 
   private
