@@ -30,7 +30,10 @@
   </head>
 
   <body>
-    <%= render "layouts/header" %>
+    <% unless devise_controller? && ['sessions', 'registrations', 'passwords'].include?(controller_name) %>
+      <%= render 'layouts/header' %>
+    <% end %>
+
     <%= yield %>
   </body>
 </html>
