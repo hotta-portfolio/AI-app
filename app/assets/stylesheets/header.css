@@ -1,9 +1,9 @@
+/* ▼ ヘッダー共通スタイル */
 header.navbar {
   font-family: 'Arial Black', 'BIZ UDPGothic', sans-serif;
   background-color: #fff;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.075);
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #dee2e6;
 }
 
 header.navbar .container-fluid {
@@ -31,4 +31,71 @@ header.navbar .navbar-nav .btn {
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
+}
+
+/* ▼ ドロップダウンメニュー全体 */
+.dropdown-menu {
+  background-color: #00695C !important;
+  color: #fff !important;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  min-width: 220px;
+  padding: 0 0 12px 0;
+  overflow: hidden;
+}
+
+/* ▼ 各メニュー項目 */
+.dropdown-menu .dropdown-item {
+  color: #fff !important;
+  padding: 12px 20px;
+  font-size: 0.95rem;
+}
+
+/* ▼ ホバー時 */
+.dropdown-menu .dropdown-item:hover {
+  background-color: #222 !important;
+}
+
+/* ▼ ユーザー名ヘッダー */
+.dropdown-menu .dropdown-header {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #fff !important;
+  padding: 10px 20px;
+}
+
+.dropdown-menu .d-flex a {
+  white-space: nowrap;
+  font-size: 0.9rem;
+  color: #fff !important;
+  text-decoration: none;
+  flex: 1;
+  text-align: center;
+}
+
+.dropdown-menu .d-flex a:last-child {
+  border-right: none;
+}
+
+.dropdown-menu .d-flex a:hover {
+  background-color: #222 !important;
+}
+
+/* ▼ ログアウトボタン（白背景・中央・線なし） */
+.dropdown-menu .dropdown-item.text-danger {
+  background-color: #fff !important;
+  color: #000 !important;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 6px;
+  padding: 10px 16px;
+  margin: 12px auto 0 auto;
+  display: block;
+  width: 80%;
+  border: none;
+}
+
+/* ▼ ログアウトホバー */
+.dropdown-menu .dropdown-item.text-danger:hover {
+  background-color: #f2f2f2 !important;
 }

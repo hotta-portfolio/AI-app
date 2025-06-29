@@ -43,13 +43,21 @@
           <!-- ドロップダウンメニュー -->
           <ul class="dropdown-menu dropdown-menu-end text-nowrap mt-2" aria-labelledby="userMenu">
             <li class="dropdown-header fw-bold"><%= current_user.name.presence || "ユーザー名" %></li>
-            <li><%= link_to "プロフィール", user_path(current_user), class: "dropdown-item" %></li>
-            <li><%= link_to "プロフィールを編集", edit_user_registration_path, class: "dropdown-item" %></li>
-            <li><%= link_to "お支払い情報", "#", class: "dropdown-item" %></li>
-            <li><%= link_to "投稿一覧", user_path(current_user), class: "dropdown-item" %></li>
-            <li><%= link_to "購入済み一覧", "#", class: "dropdown-item" %></li>
+
+            <!-- 横並びのプロフィールリンク -->
+            <li>
+              <div class="d-flex justify-content-between px-3 py-2">
+                <%= link_to "プロフィール", user_path(current_user), class: "dropdown-item px-0 me-2 flex-fill text-start" %>
+                <%= link_to "プロフィールを編集", edit_user_registration_path, class: "dropdown-item px-0 ms-2 flex-fill text-start" %>
+              </div>
+            </li>
+
             <li><hr class="dropdown-divider"></li>
-            <li><%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item text-danger" %></li>
+            <li><%= link_to "お支払い情報", "#", class: "dropdown-item small-text" %></li>
+            <li><%= link_to "投稿一覧", user_path(current_user), class: "dropdown-item small-text" %></li>
+            <li><%= link_to "購入済み一覧", "#", class: "dropdown-item small-text" %></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item text-danger small-text" %></li>
           </ul>
         </div>
       <% else %>
@@ -57,6 +65,5 @@
         <%= link_to "新規登録", new_user_registration_path, class: "btn btn-success fw-bold rounded-pill px-3" %>
       <% end %>
     </div>
-
   </div>
 </header>
