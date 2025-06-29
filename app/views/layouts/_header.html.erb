@@ -47,8 +47,8 @@
             <!-- 横並びのプロフィールリンク -->
             <li>
               <div class="d-flex justify-content-between px-3 py-2">
-                <%= link_to "プロフィール", user_path(current_user), class: "dropdown-item px-0 me-2 flex-fill text-start" %>
-                <%= link_to "プロフィールを編集", edit_user_registration_path, class: "dropdown-item px-0 ms-2 flex-fill text-start" %>
+                <%= link_to "プロフィールを編集", edit_user_path(current_user), class: "dropdown-item px-0 me-2 flex-fill text-start" %>
+                <%= link_to "アカウントを編集", edit_user_registration_path, class: "dropdown-item px-0 ms-2 flex-fill text-start" %>
               </div>
             </li>
 
@@ -61,8 +61,8 @@
           </ul>
         </div>
       <% else %>
-        <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline-dark fw-bold rounded-pill px-3 me-3" %>
-        <%= link_to "新規登録", new_user_registration_path, class: "btn btn-success fw-bold rounded-pill px-3" %>
+        <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline-dark fw-bold rounded-pill px-4 me-4", style: "font-size: 0.9rem;" %>
+        <%= link_to "新規登録", new_user_registration_path, class: "btn btn-success fw-bold rounded-pill px-4", style: "font-size: 0.9rem;" %>
       <% end %>
     </div>
   </div>
