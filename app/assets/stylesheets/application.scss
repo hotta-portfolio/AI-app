@@ -1,3 +1,12 @@
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons';
 @import "header";
 @import "knowhows";
-@import "bootstrap";
+
+.menu-box:hover {
+  background-color: #f8f9fa;
+}
+
+.menu-box a {
+  transition: color 0.2s ease;
+}

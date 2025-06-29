@@ -11,8 +11,10 @@ class UsersController < ApplicationController
   def update
     @user = current_user
     if @user.update(user_params)
-      redirect_to user_path, notice: 'プロフィールを更新しました'
+      flash[:notice] = "\u30D7\u30ED\u30D5\u30A3\u30FC\u30EB\u3092\u66F4\u65B0\u3057\u307E\u3057\u305F"
+      render :edit
     else
+      flash.now[:alert] = "\u30D7\u30ED\u30D5\u30A3\u30FC\u30EB\u306E\u66F4\u65B0\u306B\u5931\u6557\u3057\u307E\u3057\u305F"
       render :edit
     end
   end
@@ -20,6 +22,6 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :avatar) # 適宜追加
+    params.require(:user).permit(:name, :email, :avatar, :profile)
   end
 end

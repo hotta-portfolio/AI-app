@@ -1,31 +1,87 @@
-<h2>プロフィール編集</h2>
+<div class="container-fluid">
+  <div class="row min-vh-100">
 
-<%= form_with model: @user, url: user_path, method: :patch, local: true, multipart: true do |f| %>
-  <div>
-    <%= f.label :name, "ニックネーム" %><br>
-    <%= f.text_field :name %>
-  </div>
+    <!-- ✅ 左カラム：サイドメニュー -->
+    <div class="col-md-3 bg-light p-4 border-end">
+      <% menu_items = [
+        { text: "アカウントを編集する", path: edit_user_registration_path },
+        { text: "お支払い情報", path: "#" },
+        { text: "投稿一覧", path: user_path },
+        { text: "購入履歴", path: "#" }
+      ] %>
 
-  <div>
-    <%= f.label :bio, "自己紹介" %><br>
-    <%= f.text_area :profile, rows: 3 %>
-  </div>
+      <% menu_items.each do |item| %>
+        <div class="p-3 mb-3 border rounded shadow-sm bg-white menu-box">
+          <%= link_to item[:text], item[:path], class: "text-decoration-none text-dark fw-bold d-block" %>
+        </div>
+      <% end %>
+    </div>
 
-  <div>
-    <%= f.label :avatar, "アバター画像（プロフィール画像）" %><br>
-    <%= f.file_field :avatar %>
 
-    <% if @user.avatar.attached? %>
-      <div class="mt-2">
-        <%= image_tag url_for(@user.avatar.variant(resize_to_fill: [100, 100])), class: "rounded-circle", style: "object-fit: cover;" %>
+
+    <!-- ✅ 右カラム：フォーム本体 -->
+    <div class="col-md-9 bg-light p-4 d-flex justify-content-center">
+      <div style="max-width: 900px; width: 100%;">
+
+        <!-- タイトル -->
+        <h2 class="fw-bold mb-4 text-center">公開用プロフィールの編集</h2>
+
+        <!-- flashメッセージ -->
+        <% if flash[:notice] %>
+          <div class="alert alert-success text-center mb-4">
+            <%= flash[:notice] %>
+          </div>
+        <% elsif flash[:alert] %>
+          <div class="alert alert-danger text-center mb-4">
+            <%= flash[:alert] %>
+          </div>
+        <% end %>
+
+        <%= form_with model: @user, url: user_path, method: :patch, local: true, multipart: true do |f| %>
+
+          <!-- プロフィール画像 -->
+          <div class="mb-4 row align-items-center">
+            <label class="col-sm-3 col-form-label fw-bold">プロフィール画像</label>
+            <div class="col-sm-9 d-flex align-items-center">
+              <% if @user.avatar.attached? %>
+                <%= image_tag url_for(@user.avatar.variant(resize_to_fill: [80, 80])), class: "rounded-circle me-3", style: "width: 50px; height: 50px; object-fit: cover;" %>
+              <% else %>
+                <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3" style="width: 80px; height: 80px;">
+                  アイコン
+                </div>
+              <% end %>
+              <%= f.file_field :avatar, class: "form-control w-auto" %>
+            </div>
+          </div>
+
+          <!-- ニックネーム -->
+          <div class="mb-4 row align-items-center">
+            <%= f.label :name, "ニックネーム", class: "col-sm-3 col-form-label fw-bold" %>
+            <div class="col-sm-9">
+              <%= f.text_field :name, class: "form-control", placeholder: "ニックネームを入力" %>
+            </div>
+          </div>
+
+          <!-- 自己紹介 -->
+          <div class="mb-4 row align-items-start">
+            <%= f.label :profile, "自己紹介", class: "col-sm-3 col-form-label fw-bold pt-2" %>
+            <div class="col-sm-9">
+              <%= f.text_area :profile, rows: 4, class: "form-control", placeholder: "自己紹介を入力" %>
+            </div>
+          </div>
+
+          <!-- ボタン -->
+          <div class="mb-3 text-center">
+            <%= f.submit "更新する", class: "btn btn-dark" %>
+          </div>
+
+        <% end %>
+
+        <div class="text-center">
+          <%= link_to "戻る", user_path, class: "text-decoration-underline text-secondary" %>
+        </div>
+
       </div>
-    <% end %>
+    </div>
   </div>
-
-
-  <div>
-    <%= f.submit "更新する" %>
-  </div>
-<% end %>
-
-<%= link_to "戻る", user_path %>
+</div>
