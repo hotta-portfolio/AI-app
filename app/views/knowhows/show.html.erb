@@ -1,46 +1,88 @@
-<h1><%= @knowhow.title %></h1>
-
 <% if @knowhow.media_files.attached? %>
-  <% @knowhow.media_files.each do |file| %>
-    <% if file.image? %>
-      <%= image_tag url_for(file), width: 400 %>
-    <% elsif file.video? %>
-      <video width="400" controls>
-        <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
-      </video>
-    <% elsif file.audio? %>
-      <audio controls>
-        <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
-      </audio>
-    <% end %>
-  <% end %>
+  <div class="container px-3"> <!-- 中央揃え用コンテナ -->
+    <div class="d-flex flex-column flex-md-row gap-4 mb-4 justify-content-center">
+
+      <!-- 左：サムネイル一覧 -->
+      <div class="d-flex flex-md-column gap-2">
+        <% @knowhow.media_files.each_with_index do |file, index| %>
+          <div onmouseover="showMedia(<%= index %>)" class="thumbnail-box" style="width: 60px; height: 60px;">
+            <% if file.image? %>
+              <%= image_tag url_for(file), style: "width: 100%; height: 100%; object-fit: cover;" %>
+            <% elsif file.video? %>
+              <div style="width: 100%; height: 100%; background: #000; color: #fff; display: flex; align-items: center; justify-content: center;">
+                🎥
+              </div>
+            <% elsif file.audio? %>
+              <div style="width: 100%; height: 100%; background: #eee; display: flex; align-items: center; justify-content: center;">
+                🎧
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- 中央：選択されたメディア -->
+      <div class="flex-grow-1 me-md-4" style="max-width: 600px;">
+        <% @knowhow.media_files.each_with_index do |file, index| %>
+          <div id="media-<%= index %>" class="main-media" style="<%= index == 0 ? '' : 'display: none;' %>">
+            <% if file.image? %>
+              <%= image_tag url_for(file), class: "img-fluid rounded w-100" %>
+            <% elsif file.video? %>
+              <video controls class="w-100 rounded">
+                <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
+              </video>
+            <% elsif file.audio? %>
+              <audio controls class="mt-2 w-100">
+                <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
+              </audio>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- 右：詳細情報 -->
+      <div class="flex-grow-1 ms-md-3" style="max-width: 500px;">
+        <h1 class="fw-bold fs-4 mb-3 text-start"><%= @knowhow.title %></h1>
+        <p class="lead mb-4"><%= @knowhow.description %></p>
+
+        <ul class="list-unstyled mb-4">
+          <li><strong>カテゴリ:</strong> <%= t("enum.knowhow.category_type.#{@knowhow.category_type}") %></li>
+          <li><strong>価格:</strong> ¥<%= @knowhow.price %></li>
+          <li><strong>投稿者:</strong>
+            <%= link_to (@knowhow.user.name || @knowhow.user.email),
+                  knowhows_path(q: { user_name_or_user_email_cont: @knowhow.user.name || @knowhow.user.email }) %>
+          </li>
+        </ul>
+
+        <% if @knowhow.tags.any? %>
+          <div class="mb-3">
+            <% @knowhow.tags.each do |tag| %>
+              <%= link_to "##{tag.name}", knowhows_path(q: { tags_name_cont: tag.name }),
+                    class: "badge bg-secondary me-1" %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @knowhow.user != current_user %>
+          <% if @purchased && @purchase.knowhow.chat_room.present? %>
+            <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @purchase.knowhow.chat_room),
+                  class: "btn btn-primary me-2" %>
+          <% else %>
+            <%= link_to "購入する", new_knowhow_purchase_path(@knowhow),
+                  class: "btn btn-success me-2" %>
+          <% end %>
+        <% else %>
+          <p class="text-muted mb-3">※これはあなたの投稿です。</p>
+          <div class="d-flex gap-2">
+            <%= link_to '編集', edit_knowhow_path(@knowhow), class: "btn btn-secondary" %>
+            <%= link_to '削除', knowhow_path(@knowhow),
+                  data: { turbo_method: :delete, turbo_confirm: '本当に削除しますか？' },
+                  class: "btn btn-danger" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 <% end %>
 
-<p><%= @knowhow.description %></p>
-<p>カテゴリ: <%= t("enum.knowhow.category_type.#{@knowhow.category_type}") %></p>
-<p>価格: ¥<%= @knowhow.price %></p>
-<p>投稿者:
-  <%= link_to (@knowhow.user.name || @knowhow.user.email), knowhows_path(q: { user_name_or_user_email_cont: @knowhow.user.name || @knowhow.user.email }) %>
-</p>
-
-<% if @knowhow.tags.any? %>
-  <p>タグ:
-    <% @knowhow.tags.each do |tag| %>
-      <%= link_to "##{tag.name}", knowhows_path(q: { tags_name_cont: tag.name }), class: "badge bg-secondary me-1" %>
-    <% end %>
-  </p>
-<% end %>
-
-<% if @knowhow.user != current_user %>
-  <% if @purchased && @purchase.knowhow.chat_room.present? %>
-    <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @purchase.knowhow.chat_room), class: "btn btn-primary" %>
-  <% else %>
-    <%= link_to "購入する", new_knowhow_purchase_path(@knowhow), class: "btn btn-success" %>
-  <% end %>
-<% else %>
-  <p class="text-muted">※これはあなたの投稿です。</p>
-  <%= link_to '編集', edit_knowhow_path(@knowhow), class: "btn btn-secondary me-2" %>
-  <%= link_to '削除', knowhow_path(@knowhow),
-        data: { turbo_method: :delete, turbo_confirm: '本当に削除しますか？' },
-        class: "btn btn-danger" %>
-<% end %>
+<%= javascript_include_tag "knowhows/show", "data-turbo-track": "reload", defer: true %>
