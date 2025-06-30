@@ -1,43 +1,97 @@
-<h2><%= resource_name.to_s.humanize %>編集</h2>
+<div class="container-fluid">
+  <div class="row min-vh-100">
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+    <!-- ✅ 左カラム：サイドメニュー -->
+    <div class="col-md-3 bg-light p-4 border-end">
+      <% menu_items = [
+        { text: "プロフィールを編集する", path: edit_user_path(current_user) },
+        { text: "お支払い情報", path: "#" },
+        { text: "投稿一覧", path: user_path },
+        { text: "購入履歴", path: "#" }
+      ] %>
 
-  <div class="field">
-    <%= f.label :email, "メールアドレス" %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      <% menu_items.each do |item| %>
+        <div class="p-3 mb-3 border rounded shadow-sm bg-white menu-box">
+          <%= link_to item[:text], item[:path], class: "text-decoration-none text-dark fw-bold d-block" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- ✅ 右カラム：アカウント編集フォーム -->
+    <div class="col-md-9 bg-light p-4 d-flex justify-content-center">
+      <div style="max-width: 900px; width: 100%;">
+
+        <!-- タイトル -->
+        <h2 class="fw-bold mb-4 text-center">アカウントの編集</h2>
+
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <!-- メールアドレス -->
+          <div class="mb-4 row align-items-center">
+            <%= f.label :email, "メールアドレス", class: "col-sm-3 col-form-label fw-bold" %>
+            <div class="col-sm-9">
+              <%= f.email_field :email, class: "form-control", autofocus: true, autocomplete: "email" %>
+            </div>
+          </div>
+
+          <!-- メール確認中表示 -->
+          <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+            <div class="mb-4 row">
+              <div class="offset-sm-3 col-sm-9 text-muted">
+                現在確認待ちのメールアドレス: <%= resource.unconfirmed_email %>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- パスワード -->
+          <div class="mb-4 row align-items-center">
+            <%= f.label :password, "パスワード", class: "col-sm-3 col-form-label fw-bold" %>
+            <div class="col-sm-9">
+              <%= f.password_field :password, class: "form-control", autocomplete: "new-password", placeholder: "変更しない場合は空欄のまま" %>
+              <% if @minimum_password_length %>
+                <small class="form-text text-muted">※最低 <%= @minimum_password_length %> 文字</small>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- パスワード確認 -->
+          <div class="mb-4 row align-items-center">
+            <%= f.label :password_confirmation, "パスワード確認", class: "col-sm-3 col-form-label fw-bold" %>
+            <div class="col-sm-9">
+              <%= f.password_field :password_confirmation, class: "form-control", autocomplete: "new-password" %>
+            </div>
+          </div>
+
+          <!-- 現在のパスワード -->
+          <div class="mb-4 row align-items-center">
+            <%= f.label :current_password, "現在のパスワード", class: "col-sm-3 col-form-label fw-bold" %>
+            <div class="col-sm-9">
+              <%= f.password_field :current_password, class: "form-control", autocomplete: "current-password", placeholder: "変更を確定するには入力が必要です" %>
+            </div>
+          </div>
+
+          <!-- 更新ボタン -->
+          <div class="offset-sm-3 col-sm-9 mb-3">
+            <%= f.submit "更新する", class: "btn btn-dark" %>
+          </div>
+        <% end %>
+
+        <!-- 戻る -->
+        <div class="offset-sm-3 col-sm-9 mt-3">
+          <%= link_to "戻る", user_path, class: "text-decoration-underline text-secondary" %>
+        </div>
+
+        <!-- アカウント削除 -->
+        <div class="offset-sm-3 col-sm-9 mt-5">
+          <h4 class="fw-bold text-danger">アカウントの削除</h4>
+          <p>ご利用に満足いただけない場合は、以下から削除できます。</p>
+          <%= button_to "アカウントを削除する", registration_path(resource_name), method: :delete,
+              data: { confirm: "本当に削除しますか？", turbo_confirm: "本当に削除しますか？" },
+              class: "btn btn-outline-danger" %>
+        </div>
+
+      </div>
+    </div>
   </div>
-
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>現在確認待ちのメールアドレス: <%= resource.unconfirmed_email %></div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :password, "パスワード" %> <i>(変更しない場合は空のままにしてください)</i><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-    <% if @minimum_password_length %>
-      <br />
-      <em>最低 <%= @minimum_password_length %> 文字</em>
-    <% end %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation, "パスワード確認" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :current_password, "現在のパスワード" %> <i>(変更を確定するために現在のパスワードが必要です)</i><br />
-    <%= f.password_field :current_password, autocomplete: "current-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "更新する" %>
-  </div>
-<% end %>
-
-<h3>アカウントの削除</h3>
-
-<div>ご利用に満足いただけない場合は、<%= button_to "アカウントを削除する", registration_path(resource_name), data: { confirm: "本当に削除しますか？", turbo_confirm: "本当に削除しますか？" }, method: :delete %></div>
-
-<%= link_to "戻る", :back %>
+</div>
