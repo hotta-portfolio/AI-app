@@ -24,7 +24,7 @@
       <div style="max-width: 900px; width: 100%;">
 
         <!-- タイトル -->
-        <h2 class="fw-bold mb-4 text-center">公開用プロフィールの編集</h2>
+        <h2 class="fw-bold mb-4 text-center">プロフィールの編集</h2>
 
         <!-- flashメッセージ -->
         <% if flash[:notice] %>
@@ -71,13 +71,13 @@
           </div>
 
           <!-- ボタン -->
-          <div class="mb-3 text-center">
+          <div class="offset-sm-3 col-sm-9 mb-3">
             <%= f.submit "更新する", class: "btn btn-dark" %>
           </div>
 
         <% end %>
 
-        <div class="text-center">
+        <div class="offset-sm-3 col-sm-9 mt-3">
           <%= link_to "戻る", user_path, class: "text-decoration-underline text-secondary" %>
         </div>
 
