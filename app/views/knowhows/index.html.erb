@@ -1,72 +1,77 @@
-<%= search_form_for @q, url: knowhows_path, method: :get do |f| %>
-  <div>
-    <%= f.search_field :title_or_description_or_user_name_or_user_email_cont, placeholder: "キーワードや投稿者名で検索" %>
-  </div>
+<!-- 💡 コンテナで幅制限 -->
+<div class="container-xl mt-4">
+  <div class="knowhows-list row row-cols-1 row-cols-md-3 g-5">
+    <% @knowhows.each do |knowhow| %>
+      <div class="col">
+        <div class="card h-100 shadow-sm overflow-hidden position-relative">
 
-  <div>
-    <%= f.select :category_type_eq, 
-      options_for_select(
-        Knowhow.category_types.map { |k, v| [t("enum.knowhow.category_type.#{k}"), v] },
-        @q.category_type_eq
-      ),
-      { include_blank: 'すべて' } %>
-  </div>
+          <!-- ✅ カード全体をリンクで覆う -->
+          <%= link_to knowhow_path(knowhow), class: "stretched-link" do %><% end %>
 
-  <div>
-    <%= f.search_field :tags_name_cont, placeholder: "タグで検索" %>
-  </div>
-
-  <div>
-    <%= f.number_field :price_gteq, placeholder: "最低価格（円）" %>
-    <%= f.number_field :price_lteq, placeholder: "最高価格（円）" %>
-  </div>
-
-  <div>
-    <%= f.submit "検索" %>
-  </div>
-<% end %>
-
-<div class="knowhows-list mt-4">
-  <% @knowhows.each do |knowhow| %>
-    <div class="knowhow-card border p-3 mb-4 rounded">
-    <h3><%= link_to knowhow.title, knowhow %></h3>
-      <% if knowhow.media_files.attached? %>
-        <div class="media-scroll-container mb-2">
-          <% knowhow.media_files.each do |file| %>
-            <div class="media-item">
-              <% if file.image? %>
-                <%= image_tag url_for(file),width: 400, class: "img-fluid knowhow-media-image" %>
-              <% elsif file.video? %>
-                <video width="400" controls,controls class="knowhow-media-video">
-                  <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
-                </video>
-              <% elsif file.audio? %>
-                <video controls class="knowhow-media-video">
-                  <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
+          <% if knowhow.media_files.attached? %>
+            <% primary_file = knowhow.media_files.first %>
+            <% if primary_file.image? %>
+              <%= image_tag url_for(primary_file), class: "card-img-top aspect-ratio-16x9", style: "object-fit: cover;" %>
+            <% elsif primary_file.video? %>
+              <video controls class="card-img-top aspect-ratio-16x9" style="object-fit: cover;">
+                <source src="<%= url_for(primary_file) %>" type="<%= primary_file.content_type %>">
+              </video>
+            <% elsif primary_file.audio? %>
+              <div class="p-3">
+                <audio controls class="w-100">
+                  <source src="<%= url_for(primary_file) %>" type="<%= primary_file.content_type %>">
                 </audio>
+              </div>
+            <% end %>
+          <% end %>
+
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title fw-bold mb-2">
+              <span><%= knowhow.title %></span>
+            </h5>
+
+            <!-- 説明文を2行に制限 -->
+            <p class="card-text small text-muted description-fixed">
+              <%= knowhow.description %>
+            </p>
+
+            <div class="mt-auto">
+              <ul class="list-unstyled small mb-2">
+                <li>カテゴリ: <%= t("enum.knowhow.category_type.#{knowhow.category_type}") %></li>
+                <li>価格: ¥<%= knowhow.price %></li>
+                <li>投稿者:
+                  <%= link_to(
+                        knowhow.user.name || knowhow.user.email,
+                        knowhows_path(q: { user_name_or_user_email_cont: knowhow.user.name || knowhow.user.email }),
+                        class: "position-relative z-1"
+                      ) %>
+                </li>
+              </ul>
+
+              <% if knowhow.tags.any? %>
+                <div class="mb-2">
+                  <% knowhow.tags.each do |tag| %>
+                    <%= link_to(
+                          "##{tag.name}",
+                          knowhows_path(q: { tags_name_cont: tag.name }),
+                          class: "badge bg-secondary me-1 position-relative z-1"
+                        ) %>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <% if current_user && (knowhow.user_id == current_user.id || knowhow.purchases.exists?(user_id: current_user.id)) %>
+                <%= link_to(
+                      "チャットする",
+                      chat_room_path(knowhow.chat_room),
+                      class: "btn btn-outline-primary btn-sm position-relative z-1",
+                      data: { turbo: false }
+                    ) %>
               <% end %>
             </div>
-          <% end %>
+          </div>
         </div>
-      <% end %>
-
-      <p><%= truncate(knowhow.description, length: 80) %></p>
-      <p>カテゴリ: <%= t("enum.knowhow.category_type.#{knowhow.category_type}") %></p>
-      <p>価格: ¥<%= knowhow.price %></p>
-      <p>投稿者: 
-        <%= link_to (knowhow.user.name || knowhow.user.email), knowhows_path(q: { user_name_or_user_email_cont: knowhow.user.name || knowhow.user.email }) %>
-      </p>
-
-      <% if knowhow.tags.any? %>
-        <p>タグ: 
-          <% knowhow.tags.each do |tag| %>
-            <%= link_to "##{tag.name}", knowhows_path(q: { tags_name_cont: tag.name }), class: "badge bg-secondary me-1" %>
-          <% end %>
-        </p>
-      <% end %>
-      <% if current_user && (knowhow.user_id == current_user.id || knowhow.purchases.exists?(user_id: current_user.id)) %>
-        <%= link_to "チャットする", chat_room_path(knowhow.chat_room),class: "btn btn-outline-primary btn-sm" %>
-      <% end %>
-    </div>
-  <% end %>
+      </div>
+    <% end %>
+  </div>
 </div>
