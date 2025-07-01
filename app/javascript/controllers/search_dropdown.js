@@ -1,5 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // 要素の取得
+document.addEventListener("turbo:load", () => {
   const input = document.getElementById("search-input");
   const dropdown = document.getElementById("search-dropdown");
 
@@ -11,39 +10,45 @@ document.addEventListener("DOMContentLoaded", () => {
   const tagForm = document.getElementById("tag-form");
   const priceForm = document.getElementById("price-form");
 
-  // 🔍 検索欄にフォーカス → ドロップダウン表示
+  function clearButtons() {
+    [categoryBtn, tagBtn, priceBtn].forEach(btn => btn?.classList.remove("active"));
+  }
+
   input?.addEventListener("focus", () => {
     dropdown?.classList.remove("d-none");
   });
 
-  // ❌ フォーム外をクリック → 閉じる
   document.addEventListener("click", (e) => {
     if (!document.getElementById("search-form")?.contains(e.target)) {
       dropdown?.classList.add("d-none");
       categoryForm?.classList.add("d-none");
       tagForm?.classList.add("d-none");
       priceForm?.classList.add("d-none");
+      clearButtons();
     }
   });
 
-  // 🟦 カテゴリボタンクリック → 切り替え表示
   categoryBtn?.addEventListener("click", () => {
     categoryForm?.classList.toggle("d-none");
     tagForm?.classList.add("d-none");
     priceForm?.classList.add("d-none");
+    clearButtons();
+    if (!categoryForm.classList.contains("d-none")) categoryBtn.classList.add("active");
   });
 
-  // 🏷 タグボタンクリック → 切り替え表示
   tagBtn?.addEventListener("click", () => {
     tagForm?.classList.toggle("d-none");
     categoryForm?.classList.add("d-none");
     priceForm?.classList.add("d-none");
+    clearButtons();
+    if (!tagForm.classList.contains("d-none")) tagBtn.classList.add("active");
   });
 
-  // 💰 価格帯ボタンクリック → 切り替え表示
   priceBtn?.addEventListener("click", () => {
     priceForm?.classList.toggle("d-none");
     categoryForm?.classList.add("d-none");
     tagForm?.classList.add("d-none");
+    clearButtons();
+    if (!priceForm.classList.contains("d-none")) priceBtn.classList.add("active");
   });
 });
