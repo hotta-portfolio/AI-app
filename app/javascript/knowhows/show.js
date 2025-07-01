@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("turbo:load", function () {
   window.showMedia = function (index) {
     const mediaElements = document.querySelectorAll(".main-media");
 
