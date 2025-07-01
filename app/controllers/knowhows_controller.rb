@@ -1,16 +1,14 @@
 # app/controllers/knowhows_controller.rb
 class KnowhowsController < ApplicationController
   # ログインしていないユーザーは、新規作成や編集はできないようにする
-  before_action :authenticate_user!, except: [:index, :show]
-  
-  # show/edit/update/destroyで共通して使うノウハウ取得処理をまとめる
-  before_action :set_knowhow, only: [:show, :edit, :update, :destroy, :delete_media]
+  before_action :authenticate_user!, except: [ :index, :show ]
 
-  # ノウハウ一覧ページ
+  # show/edit/update/destroyで共通して使うノウハウ取得処理をまとめる
+  before_action :set_knowhow, only: [ :show, :edit, :update, :destroy, :delete_media ]
+
+# ノウハウ一覧ページ
 def index
-  # 1. Ransackの検索オブジェクトを作成
-  @q = Knowhow.ransack(params[:q])
-  # 2. 検索結果を取得し、N+1問題を考慮してページネーションなどを適用
+  #  検索結果を取得し、N+1問題を考慮してページネーションなどを適用
   #    order(created_at: :desc) は検索結果に適用
   @knowhows = @q.result(distinct: true).includes(:user, :tags, media_files_attachments: :blob).order(created_at: :desc)
 end
@@ -28,7 +26,7 @@ end
   end
 
   # 新規投稿処理
-  def create  
+  def create
     @knowhow = current_user.knowhows.new(knowhow_params)
     if @knowhow.save
       # 保存成功したら詳細ページへリダイレクトし、メッセージを表示
@@ -54,21 +52,21 @@ end
       redirect_to knowhows_path, alert: "編集権限がありません"
       return
     end
-  
+
     permitted_params = knowhow_params.except(:media_files)
-  
+
     if @knowhow.update(permitted_params)
       # 新規ファイルがある場合のみ追加
       if params[:knowhow][:media_files].present?
         @knowhow.media_files.attach(params[:knowhow][:media_files])
       end
-  
+
       redirect_to @knowhow, notice: "ノウハウを更新しました"
     else
       render :edit
     end
   end
-  
+
   # 削除処理
   def destroy
     if @knowhow.user == current_user
@@ -91,7 +89,7 @@ end
   # ストロングパラメータ（フォームから受け取る安全な値だけを許可）
   def knowhow_params
     # media_filesは複数アップロードできるので配列で許可
-    params.require(:knowhow).permit(:title, :description, :price, :category_type,:tag_list, media_files: [], tag_ids: [])
+    params.require(:knowhow).permit(:title, :description, :price, :category_type, :tag_list, media_files: [], tag_ids: [])
   end
 
   # 共通で使うノウハウ取得メソッド

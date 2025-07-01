@@ -1,11 +1,60 @@
 <header class="navbar navbar-expand-lg bg-white shadow-sm px-4 py-3 border-bottom" style="font-family: 'BIZ UDPGothic', sans-serif;">
   <div class="container-fluid d-flex justify-content-between align-items-center">
 
-    <!-- 左ロゴ -->
-    <div class="d-flex align-items-center">
+    <!-- 左：ロゴ＋検索 -->
+    <div class="d-flex align-items-center flex-grow-1 gap-3">
+      <!-- ロゴ -->
       <%= link_to root_path, class: "d-flex align-items-center text-decoration-none" do %>
-        <%= image_tag "logo.png", alt: "GenHacks Logo", class: "me-2", style: "height: 40px;" %>
+        <%= image_tag "logo.png", alt: "GenHacks Logo", style: "height: 40px;" %>
       <% end %>
+
+      <!-- 🔍 検索フォーム -->
+      <div class="position-relative" style="max-width: 600px; width: 100%;">
+        <%= search_form_for @q, url: knowhows_path, method: :get, html: { id: "search-form" } do |f| %>
+          <!-- 検索入力 -->
+          <div>
+            <%= f.search_field :title_or_description_or_user_name_or_user_email_cont,
+                placeholder: "なにをお探しですか？",
+                class: "form-control",
+                id: "search-input",
+                autocomplete: "off" %>
+          </div>
+
+          <!-- 🔽 検索詳細ボックス -->
+          <div id="search-dropdown" class="border mt-1 p-3 rounded bg-white shadow position-absolute w-100 d-none" style="z-index: 1000;">
+            <!-- ボタン群 -->
+            <div class="mb-2 d-flex gap-3">
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-category">カテゴリからさがす</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-tag">タグからさがす</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-price">価格帯からさがす</button>
+            </div>
+
+            <!-- フォーム -->
+            <div id="category-form" class="mb-2 d-none">
+              <%= f.select :category_type_eq,
+                options_for_select(
+                  Knowhow.category_types.map { |k, v| [t("enum.knowhow.category_type.#{k}"), v] },
+                  @q.category_type_eq
+                ),
+                { include_blank: 'カテゴリ指定なし' },
+                { class: "form-select" } %>
+            </div>
+
+            <div id="tag-form" class="mb-2 d-none">
+              <%= f.search_field :tags_name_cont, placeholder: "タグ名で検索", class: "form-control" %>
+            </div>
+
+            <div id="price-form" class="mb-2 d-none d-flex gap-2">
+              <%= f.number_field :price_gteq, placeholder: "最低価格", class: "form-control" %>
+              <%= f.number_field :price_lteq, placeholder: "最高価格", class: "form-control" %>
+            </div>
+
+            <div class="text-end">
+              <%= f.submit "検索", class: "btn btn-primary btn-sm" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
     </div>
 
     <!-- 右メニュー -->
@@ -23,35 +72,28 @@
           <div class="mt-1 fw-semibold" style="font-size: 0.8rem;">投稿する</div>
         <% end %>
 
-        <!-- ユーザーメニュー（ドロップダウン） -->
+        <!-- ユーザーメニュー -->
         <div class="dropdown d-flex flex-column align-items-center ms-3">
           <button class="btn p-0 border-0 bg-transparent d-flex flex-column align-items-center"
                   type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
-            <!-- 丸いアイコン -->
             <% if current_user.avatar.attached? %>
               <%= image_tag current_user.avatar.variant(resize_to_fill: [30, 30]), class: "rounded-circle", style: "width: 30px; height: 30px; object-fit: cover;" %>
             <% else %>
-              <div class="btn btn-dark rounded-circle d-flex align-items-center justify-content-center"
-                   style="width: 30px; height: 30px;">
+              <div class="btn btn-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
                 <%= current_user.name.present? ? current_user.name[0].upcase : "？" %>
               </div>
             <% end %>
-            <!-- テキスト -->
             <div class="fw-semibold mt-1" style="font-size: 0.8rem;">マイページ</div>
           </button>
 
-          <!-- ドロップダウンメニュー -->
           <ul class="dropdown-menu dropdown-menu-end text-nowrap mt-2" aria-labelledby="userMenu">
             <li class="dropdown-header fw-bold"><%= current_user.name.presence || "ユーザー名" %></li>
-
-            <!-- 横並びのプロフィールリンク -->
             <li>
               <div class="d-flex justify-content-between px-3 py-2">
                 <%= link_to "プロフィールを編集", edit_user_path(current_user), class: "dropdown-item px-0 me-2 flex-fill text-start" %>
                 <%= link_to "アカウントを編集", edit_user_registration_path, class: "dropdown-item px-0 ms-2 flex-fill text-start" %>
               </div>
             </li>
-
             <li><hr class="dropdown-divider"></li>
             <li><%= link_to "お支払い情報", "#", class: "dropdown-item small-text" %></li>
             <li><%= link_to "投稿一覧", user_path(current_user), class: "dropdown-item small-text" %></li>
