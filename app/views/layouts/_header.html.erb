@@ -9,28 +9,34 @@
       <% end %>
 
       <!-- 🔍 検索フォーム -->
-      <div class="position-relative" style="max-width: 600px; width: 100%;">
+      <div class="position-relative ms-3" style="max-width: 500px; width: 100%;">
         <%= search_form_for @q, url: knowhows_path, method: :get, html: { id: "search-form" } do |f| %>
-          <!-- 検索入力 -->
-          <div>
+          <!-- 検索入力 + アイコン -->
+          <div class="position-relative">
             <%= f.search_field :title_or_description_or_user_name_or_user_email_cont,
-                placeholder: "なにをお探しですか？",
-                class: "form-control",
-                id: "search-input",
-                autocomplete: "off" %>
+              placeholder: "なにをお探しですか？",
+              class: "form-control pe-5",
+              id: "search-input",
+              autocomplete: "off" %>
+
+            <!-- 検索アイコン（右端・submitボタン） -->
+            <button type="submit" class="btn position-absolute p-0"
+              style="right: 12px; top: 50%; transform: translateY(-50%); height: 100%; background: transparent; border: none;">
+              <i class="fas fa-search text-muted"></i>
+            </button>
           </div>
 
-          <!-- 🔽 検索詳細ボックス -->
+          <!-- 🔽 詳細検索ドロップダウン -->
           <div id="search-dropdown" class="border mt-1 p-3 rounded bg-white shadow position-absolute w-100 d-none" style="z-index: 1000;">
             <!-- ボタン群 -->
-            <div class="mb-2 d-flex gap-3">
+            <div class="mb-2 d-flex justify-content-center gap-3">
               <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-category">カテゴリからさがす</button>
               <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-tag">タグからさがす</button>
               <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-price">価格帯からさがす</button>
             </div>
 
-            <!-- フォーム -->
-            <div id="category-form" class="mb-2 d-none">
+            <!-- カテゴリ検索 -->
+            <div id="category-form" class="mb-2 mt-3 d-none">
               <%= f.select :category_type_eq,
                 options_for_select(
                   Knowhow.category_types.map { |k, v| [t("enum.knowhow.category_type.#{k}"), v] },
@@ -40,17 +46,15 @@
                 { class: "form-select" } %>
             </div>
 
-            <div id="tag-form" class="mb-2 d-none">
+            <!-- タグ検索 -->
+            <div id="tag-form" class="mb-2 mt-3 d-none">
               <%= f.search_field :tags_name_cont, placeholder: "タグ名で検索", class: "form-control" %>
             </div>
 
-            <div id="price-form" class="mb-2 d-none d-flex gap-2">
+            <!-- 価格帯検索 -->
+            <div id="price-form" class="mb-2 mt-3 d-none d-flex gap-2">
               <%= f.number_field :price_gteq, placeholder: "最低価格", class: "form-control" %>
               <%= f.number_field :price_lteq, placeholder: "最高価格", class: "form-control" %>
-            </div>
-
-            <div class="text-end">
-              <%= f.submit "検索", class: "btn btn-primary btn-sm" %>
             </div>
           </div>
         <% end %>
@@ -59,6 +63,7 @@
 
     <!-- 右メニュー -->
     <div class="d-flex align-items-center">
+      <!-- AI生成一覧リンク -->
       <%= link_to knowhows_path, class: "text-decoration-none text-dark fw-bold me-4 d-inline-block", style: "position: relative; left: -30px;" do %>
         <div class="mt-1" style="font-size: 0.9rem;">AI生成一覧</div>
       <% end %>
@@ -75,7 +80,7 @@
         <!-- ユーザーメニュー -->
         <div class="dropdown d-flex flex-column align-items-center ms-3">
           <button class="btn p-0 border-0 bg-transparent d-flex flex-column align-items-center"
-                  type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+            type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
             <% if current_user.avatar.attached? %>
               <%= image_tag current_user.avatar.variant(resize_to_fill: [30, 30]), class: "rounded-circle", style: "width: 30px; height: 30px; object-fit: cover;" %>
             <% else %>
@@ -86,6 +91,7 @@
             <div class="fw-semibold mt-1" style="font-size: 0.8rem;">マイページ</div>
           </button>
 
+          <!-- ドロップダウンメニュー -->
           <ul class="dropdown-menu dropdown-menu-end text-nowrap mt-2" aria-labelledby="userMenu">
             <li class="dropdown-header fw-bold"><%= current_user.name.presence || "ユーザー名" %></li>
             <li>
