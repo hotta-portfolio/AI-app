@@ -11,6 +11,8 @@ class Knowhow < ApplicationRecord
   belongs_to :user
   has_many :purchases, dependent: :destroy
   has_one :chat_room, dependent: :destroy
+  has_many :instructions, -> { order(:step) }, dependent: :destroy
+  accepts_nested_attributes_for :instructions, allow_destroy: true
 
   # Active Storage (ファイルアップロード)
   has_many_attached :media_files

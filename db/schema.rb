@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_20_121804) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_02_144146) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,6 +52,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_20_121804) do
     t.bigint "knowhow_id", null: false
     t.string "name"
     t.index ["knowhow_id"], name: "index_chat_rooms_on_knowhow_id"
+  end
+
+  create_table "instructions", force: :cascade do |t|
+    t.integer "step"
+    t.text "description"
+    t.bigint "knowhow_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["knowhow_id"], name: "index_instructions_on_knowhow_id"
   end
 
   create_table "knowhow_tags", force: :cascade do |t|
@@ -125,6 +134,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_20_121804) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "chat_rooms", "knowhows"
+  add_foreign_key "instructions", "knowhows"
   add_foreign_key "knowhow_tags", "knowhows"
   add_foreign_key "knowhow_tags", "tags"
   add_foreign_key "knowhows", "users"

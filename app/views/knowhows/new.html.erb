@@ -31,7 +31,64 @@
     <%= f.file_field :media_files, multiple: true, direct_upload: true %>
   </div>
 
+  <!-- ✅ 作り方手順セクション -->
+  <h3 class="mt-4">作り方手順</h3>
+  <div id="instructions">
+    <!-- 最初の1つ目の手順フィールド（f.fields_for） -->
+    <%= f.fields_for :instructions do |instruction_form| %>
+      <div class="mb-3 border p-3 rounded instruction-block">
+        <div>
+          <%= instruction_form.label :step, "ステップ番号" %><br>
+          <%= instruction_form.number_field :step, min: 1, class: "form-control" %>
+        </div>
+
+        <div>
+          <%= instruction_form.label :description, "説明文" %><br>
+          <%= instruction_form.text_area :description, rows: 3, class: "form-control" %>
+        </div>
+
+        <div>
+          <%= instruction_form.label :image, "画像（任意）" %><br>
+          <%= instruction_form.file_field :image, class: "form-control" %>
+        </div>
+
+        <div class="text-end">
+          <button type="button" class="btn btn-sm btn-danger remove-step">削除</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- ステップ追加ボタン -->
+  <div class="mb-4">
+    <button type="button" id="add-step" class="btn btn-outline-primary">＋ ステップを追加</button>
+  </div>
+
   <div>
-    <%= f.submit %>
+    <%= f.submit "投稿する", class: "btn btn-primary" %>
   </div>
 <% end %>
+
+<!-- ✅ テンプレート：非表示 -->
+<div id="instruction-template" class="d-none">
+  <div class="mb-3 border p-3 rounded instruction-block">
+    <div>
+      <label>ステップ番号</label><br>
+      <input type="number" name="knowhow[instructions_attributes][NEW_INDEX][step]" class="form-control" min="1">
+    </div>
+
+    <div>
+      <label>説明文</label><br>
+      <textarea name="knowhow[instructions_attributes][NEW_INDEX][description]" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div>
+      <label>画像（任意）</label><br>
+      <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]" class="form-control">
+    </div>
+
+    <div class="text-end">
+      <button type="button" class="btn btn-sm btn-danger remove-step">削除</button>
+    </div>
+  </div>
+</div>

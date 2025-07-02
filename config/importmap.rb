@@ -15,3 +15,4 @@ pin_all_from "app/javascript/channels", under: "channels"
 pin "bootstrap" # @5.3.7
 pin "@popperjs/core", to: "https://ga.jspm.io/npm:@popperjs/core@2.11.8/lib/index.js"
 pin "knowhows/show"
+pin "knowhows/steps", to: "knowhows/steps.js"

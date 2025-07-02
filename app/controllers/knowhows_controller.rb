@@ -23,6 +23,7 @@ end
   def new
     # 現在ログイン中のユーザーに紐付く新規Knowhowインスタンスを作成
     @knowhow = current_user.knowhows.new
+    @knowhow.instructions.build
   end
 
   # 新規投稿処理
@@ -88,8 +89,17 @@ end
 
   # ストロングパラメータ（フォームから受け取る安全な値だけを許可）
   def knowhow_params
-    # media_filesは複数アップロードできるので配列で許可
-    params.require(:knowhow).permit(:title, :description, :price, :category_type, :tag_list, media_files: [], tag_ids: [])
+    # media_files は複数アップロードできるので配列で許可
+    params.require(:knowhow).permit(
+      :title,
+      :description,
+      :price,
+      :category_type,
+      :tag_list,
+      media_files: [],
+      tag_ids: [],
+      instructions_attributes: [ :id, :step, :description, :image, :_destroy ]
+    )
   end
 
   # 共通で使うノウハウ取得メソッド
