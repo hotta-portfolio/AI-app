@@ -1,94 +1,130 @@
 <%= form_with model: @knowhow, local: true, multipart: true do |f| %>
-  <div>
-    <%= f.label :title %><br>
-    <%= f.text_field :title %>
-  </div>
+  <div class="container">
 
-  <div>
-    <%= f.label :category_type, "カテゴリ" %><br>
-    <%= f.select :category_type,
-          Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
-          { include_blank: "選択してください" } %>
-  </div>
-
-  <div>
-    <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %><br>
-    <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), placeholder: "例: Rails, Ruby, 初心者" %>
-  </div>
-
-  <div>
-    <%= f.label :description %><br>
-    <%= f.text_area :description %>
-  </div>
-
-  <div>
-    <%= f.label :price %><br>
-    <%= f.number_field :price %>
-  </div>
-
-  <div>
-    <%= f.label :media_files, "生成物（画像・動画・音声）アップロード" %><br>
-    <%= f.file_field :media_files, multiple: true, direct_upload: true %>
-  </div>
-
-  <!-- ✅ 作り方手順セクション -->
-  <h3 class="mt-4">作り方手順</h3>
-  <div id="instructions">
-    <!-- 最初の1つ目の手順フィールド（f.fields_for） -->
-    <%= f.fields_for :instructions do |instruction_form| %>
-      <div class="mb-3 border p-3 rounded instruction-block">
-        <div>
-          <%= instruction_form.label :step, "ステップ番号" %><br>
-          <%= instruction_form.number_field :step, min: 1, class: "form-control" %>
+    <!-- メイン2カラム -->
+    <div class="row">
+      <!-- 左カラム -->
+      <div class="col-md-6">
+        <!-- サムネ -->
+        <div class="mb-3 text-center border p-4">
+          <div>📸</div>
+          <div>サムネ</div>
         </div>
 
-        <div>
-          <%= instruction_form.label :description, "説明文" %><br>
-          <%= instruction_form.text_area :description, rows: 3, class: "form-control" %>
+        <!-- カテゴリ -->
+        <div class="mb-3">
+          <%= f.label :category_type, "カテゴリ" %>
+          <%= f.select :category_type,
+              Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
+              { include_blank: "選択してください" },
+              class: "form-select" %>
         </div>
 
-        <div>
-          <%= instruction_form.label :image, "画像（任意）" %><br>
-          <%= instruction_form.file_field :image, class: "form-control" %>
-        </div>
-
-        <div class="text-end">
-          <button type="button" class="btn btn-sm btn-danger remove-step">削除</button>
+        <!-- 価格 -->
+        <div class="mb-3">
+          <%= f.label :price %>
+          <%= f.number_field :price, class: "form-control" %>
         </div>
       </div>
-    <% end %>
-  </div>
 
-  <!-- ステップ追加ボタン -->
-  <div class="mb-4">
-    <button type="button" id="add-step" class="btn btn-outline-primary">＋ ステップを追加</button>
-  </div>
+      <!-- 右カラム -->
+      <div class="col-md-6">
+        <!-- タイトル -->
+        <div class="mb-3">
+          <%= f.label :title %>
+          <%= f.text_field :title, class: "form-control" %>
+        </div>
 
-  <div>
-    <%= f.submit "投稿する", class: "btn btn-primary" %>
+        <!-- タグ -->
+        <div class="mb-3">
+          <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %>
+          <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), class: "form-control" %>
+        </div>
+
+        <!-- 説明 -->
+        <div class="mb-3">
+          <%= f.label :description %>
+          <%= f.text_area :description, class: "form-control", rows: 5 %>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ 作り方セクション -->
+    <h3 class="mt-4">作り方</h3>
+    <div id="instructions" class="d-flex flex-wrap gap-3">
+      <%= f.fields_for :instructions do |instruction_form| %>
+        <!-- 使用ソフト -->
+        <div class="mb-2">
+          <%= instruction_form.label :software, "使用ソフト" %>
+          <%= instruction_form.text_field :software, class: "form-control", placeholder: "例: Photoshop, Premiere" %>
+        </div>
+
+        <div class="instruction-block card position-relative shadow-sm p-3" style="width: 240px;">
+          <!-- ステップ番号 -->
+          <div class="step-badge"><%= instruction_form.object.step.presence || "?" %></div>
+
+          <!-- メニュー -->
+          <div class="dropdown step-menu">
+            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              ⋯
+            </button>
+            <ul class="dropdown-menu">
+              <li><button type="button" class="dropdown-item add-step">作り方を追加</button></li>
+              <li><button type="button" class="dropdown-item remove-step">作り方を削除</button></li>
+            </ul>
+          </div>
+
+          <!-- 画像 -->
+          <div class="mb-2 text-center">
+            <% if instruction_form.object.image.attached? %>
+              <%= image_tag instruction_form.object.image, class: "img-fluid rounded", style: "max-height: 120px;" %>
+            <% else %>
+              <div class="bg-light rounded" style="height: 120px;"></div>
+            <% end %>
+            <%= instruction_form.file_field :image, class: "form-control mt-1" %>
+          </div>
+
+          <!-- 説明文 -->
+          <%= instruction_form.text_area :description, rows: 2, class: "form-control mb-2", placeholder: "説明文を入力" %>
+
+          <!-- ステップ番号 -->
+          <%= instruction_form.number_field :step, min: 1, class: "form-control", placeholder: "ステップ番号" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 投稿ボタン -->
+    <div>
+      <%= f.submit "投稿する", class: "btn btn-primary" %>
+    </div>
   </div>
 <% end %>
 
-<!-- ✅ テンプレート：非表示 -->
+<!-- ✅ JSテンプレート -->
 <div id="instruction-template" class="d-none">
-  <div class="mb-3 border p-3 rounded instruction-block">
-    <div>
-      <label>ステップ番号</label><br>
-      <input type="number" name="knowhow[instructions_attributes][NEW_INDEX][step]" class="form-control" min="1">
+  <div class="instruction-block card position-relative shadow-sm p-3" style="width: 240px;">
+    <div class="step-badge">NEW_INDEX</div>
+
+    <div class="dropdown step-menu">
+      <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        ⋯
+      </button>
+      <ul class="dropdown-menu">
+        <li><button type="button" class="dropdown-item add-step">作り方を追加</button></li>
+        <li><button type="button" class="dropdown-item remove-step">作り方を削除</button></li>
+      </ul>
     </div>
 
-    <div>
-      <label>説明文</label><br>
-      <textarea name="knowhow[instructions_attributes][NEW_INDEX][description]" class="form-control" rows="3"></textarea>
+    <!-- 画像 -->
+    <div class="mb-2 text-center">
+      <div class="bg-light rounded" style="height: 120px;"></div>
+      <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]" class="form-control mt-1">
     </div>
 
-    <div>
-      <label>画像（任意）</label><br>
-      <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]" class="form-control">
-    </div>
+    <!-- 説明文 -->
+    <textarea name="knowhow[instructions_attributes][NEW_INDEX][description]" class="form-control mb-2" rows="2" placeholder="説明文を入力"></textarea>
 
-    <div class="text-end">
-      <button type="button" class="btn btn-sm btn-danger remove-step">削除</button>
-    </div>
+    <!-- ステップ番号 -->
+    <input type="number" name="knowhow[instructions_attributes][NEW_INDEX][step]" class="form-control" min="1" placeholder="ステップ番号">
   </div>
 </div>
