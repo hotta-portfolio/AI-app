@@ -60,7 +60,7 @@
       <div id="instructions" class="row g-3 mt-3">
         <%= f.fields_for :instructions do |instruction_form| %>
           <div class="col-md-4">
-            <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 300px;">
+            <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 350px;">
               <div class="step-badge" style="z-index: 20;">
                 <%= instruction_form.object.step.presence || 1 %>
               </div>
@@ -73,7 +73,7 @@
               </div>
               <div class="mb-2 text-center">
                 <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
-                       style="width: 100%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden;">
+                       style="width: 100%; aspect-ratio: 16 / 9; cursor: pointer; overflow: hidden;">
                   <span class="upload-icon position-absolute top-50 start-50 translate-middle">📸</span>
                   <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
                   <%= instruction_form.file_field :image, class: "d-none", accept: "image/*", onchange: "previewImage(this)" %>
@@ -89,7 +89,7 @@
       <!-- ✅ 追加用テンプレート -->
       <template id="instruction-template">
         <div class="col-md-4">
-          <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 300px;">
+          <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 350px;">
             <div class="step-badge" style="z-index: 20;">
               STEP_NUMBER
             </div>
@@ -102,7 +102,7 @@
             </div>
             <div class="mb-2 text-center">
               <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
-                    style="width: 100%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden;">
+                    style="width: 100%; aspect-ratio: 16/ 9; cursor: pointer; overflow: hidden;">
                 <span class="upload-icon position-absolute top-50 start-50 translate-middle">📸</span>
                 <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
                 <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]" class="d-none" accept="image/*" onchange="previewImage(this)">
