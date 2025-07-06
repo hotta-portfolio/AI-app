@@ -3,15 +3,13 @@
 
     <!-- メイン2カラム -->
     <div class="row">
-      <!-- 左カラム -->
+      <!-- 左 -->
       <div class="col-md-6">
-        <!-- サムネ -->
         <div class="mb-3 text-center border p-4">
           <div>📸</div>
           <div>サムネ</div>
         </div>
 
-        <!-- カテゴリ -->
         <div class="mb-3">
           <%= f.label :category_type, "カテゴリ" %>
           <%= f.select :category_type,
@@ -20,28 +18,24 @@
               class: "form-select" %>
         </div>
 
-        <!-- 価格 -->
         <div class="mb-3">
           <%= f.label :price %>
           <%= f.number_field :price, class: "form-control" %>
         </div>
       </div>
 
-      <!-- 右カラム -->
+      <!-- 右 -->
       <div class="col-md-6">
-        <!-- タイトル -->
         <div class="mb-3">
           <%= f.label :title %>
           <%= f.text_field :title, class: "form-control" %>
         </div>
 
-        <!-- タグ -->
         <div class="mb-3">
           <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %>
           <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), class: "form-control" %>
         </div>
 
-        <!-- 説明 -->
         <div class="mb-3">
           <%= f.label :description %>
           <%= f.text_area :description, class: "form-control", rows: 5 %>
@@ -51,80 +45,104 @@
 
     <!-- ✅ 作り方セクション -->
     <h3 class="mt-4">作り方</h3>
-    <div id="instructions" class="d-flex flex-wrap gap-3">
+
+    <div class="mb-2">
+      <%= label :software, "使用ソフト" %>
+      <%= text_field :software, class: "form-control", placeholder: "例: Photoshop, Premiere" %>
+    </div>
+
+    <div id="instructions" class="row g-3">
       <%= f.fields_for :instructions do |instruction_form| %>
-        <!-- 使用ソフト -->
-        <div class="mb-2">
-          <%= instruction_form.label :software, "使用ソフト" %>
-          <%= instruction_form.text_field :software, class: "form-control", placeholder: "例: Photoshop, Premiere" %>
-        </div>
+        <div class="col-md-4">
+          <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 300px;">
+            
+            <div class="step-badge" style="z-index: 20;">
+              <%= instruction_form.object.step.presence || 1 %>
+            </div>
 
-        <div class="instruction-block card position-relative shadow-sm p-3" style="width: 240px;">
-          <!-- ステップ番号 -->
-          <div class="step-badge"><%= instruction_form.object.step.presence || "?" %></div>
+            <div class="dropdown step-menu" style="z-index: 20;">
+              <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">⋯</button>
+              <ul class="dropdown-menu">
+                <li>
+                  <button type="button" class="dropdown-item add-step">作り方を追加</button>
+                </li>
+                <li>
+                  <button type="button" class="dropdown-item remove-step">作り方を削除</button>
+                </li>
+              </ul>
+            </div>
 
-          <!-- メニュー -->
-          <div class="dropdown step-menu">
-            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              ⋯
-            </button>
-            <ul class="dropdown-menu">
-              <li><button type="button" class="dropdown-item add-step">作り方を追加</button></li>
-              <li><button type="button" class="dropdown-item remove-step">作り方を削除</button></li>
-            </ul>
+            <div class="mb-2 text-center">
+              <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
+                     style="width: 100%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden;">
+                <!-- 📸アイコン -->
+                <span class="upload-icon position-absolute top-50 start-50 translate-middle">📸</span>
+
+                <!-- プレビュー画像 -->
+                <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded"
+                     style="object-fit: cover;">
+
+                <!-- 非表示 file input -->
+                <%= file_field_tag "knowhow[instructions_attributes][NEW_INDEX][image]",
+                      class: "d-none",
+                      accept: "image/*",
+                      onchange: "previewImage(this)" %>
+              </label>
+            </div>
+
+            <%= instruction_form.text_area :description, rows: 4, class: "form-control mb-2", placeholder: "説明文を入力" %>
+            <%= instruction_form.hidden_field :step %>
+
           </div>
-
-          <!-- 画像 -->
-          <div class="mb-2 text-center">
-            <% if instruction_form.object.image.attached? %>
-              <%= image_tag instruction_form.object.image, class: "img-fluid rounded", style: "max-height: 120px;" %>
-            <% else %>
-              <div class="bg-light rounded" style="height: 120px;"></div>
-            <% end %>
-            <%= instruction_form.file_field :image, class: "form-control mt-1" %>
-          </div>
-
-          <!-- 説明文 -->
-          <%= instruction_form.text_area :description, rows: 2, class: "form-control mb-2", placeholder: "説明文を入力" %>
-
-          <!-- ステップ番号 -->
-          <%= instruction_form.number_field :step, min: 1, class: "form-control", placeholder: "ステップ番号" %>
         </div>
       <% end %>
     </div>
 
-    <!-- 投稿ボタン -->
-    <div>
+    <div class="mt-4">
       <%= f.submit "投稿する", class: "btn btn-primary" %>
     </div>
+
   </div>
 <% end %>
 
 <!-- ✅ JSテンプレート -->
 <div id="instruction-template" class="d-none">
-  <div class="instruction-block card position-relative shadow-sm p-3" style="width: 240px;">
-    <div class="step-badge">NEW_INDEX</div>
+  <div class="col-md-4">
+    <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 300px;">
+      
+      <div class="step-badge" style="z-index: 20;">STEP_NUMBER</div>
 
-    <div class="dropdown step-menu">
-      <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        ⋯
-      </button>
-      <ul class="dropdown-menu">
-        <li><button type="button" class="dropdown-item add-step">作り方を追加</button></li>
-        <li><button type="button" class="dropdown-item remove-step">作り方を削除</button></li>
-      </ul>
+      <div class="dropdown step-menu" style="z-index: 20;">
+        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">⋯</button>
+        <ul class="dropdown-menu">
+          <li>
+            <button type="button" class="dropdown-item add-step">作り方を追加</button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item remove-step">作り方を削除</button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="mb-2 text-center">
+        <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
+               style="width: 100%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden;">
+          <span class="upload-icon position-absolute top-50 start-50 translate-middle">📸</span>
+          <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded"
+               style="object-fit: cover;">
+          <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]"
+                 class="d-none"
+                 accept="image/*"
+                 onchange="previewImage(this)">
+        </label>
+      </div>
+
+      <textarea name="knowhow[instructions_attributes][NEW_INDEX][description]"
+                class="form-control mb-2"
+                rows="4"
+                placeholder="説明文を入力"></textarea>
+
+      <input type="hidden" name="knowhow[instructions_attributes][NEW_INDEX][step]" value="STEP_NUMBER">
     </div>
-
-    <!-- 画像 -->
-    <div class="mb-2 text-center">
-      <div class="bg-light rounded" style="height: 120px;"></div>
-      <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]" class="form-control mt-1">
-    </div>
-
-    <!-- 説明文 -->
-    <textarea name="knowhow[instructions_attributes][NEW_INDEX][description]" class="form-control mb-2" rows="2" placeholder="説明文を入力"></textarea>
-
-    <!-- ステップ番号 -->
-    <input type="number" name="knowhow[instructions_attributes][NEW_INDEX][step]" class="form-control" min="1" placeholder="ステップ番号">
   </div>
 </div>
