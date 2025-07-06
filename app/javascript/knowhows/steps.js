@@ -24,20 +24,3 @@ document.addEventListener("turbo:load", function () {
     }
   });
 });
-
-
-function previewImage(input) {
-  const file = input.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const preview = input.closest("label").querySelector(".img-preview");
-    preview.src = e.target.result;
-    preview.classList.remove("d-none");
-
-    // アイコンを非表示に
-    input.closest("label").querySelector(".upload-icon").style.display = "none";
-  };
-  reader.readAsDataURL(file);
-}

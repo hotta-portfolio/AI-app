@@ -20,4 +20,3 @@ document.addEventListener("turbo:load", function () {
     });
   }
 });
-s

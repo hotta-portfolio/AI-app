@@ -1,148 +1,123 @@
 <%= form_with model: @knowhow, local: true, multipart: true do |f| %>
   <div class="container">
 
-    <!-- メイン2カラム -->
-    <div class="row">
-      <!-- 左 -->
-      <div class="col-md-6">
-        <div class="mb-3 text-center border p-4">
-          <div>📸</div>
-          <div>サムネ</div>
+    <!-- STEP 1: 基本情報 -->
+    <div id="step-1" class="mt-5">
+      <div class="row justify-content-center">
+        <!-- 左カラム -->
+        <div class="col-md-4">
+          <div class="mb-4">
+            <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
+                  style="width: 90%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden;">
+              <span class="upload-icon position-absolute top-50 start-50 translate-middle">📸</span>
+              <%= tag.img src: "", class: "thumbnail-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded", style: "object-fit: cover;" %>
+              <%= f.file_field :thumbnail, accept: "image/*", class: "d-none thumbnail-input" %>
+            </label>
+          </div>
         </div>
 
-        <div class="mb-3">
-          <%= f.label :category_type, "カテゴリ" %>
-          <%= f.select :category_type,
-              Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
-              { include_blank: "選択してください" },
-              class: "form-select" %>
-        </div>
-
-        <div class="mb-3">
-          <%= f.label :price %>
-          <%= f.number_field :price, class: "form-control" %>
-        </div>
-      </div>
-
-      <!-- 右 -->
-      <div class="col-md-6">
-        <div class="mb-3">
-          <%= f.label :title %>
-          <%= f.text_field :title, class: "form-control" %>
-        </div>
-
-        <div class="mb-3">
-          <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %>
-          <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), class: "form-control" %>
-        </div>
-
-        <div class="mb-3">
-          <%= f.label :description %>
-          <%= f.text_area :description, class: "form-control", rows: 5 %>
+        <!-- 右カラム -->
+        <div class="col-md-4">
+          <div class="mb-3">
+            <%= f.label :title %>
+            <%= f.text_field :title, class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :description %>
+            <%= f.text_area :description, class: "form-control", rows: 5 %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :category_type, "カテゴリ" %>
+            <%= f.select :category_type,
+                Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
+                { include_blank: "選択してください" },
+                class: "form-select" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :price %>
+            <%= f.number_field :price, class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %>
+            <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), class: "form-control" %>
+          </div>
+          <div class="text-end mt-4">
+            <button type="button" class="btn btn-primary" id="go-to-step-2">次へ</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ✅ 作り方セクション -->
-    <h3 class="mt-4">作り方</h3>
+    <!-- STEP 2: 作り方 -->
+    <div id="step-2" class="d-none">
+      <h3 class="mt-4">作り方</h3>
 
-    <div class="mb-2">
-      <%= label :software, "使用ソフト" %>
-      <%= text_field :software, class: "form-control", placeholder: "例: Photoshop, Premiere" %>
-    </div>
+      <div class="mb-2 mt-3">
+        <%= label_tag :software, "使用ソフト" %>
+        <%= text_field_tag :software, "", class: "form-control", placeholder: "例: Photoshop, Premiere" %>
+      </div>
 
-    <div id="instructions" class="row g-3">
-      <%= f.fields_for :instructions do |instruction_form| %>
+      <div id="instructions" class="row g-3 mt-3">
+        <%= f.fields_for :instructions do |instruction_form| %>
+          <div class="col-md-4">
+            <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 300px;">
+              <div class="step-badge" style="z-index: 20;">
+                <%= instruction_form.object.step.presence || 1 %>
+              </div>
+              <div class="dropdown step-menu" style="z-index: 20;">
+                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">⋯</button>
+                <ul class="dropdown-menu">
+                  <li><button type="button" class="dropdown-item add-step">作り方を追加</button></li>
+                  <li><button type="button" class="dropdown-item remove-step">作り方を削除</button></li>
+                </ul>
+              </div>
+              <div class="mb-2 text-center">
+                <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
+                       style="width: 100%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden;">
+                  <span class="upload-icon position-absolute top-50 start-50 translate-middle">📸</span>
+                  <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
+                  <%= instruction_form.file_field :image, class: "d-none", accept: "image/*", onchange: "previewImage(this)" %>
+                </label>
+              </div>
+              <%= instruction_form.text_area :description, rows: 4, class: "form-control mb-2", placeholder: "説明文を入力" %>
+              <%= instruction_form.hidden_field :step %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- ✅ 追加用テンプレート -->
+      <template id="instruction-template">
         <div class="col-md-4">
           <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 300px;">
-            
             <div class="step-badge" style="z-index: 20;">
-              <%= instruction_form.object.step.presence || 1 %>
+              STEP_NUMBER
             </div>
-
             <div class="dropdown step-menu" style="z-index: 20;">
               <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">⋯</button>
               <ul class="dropdown-menu">
-                <li>
-                  <button type="button" class="dropdown-item add-step">作り方を追加</button>
-                </li>
-                <li>
-                  <button type="button" class="dropdown-item remove-step">作り方を削除</button>
-                </li>
+                <li><button type="button" class="dropdown-item add-step">作り方を追加</button></li>
+                <li><button type="button" class="dropdown-item remove-step">作り方を削除</button></li>
               </ul>
             </div>
-
             <div class="mb-2 text-center">
               <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
-                     style="width: 100%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden;">
-                <!-- 📸アイコン -->
+                    style="width: 100%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden;">
                 <span class="upload-icon position-absolute top-50 start-50 translate-middle">📸</span>
-
-                <!-- プレビュー画像 -->
-                <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded"
-                     style="object-fit: cover;">
-
-                <!-- 非表示 file input -->
-                <%= file_field_tag "knowhow[instructions_attributes][NEW_INDEX][image]",
-                      class: "d-none",
-                      accept: "image/*",
-                      onchange: "previewImage(this)" %>
+                <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
+                <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]" class="d-none" accept="image/*" onchange="previewImage(this)">
               </label>
             </div>
-
-            <%= instruction_form.text_area :description, rows: 4, class: "form-control mb-2", placeholder: "説明文を入力" %>
-            <%= instruction_form.hidden_field :step %>
-
+            <textarea name="knowhow[instructions_attributes][NEW_INDEX][description]" rows="4" class="form-control mb-2" placeholder="説明文を入力"></textarea>
+            <input type="hidden" name="knowhow[instructions_attributes][NEW_INDEX][step]" value="STEP_NUMBER">
           </div>
         </div>
-      <% end %>
-    </div>
+      </template>
 
-    <div class="mt-4">
-      <%= f.submit "投稿する", class: "btn btn-primary" %>
+      <div class="d-flex justify-content-between mt-4">
+        <button type="button" class="btn btn-secondary" id="back-to-step-1">戻る</button>
+        <%= f.submit "投稿する", class: "btn btn-primary" %>
+      </div>
     </div>
-
   </div>
 <% end %>
-
-<!-- ✅ JSテンプレート -->
-<div id="instruction-template" class="d-none">
-  <div class="col-md-4">
-    <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 300px;">
-      
-      <div class="step-badge" style="z-index: 20;">STEP_NUMBER</div>
-
-      <div class="dropdown step-menu" style="z-index: 20;">
-        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">⋯</button>
-        <ul class="dropdown-menu">
-          <li>
-            <button type="button" class="dropdown-item add-step">作り方を追加</button>
-          </li>
-          <li>
-            <button type="button" class="dropdown-item remove-step">作り方を削除</button>
-          </li>
-        </ul>
-      </div>
-
-      <div class="mb-2 text-center">
-        <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
-               style="width: 100%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden;">
-          <span class="upload-icon position-absolute top-50 start-50 translate-middle">📸</span>
-          <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded"
-               style="object-fit: cover;">
-          <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]"
-                 class="d-none"
-                 accept="image/*"
-                 onchange="previewImage(this)">
-        </label>
-      </div>
-
-      <textarea name="knowhow[instructions_attributes][NEW_INDEX][description]"
-                class="form-control mb-2"
-                rows="4"
-                placeholder="説明文を入力"></textarea>
-
-      <input type="hidden" name="knowhow[instructions_attributes][NEW_INDEX][step]" value="STEP_NUMBER">
-    </div>
-  </div>
-</div>
