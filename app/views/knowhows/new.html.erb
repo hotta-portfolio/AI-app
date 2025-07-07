@@ -1,62 +1,79 @@
 <%= form_with model: @knowhow, local: true, multipart: true do |f| %>
   <div class="container">
 
-<!-- STEP 1: 基本情報 -->
-<div id="step-1" class="mt-5">
-  <div class="d-flex flex-wrap gap-4 justify-content-center">
-    <!-- 左カラム：メディア -->
-    <div class="flex-grow-1" style="min-width: 300px; max-width: 60%;">
-      <h4 class="mb-3">画像・動画・音声アップロード</h4>
+    <!-- STEP 1: 基本情報 -->
+    <div id="step-1" class="mt-5">
+      <div class="container" style="max-width: 1140px;">
+        <div class="d-flex flex-row flex-wrap gap-5 justify-content-center">
 
-      <div class="row mb-4" id="media-upload-container">
-        <div id="media-preview-container" class="d-flex flex-wrap gap-4 mb-3"></div>
-        <%= tag.div "", class: "thumbnail-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded d-flex justify-content-center align-items-center text-muted", style: "z-index: 10;" %>
-        <%= f.file_field :media_files, multiple: false, direct_upload: true,
-              accept: "image/*,video/*,audio/*",
-              class: "d-none thumbnail-input" %>
-      </div>
+          <!-- 左カラム：メディアアップロード -->
+          <div class="media-section d-flex flex-row flex-nowrap gap-4" style="min-width: 300px; flex: 1;">
+            
+            <!-- サムネイル3つ -->
+            <div class="d-flex flex-column gap-3" id="media-preview-container">
+              <% 3.times do |i| %>
+                <label class="upload-frame border rounded bg-light d-flex justify-content-center align-items-center"
+                       style="width: 80px; height: 80px; cursor: pointer; position: relative;"
+                       data-index="<%= i %>">
+                  <span class="text-muted">＋</span>
+                  <%= f.file_field :media_files, multiple: false, direct_upload: true,
+                        accept: "image/*,video/*,audio/*",
+                        class: "d-none thumbnail-input", id: "upload-input-#{i}" %>
+                </label>
+              <% end %>
+            </div>
 
-      <!-- 追加ボタン -->
-      <div class="mb-4">
-        <button type="button" class="btn btn-outline-secondary btn-sm" id="add-media-upload">＋アップロードを追加</button>
+            <!-- メインアップロード -->
+            <div class="flex-grow-1">
+              <label class="upload-frame border rounded bg-light d-flex justify-content-center align-items-center"
+                     style="width: 100%; height: 360px; cursor: pointer; position: relative;"
+                     id="main-upload-label">
+                <span class="text-muted position-absolute top-50 start-50 translate-middle" id="main-upload-placeholder">＋ メインメディア</span>
+                <%= f.file_field :media_files, multiple: false, direct_upload: true,
+                      accept: "image/*,video/*,audio/*",
+                      class: "d-none", id: "main-upload-input" %>
+              </label>
+              <div id="main-preview-content" class="mt-3"></div>
+            </div>
+          </div>
+
+          <!-- 右カラム：基本情報 -->
+          <div style="min-width: 250px; max-width: 400px; flex: 1;">
+            <div class="mb-3">
+              <%= f.label :title %>
+              <%= f.text_field :title, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+              <%= f.label :description %>
+              <%= f.text_area :description, class: "form-control", rows: 5 %>
+            </div>
+            <div class="mb-3">
+              <%= f.label :category_type, "カテゴリ" %>
+              <%= f.select :category_type,
+                  Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
+                  { include_blank: "選択してください" },
+                  class: "form-select" %>
+            </div>
+            <div class="mb-3">
+              <%= f.label :price %>
+              <%= f.number_field :price, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+              <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %>
+              <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), class: "form-control" %>
+            </div>
+            <div class="text-end mt-4">
+              <button type="button" class="btn btn-primary" id="go-to-step-2">次へ</button>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
-
-    <!-- 右カラム：基本情報 -->
-    <div style="min-width: 250px; max-width: 35%;">
-      <div class="mb-3">
-        <%= f.label :title %>
-        <%= f.text_field :title, class: "form-control" %>
-      </div>
-      <div class="mb-3">
-        <%= f.label :description %>
-        <%= f.text_area :description, class: "form-control", rows: 5 %>
-      </div>
-      <div class="mb-3">
-        <%= f.label :category_type, "カテゴリ" %>
-        <%= f.select :category_type,
-            Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
-            { include_blank: "選択してください" },
-            class: "form-select" %>
-      </div>
-      <div class="mb-3">
-        <%= f.label :price %>
-        <%= f.number_field :price, class: "form-control" %>
-      </div>
-      <div class="mb-3">
-        <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %>
-        <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), class: "form-control" %>
-      </div>
-      <div class="text-end mt-4">
-        <button type="button" class="btn btn-primary" id="go-to-step-2">次へ</button>
-      </div>
-    </div>
-  </div>
-</div>
 
     <!-- STEP 2: 作り方 -->
     <div id="step-2" class="d-none mt-5">
-      <h3 class="mb-4">作り方</h3>
+      <h3 class="mb-4">生成手順</h3>
 
       <div class="mb-3">
         <%= label_tag :software, "使用ソフト" %>
@@ -96,9 +113,7 @@
       <template id="instruction-template">
         <div class="col-md-4">
           <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 350px;">
-            <div class="step-badge" style="z-index: 20;">
-              STEP_NUMBER
-            </div>
+            <div class="step-badge" style="z-index: 20;">STEP_NUMBER</div>
             <div class="dropdown step-menu" style="z-index: 20;">
               <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">⋯</button>
               <ul class="dropdown-menu">

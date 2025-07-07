@@ -1,69 +1,63 @@
-document.addEventListener("turbo:load", function () {
-  const container = document.getElementById("media-preview-container");
-  const addBtn = document.getElementById("add-media-upload");
+document.addEventListener("turbo:load", () => {
+  // 左サムネイル
+  const thumbnails = document.querySelectorAll(".thumbnail-input");
 
-  if (!container || !addBtn) return;
-
-  addBtn.addEventListener("click", () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.name = "knowhow[media_files][]"; // nameを配列にするのが重要
-    input.accept = "image/*,video/*,audio/*";
-    input.classList.add("d-none"); // 表示しない
-    input.multiple = false;
-
-    // change時のプレビュー追加処理
-    input.addEventListener("change", function () {
-      const file = this.files[0];
-      if (!file) return;
-
-      const previewEl = createPreviewElement(file);
-      if (!previewEl) return;
-
-      previewEl.classList.add("position-relative", "rounded");
-      previewEl.style.width = "180px";
-      previewEl.style.height = "120px";
-      previewEl.style.objectFit = "cover";
-      previewEl.style.border = "1px solid #ccc";
-
-      const wrapper = document.createElement("div");
-      wrapper.classList.add("d-flex", "flex-column", "align-items-center", "gap-1");
-      wrapper.appendChild(previewEl);
-      wrapper.appendChild(input); // inputも一緒にフォームに残す
-
-      container.appendChild(wrapper);
+  thumbnails.forEach((input) => {
+    input.addEventListener("change", () => {
+      const label = input.closest("label");
+      label.innerHTML = ""; // 中身クリア
+      previewInElement(input.files[0], label);
     });
-
-    input.click(); // ファイル選択を即発火
   });
 
-  function createPreviewElement(file) {
+  // 右：メイン
+  const mainInput = document.getElementById("main-upload-input");
+  const mainLabel = document.getElementById("main-upload-label");
+  const mainPlaceholder = document.getElementById("main-upload-placeholder");
+  const mainPreviewContent = document.getElementById("main-preview-content");
+
+  if (mainInput && mainLabel && mainPreviewContent) {
+    mainInput.addEventListener("change", () => {
+      const file = mainInput.files[0];
+      if (!file) return;
+
+      mainLabel.innerHTML = ""; // ラベル内クリア
+      previewInElement(file, mainLabel);
+
+      mainPreviewContent.innerHTML = ""; // 既存があれば削除
+    });
+  }
+
+  function previewInElement(file, container) {
     const url = URL.createObjectURL(file);
     const type = file.type;
 
+    let el;
     if (type.startsWith("image/")) {
-      const img = document.createElement("img");
-      img.src = url;
-      return img;
+      el = document.createElement("img");
+      el.src = url;
+      el.style.objectFit = "cover";
+      el.style.width = "100%";
+      el.style.height = "100%";
+      el.className = "rounded";
+    } else if (type.startsWith("video/")) {
+      el = document.createElement("video");
+      el.src = url;
+      el.controls = true;
+      el.style.width = "100%";
+      el.style.height = "100%";
+      el.className = "rounded";
+    } else if (type.startsWith("audio/")) {
+      el = document.createElement("audio");
+      el.src = url;
+      el.controls = true;
+      el.className = "w-100";
     }
 
-    if (type.startsWith("video/")) {
-      const video = document.createElement("video");
-      video.src = url;
-      video.controls = true;
-      video.muted = true;
-      video.playsInline = true;
-      return video;
+    if (el) {
+      container.appendChild(el);
+    } else {
+      container.innerHTML = "<div class='text-muted'>Unsupported format</div>";
     }
-
-    if (type.startsWith("audio/")) {
-      const audio = document.createElement("audio");
-      audio.src = url;
-      audio.controls = true;
-      audio.style.width = "100%";
-      return audio;
-    }
-
-    return null;
   }
 });
