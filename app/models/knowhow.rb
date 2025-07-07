@@ -9,6 +9,7 @@ class Knowhow < ApplicationRecord
 
   # --- 関連付け (Associations) ---
   belongs_to :user
+  has_one_attached :thumbnail
   has_many :purchases, dependent: :destroy
   has_one :chat_room, dependent: :destroy
   has_many :instructions, -> { order(:step) }, dependent: :destroy

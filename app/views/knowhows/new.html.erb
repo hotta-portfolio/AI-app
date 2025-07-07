@@ -1,59 +1,64 @@
 <%= form_with model: @knowhow, local: true, multipart: true do |f| %>
   <div class="container">
 
-    <!-- STEP 1: 基本情報 -->
-    <div id="step-1" class="mt-5">
-      <div class="row justify-content-center">
-        <!-- 左カラム -->
-        <div class="col-md-4">
-          <div class="mb-4">
-            <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center text-center gap-2 position-relative"
-                  style="width: 90%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden; border: 2px solid #ccc;">
-              <i class="fa-solid fa-image fa-2x text-muted mb-2"></i>
-              <span class="text-muted small">サムネイル画像をアップロード</span>
-              <%= tag.img src: "", class: "thumbnail-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded", style: "object-fit: cover;" %>
-              <%= f.file_field :thumbnail, accept: "image/*", class: "d-none thumbnail-input" %>
-            </label>
-          </div>
-        </div>
+<!-- STEP 1: 基本情報 -->
+<div id="step-1" class="mt-5">
+  <div class="d-flex flex-wrap gap-4 justify-content-center">
+    <!-- 左カラム：メディア -->
+    <div class="flex-grow-1" style="min-width: 300px; max-width: 60%;">
+      <h4 class="mb-3">画像・動画・音声アップロード</h4>
 
-        <!-- 右カラム -->
-        <div class="col-md-4">
-          <div class="mb-3">
-            <%= f.label :title %>
-            <%= f.text_field :title, class: "form-control" %>
-          </div>
-          <div class="mb-3">
-            <%= f.label :description %>
-            <%= f.text_area :description, class: "form-control", rows: 5 %>
-          </div>
-          <div class="mb-3">
-            <%= f.label :category_type, "カテゴリ" %>
-            <%= f.select :category_type,
-                Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
-                { include_blank: "選択してください" },
-                class: "form-select" %>
-          </div>
-          <div class="mb-3">
-            <%= f.label :price %>
-            <%= f.number_field :price, class: "form-control" %>
-          </div>
-          <div class="mb-3">
-            <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %>
-            <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), class: "form-control" %>
-          </div>
-          <div class="text-end mt-4">
-            <button type="button" class="btn btn-primary" id="go-to-step-2">次へ</button>
-          </div>
-        </div>
+      <div class="row mb-4" id="media-upload-container">
+        <div id="media-preview-container" class="d-flex flex-wrap gap-4 mb-3"></div>
+        <%= tag.div "", class: "thumbnail-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded d-flex justify-content-center align-items-center text-muted", style: "z-index: 10;" %>
+        <%= f.file_field :media_files, multiple: false, direct_upload: true,
+              accept: "image/*,video/*,audio/*",
+              class: "d-none thumbnail-input" %>
+      </div>
+
+      <!-- 追加ボタン -->
+      <div class="mb-4">
+        <button type="button" class="btn btn-outline-secondary btn-sm" id="add-media-upload">＋アップロードを追加</button>
       </div>
     </div>
 
-    <!-- STEP 2: 作り方 -->
-    <div id="step-2" class="d-none">
-      <h3 class="mt-4">作り方</h3>
+    <!-- 右カラム：基本情報 -->
+    <div style="min-width: 250px; max-width: 35%;">
+      <div class="mb-3">
+        <%= f.label :title %>
+        <%= f.text_field :title, class: "form-control" %>
+      </div>
+      <div class="mb-3">
+        <%= f.label :description %>
+        <%= f.text_area :description, class: "form-control", rows: 5 %>
+      </div>
+      <div class="mb-3">
+        <%= f.label :category_type, "カテゴリ" %>
+        <%= f.select :category_type,
+            Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
+            { include_blank: "選択してください" },
+            class: "form-select" %>
+      </div>
+      <div class="mb-3">
+        <%= f.label :price %>
+        <%= f.number_field :price, class: "form-control" %>
+      </div>
+      <div class="mb-3">
+        <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %>
+        <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), class: "form-control" %>
+      </div>
+      <div class="text-end mt-4">
+        <button type="button" class="btn btn-primary" id="go-to-step-2">次へ</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-      <div class="mb-2 mt-3">
+    <!-- STEP 2: 作り方 -->
+    <div id="step-2" class="d-none mt-5">
+      <h3 class="mb-4">作り方</h3>
+
+      <div class="mb-3">
         <%= label_tag :software, "使用ソフト" %>
         <%= text_field_tag :software, "", class: "form-control", placeholder: "例: ChatGPT、Adobe Firefly" %>
       </div>
@@ -87,7 +92,7 @@
         <% end %>
       </div>
 
-      <!-- ✅ 追加用テンプレート -->
+      <!-- テンプレート -->
       <template id="instruction-template">
         <div class="col-md-4">
           <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 350px;">
@@ -103,7 +108,7 @@
             </div>
             <div class="mb-2 text-center">
               <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
-                    style="width: 100%; aspect-ratio: 16/ 9; cursor: pointer; overflow: hidden;">
+                     style="width: 100%; aspect-ratio: 16/ 9; cursor: pointer; overflow: hidden;">
                 <i class="fa-solid fa-image fa-2x upload-icon position-absolute top-50 start-50 translate-middle text-muted"></i>
                 <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
                 <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]" class="d-none" accept="image/*" onchange="previewImage(this)">
@@ -115,7 +120,7 @@
         </div>
       </template>
 
-      <div class="d-flex justify-content-between mt-4">
+      <div class="d-flex justify-content-between mt-5">
         <button type="button" class="btn btn-secondary" id="back-to-step-1">戻る</button>
         <%= f.submit "投稿する", class: "btn btn-primary" %>
       </div>

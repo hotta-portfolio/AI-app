@@ -96,6 +96,7 @@ end
       :price,
       :category_type,
       :tag_list,
+      :thumbnail,
       media_files: [],
       tag_ids: [],
       instructions_attributes: [ :id, :step, :description, :image, :_destroy ]
