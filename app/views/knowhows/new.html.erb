@@ -7,9 +7,10 @@
         <!-- 左カラム -->
         <div class="col-md-4">
           <div class="mb-4">
-            <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
-                  style="width: 90%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden;">
-              <span class="upload-icon position-absolute top-50 start-50 translate-middle">📸</span>
+            <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center text-center gap-2 position-relative"
+                  style="width: 90%; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden; border: 2px solid #ccc;">
+              <i class="fa-solid fa-image fa-2x text-muted mb-2"></i>
+              <span class="text-muted small">サムネイル画像をアップロード</span>
               <%= tag.img src: "", class: "thumbnail-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded", style: "object-fit: cover;" %>
               <%= f.file_field :thumbnail, accept: "image/*", class: "d-none thumbnail-input" %>
             </label>
@@ -54,7 +55,7 @@
 
       <div class="mb-2 mt-3">
         <%= label_tag :software, "使用ソフト" %>
-        <%= text_field_tag :software, "", class: "form-control", placeholder: "例: Photoshop, Premiere" %>
+        <%= text_field_tag :software, "", class: "form-control", placeholder: "例: ChatGPT、Adobe Firefly" %>
       </div>
 
       <div id="instructions" class="row g-3 mt-3">
@@ -74,7 +75,7 @@
               <div class="mb-2 text-center">
                 <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
                        style="width: 100%; aspect-ratio: 16 / 9; cursor: pointer; overflow: hidden;">
-                  <span class="upload-icon position-absolute top-50 start-50 translate-middle">📸</span>
+                  <i class="fa-solid fa-image fa-2x upload-icon position-absolute top-50 start-50 translate-middle text-muted"></i>
                   <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
                   <%= instruction_form.file_field :image, class: "d-none", accept: "image/*", onchange: "previewImage(this)" %>
                 </label>
@@ -103,7 +104,7 @@
             <div class="mb-2 text-center">
               <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
                     style="width: 100%; aspect-ratio: 16/ 9; cursor: pointer; overflow: hidden;">
-                <span class="upload-icon position-absolute top-50 start-50 translate-middle">📸</span>
+                <i class="fa-solid fa-image fa-2x upload-icon position-absolute top-50 start-50 translate-middle text-muted"></i>
                 <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
                 <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]" class="d-none" accept="image/*" onchange="previewImage(this)">
               </label>
