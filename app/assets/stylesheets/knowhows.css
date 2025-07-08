@@ -60,20 +60,25 @@
   }
 }
 
-  .step-badge {
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    background-color: #f0f0f0;
-    border: 2px solid #000;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-weight: bold;
-  }
+.step-badge {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  background-color: #f0f0f0;
+  border: 2px solid #000;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-weight: bold;
+}
 
-  .step-menu {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-  }
+.step-menu {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
 
+.form-control::placeholder {
+  color: #adb5bd !important;
+  font-size: 0.85rem !important;
+  opacity: 1;
+}
