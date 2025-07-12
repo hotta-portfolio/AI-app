@@ -30,10 +30,11 @@ end
   def create
     @knowhow = current_user.knowhows.new(knowhow_params)
     if @knowhow.save
-      # 保存成功したら詳細ページへリダイレクトし、メッセージを表示
+      if params[:knowhow][:media_files].present?
+        @knowhow.media_files.attach(params[:knowhow][:media_files])
+      end
       redirect_to @knowhow, notice: "ノウハウを投稿しました"
     else
-      # 保存失敗なら投稿フォームを再表示してエラーメッセージを表示
       render :new
     end
   end

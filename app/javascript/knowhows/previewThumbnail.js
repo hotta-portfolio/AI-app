@@ -1,3 +1,4 @@
+
 document.addEventListener("turbo:load", () => {
   // 左サムネイル
   const thumbnails = document.querySelectorAll(".thumbnail-input");
@@ -5,12 +6,18 @@ document.addEventListener("turbo:load", () => {
   thumbnails.forEach((input) => {
     input.addEventListener("change", () => {
       const label = input.closest("label");
-      label.innerHTML = ""; // 中身クリア
+      if (!label) return;
+
+      // input以外の要素を削除する（input自体は削除しない）
+      [...label.children].forEach(child => {
+        if (child !== input) child.remove();
+      });
+
       previewInElement(input.files[0], label);
     });
   });
 
-  // 右：メイン
+  // メインアップロード
   const mainInput = document.getElementById("main-upload-input");
   const mainLabel = document.getElementById("main-upload-label");
   const mainPlaceholder = document.getElementById("main-upload-placeholder");
@@ -21,10 +28,13 @@ document.addEventListener("turbo:load", () => {
       const file = mainInput.files[0];
       if (!file) return;
 
-      mainLabel.innerHTML = ""; // ラベル内クリア
-      previewInElement(file, mainLabel);
+      // メインラベルの中をクリア（inputは除外）
+      [...mainLabel.children].forEach(child => {
+        if (child !== mainInput) child.remove();
+      });
 
-      mainPreviewContent.innerHTML = ""; // 既存があれば削除
+      previewInElement(file, mainLabel);
+      mainPreviewContent.innerHTML = "";
     });
   }
 
