@@ -4,13 +4,34 @@ class ChatRoomsController < ApplicationController
   before_action :authorize_user!, only: [ :show ]
 
   def index
-    @chat_rooms = ChatRoom.rooms_for(params[:role], current_user.id)
+    if params[:role].present?
+      # roleがある場合のみチャットルームを取得
+      @chat_rooms = ChatRoom.rooms_for(params[:role], current_user.id)
+    else
+      # roleがない場合は空にして、最初はカードを非表示
+      @chat_rooms = []
+    end
   end
 
   def show
     @message = Message.new
     @messages = @chat_room.messages.includes(:user)
+
+    # 出品者（Knowhowの投稿者）
+    seller = @chat_room.knowhow.user
+
+    # 購入者（そのKnowhowを購入したユーザー）
+    buyer = @chat_room.knowhow.purchases.first&.user
+
+    # 現在ログイン中のユーザーから見た相手
+    @chat_partner =
+      if current_user == seller
+        buyer
+      else
+        seller
+      end
   end
+
 
   # ここから追加
   def create

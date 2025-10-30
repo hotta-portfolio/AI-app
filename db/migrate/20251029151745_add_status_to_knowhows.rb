@@ -1,0 +1,5 @@
+class AddStatusToKnowhows < ActiveRecord::Migration[8.0]
+  def change
+    add_column :knowhows, :status, :string
+  end
+end

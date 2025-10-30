@@ -15,7 +15,10 @@ class MessagesController < ApplicationController
   private
 
   def render_message(message)
-    ApplicationController.renderer.render(partial: "messages/message", locals: { message: message })
+    ApplicationController.renderer.render(
+      partial: "messages/message",
+      locals: { message: message, current_user_loc: message.user }
+      # current_user_loc にメッセージ送信者を渡す
+    )
   end
 end
-

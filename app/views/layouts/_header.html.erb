@@ -1,4 +1,4 @@
-<header class="navbar navbar-expand-lg bg-white shadow-sm px-4 py-3 border-bottom" style="font-family: 'BIZ UDPGothic', sans-serif;">
+<header class="navbar navbar-expand-lg shadow-sm px-4 py-3 fixed-top" style="font-family: 'BIZ UDPGothic', sans-serif;">
   <div class="container-fluid d-flex justify-content-between align-items-center">
 
     <!-- 左：ロゴ＋検索 -->
@@ -27,7 +27,7 @@
           </div>
 
           <!-- 🔽 詳細検索ドロップダウン -->
-          <div id="search-dropdown" class="border mt-1 p-3 rounded bg-white shadow position-absolute w-100 d-none" style="z-index: 1000;">
+          <div id="search-dropdown" class="border mt-1 p-3 rounded bg-black shadow position-absolute w-100 d-none" style="z-index: 1000;">
             <!-- ボタン群 -->
             <div class="mb-2 d-flex justify-content-center gap-3">
               <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-category">カテゴリからさがす</button>
@@ -60,57 +60,63 @@
         <% end %>
       </div>
     </div>
-
     <!-- 右メニュー -->
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center h-100">
       <!-- AI生成一覧リンク -->
-      <%= link_to knowhows_path, class: "text-decoration-none text-dark fw-bold me-4 d-inline-block", style: "position: relative; left: -30px;" do %>
-        <div class="mt-1" style="font-size: 0.9rem;">AI生成一覧</div>
+      <%= link_to knowhows_path, class: "text-decoration-none text-dark fw-bold me-4 d-flex align-items-center" do %>
+        <div style="font-size: 0.9rem;">AI生成一覧</div>
+      <% end %>
+
+      <%= link_to chat_rooms_path, class: "text-decoration-none text-dark fw-bold me-4 d-flex align-items-center" do %>
+        <div style="font-size: 0.9rem;">チャット一覧</div>
       <% end %>
 
       <% if user_signed_in? %>
         <!-- 投稿ボタン -->
         <%= link_to new_knowhow_path, class: "d-flex flex-column align-items-center text-decoration-none text-dark me-3" do %>
-          <div class="btn btn-outline-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 1rem;">
-            ＋
-          </div>
+          <div class="btn btn-outline-dark rounded-circle d-flex align-items-center justify-content-center border border-white"
+              style="width: 30px; height: 30px; font-size: 1rem;">＋</div>
           <div class="mt-1 fw-semibold" style="font-size: 0.8rem;">投稿する</div>
         <% end %>
 
         <!-- ユーザーメニュー -->
-        <div class="dropdown d-flex flex-column align-items-center ms-3">
-          <button class="btn p-0 border-0 bg-transparent d-flex flex-column align-items-center"
-            type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="dropdown d-flex flex-column align-items-center ms-3 h-100">
+          <button class="btn p-0 border-0 bg-transparent d-flex flex-column align-items-center h-100"
+                  type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
             <% if current_user.avatar.attached? %>
-              <%= image_tag current_user.avatar.variant(resize_to_fill: [30, 30]), class: "rounded-circle", style: "width: 30px; height: 30px; object-fit: cover;" %>
+              <%= image_tag current_user.avatar.variant(resize_to_fill: [30, 30]),
+                            class: "rounded-circle", style: "width: 30px; height: 30px; object-fit: cover;" %>
             <% else %>
-              <div class="btn btn-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                <%= current_user.name.present? ? current_user.name[0].upcase : "？" %>
-              </div>
+          <div class="rounded-circle border border-white" 
+              style="width: 30px; height: 30px; overflow: hidden; background-color: white;">
+            <%= image_tag 'default_avatar.png',
+                  style: "width: 45px; height: 45px; object-fit: cover; margin-left: -8.5px; margin-top: -6px;" %>
+          </div>
             <% end %>
             <div class="fw-semibold mt-1" style="font-size: 0.8rem;">マイページ</div>
           </button>
-
-          <!-- ドロップダウンメニュー -->
           <ul class="dropdown-menu dropdown-menu-end text-nowrap mt-2" aria-labelledby="userMenu">
             <li class="dropdown-header fw-bold"><%= current_user.name.presence || "ユーザー名" %></li>
             <li>
               <div class="d-flex justify-content-between px-3 py-2">
-                <%= link_to "プロフィールを編集", edit_user_path(current_user), class: "dropdown-item px-0 me-2 flex-fill text-start" %>
-                <%= link_to "アカウントを編集", edit_user_registration_path, class: "dropdown-item px-0 ms-2 flex-fill text-start" %>
+                <%= link_to "プロフィール編集", edit_user_path(current_user), class: "dropdown-item px-0 me-2 flex-fill text-start" %>
+                <%= link_to "アカウント編集", edit_user_registration_path, class: "dropdown-item px-0 ms-2 flex-fill text-start" %>
               </div>
             </li>
             <li><hr class="dropdown-divider"></li>
-            <li><%= link_to "お支払い情報", "#", class: "dropdown-item small-text" %></li>
+            <li><%= link_to "お支払い情報", payment_path, class: "dropdown-item small-text" %></li>
             <li><%= link_to "投稿一覧", user_path(current_user), class: "dropdown-item small-text" %></li>
-            <li><%= link_to "購入済み一覧", "#", class: "dropdown-item small-text" %></li>
+            <li><%= link_to "購入済み一覧", purchases_path, class: "dropdown-item small-text" %></li>
             <li><hr class="dropdown-divider"></li>
             <li><%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item text-danger small-text" %></li>
           </ul>
         </div>
       <% else %>
-        <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline-dark fw-bold rounded-pill px-4 me-4", style: "font-size: 0.9rem;" %>
-        <%= link_to "新規登録", new_user_registration_path, class: "btn btn-success fw-bold rounded-pill px-4", style: "font-size: 0.9rem;" %>
+        <%= link_to "ログイン", new_user_session_path,
+                    class: "btn btn-outline-dark fw-bold rounded-pill px-4 me-4", style: "font-size: 0.9rem; height: 40px;" %>
+        <%= link_to "新規登録", new_user_registration_path,
+                    class: "btn fw-bold rounded-pill px-4",
+                    style: "background-color: #0f4e8a; color: white; font-size: 0.9rem; height: 40px;" %>
       <% end %>
     </div>
   </div>

@@ -1,4 +1,3 @@
-
 document.addEventListener("turbo:load", () => {
   // 左サムネイル
   const thumbnails = document.querySelectorAll(".thumbnail-input");
@@ -14,6 +13,7 @@ document.addEventListener("turbo:load", () => {
       });
 
       previewInElement(input.files[0], label);
+      checkMediaCount();
     });
   });
 
@@ -28,16 +28,17 @@ document.addEventListener("turbo:load", () => {
       const file = mainInput.files[0];
       if (!file) return;
 
-      // メインラベルの中をクリア（inputは除外）
       [...mainLabel.children].forEach(child => {
         if (child !== mainInput) child.remove();
       });
 
       previewInElement(file, mainLabel);
       mainPreviewContent.innerHTML = "";
+      checkMediaCount();
     });
   }
 
+  // メディアプレビュー作成
   function previewInElement(file, container) {
     const url = URL.createObjectURL(file);
     const type = file.type;
@@ -70,4 +71,22 @@ document.addEventListener("turbo:load", () => {
       container.innerHTML = "<div class='text-muted'>Unsupported format</div>";
     }
   }
+
+  // --- 最低1個のメディアを維持 ---
+  const checkMediaCount = () => {
+    const mediaBoxes = document.querySelectorAll(".thumbnail-box");
+    document.querySelectorAll(".delete-media-btn").forEach(btn => {
+      btn.disabled = mediaBoxes.length <= 1;
+    });
+  };
+
+  // 初期チェック
+  checkMediaCount();
+
+  // 削除ボタンがある場合、クリック後に再チェック
+  document.querySelectorAll(".delete-media-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      setTimeout(checkMediaCount, 100); // DOM更新後に再計算
+    });
+  });
 });

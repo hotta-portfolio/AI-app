@@ -1,0 +1,14 @@
+<% grouped_messages = messages.group_by { |m| m.created_at.to_date } %>
+
+<% grouped_messages.each do |date, daily_messages| %>
+  <!-- 📅 日付区切り -->
+  <div class="text-center my-3">
+    <span class="bg-white border text-muted px-3 py-1 rounded-pill" style="font-size: 0.8rem;">
+      <%= date.strftime("%Y/%m/%d") %>
+    </span>
+  </div>
+
+  <% daily_messages.each do |message| %>
+    <%= render partial: "messages/message", locals: { message: message } %>
+  <% end %>
+<% end %>

@@ -14,8 +14,6 @@ class Knowhow < ApplicationRecord
   has_one :chat_room, dependent: :destroy
   has_many :instructions, -> { order(:step) }, dependent: :destroy
   accepts_nested_attributes_for :instructions, allow_destroy: true
-
-  # Active Storage (ファイルアップロード)
   has_many_attached :media_files
 
   # タグ機能 (多対多)
@@ -26,13 +24,26 @@ class Knowhow < ApplicationRecord
   # フォームからタグ名の文字列を受け取るため
   attr_accessor :tag_list
 
-  # --- バリデーション (Validations) ---
-  # validates :title, presence: true # 例: タイトルは必須
-
   # --- コールバック (Callbacks) ---
   # データ保存後に、タグを保存・関連付けする処理を呼び出す
   after_save :save_tags
   after_create :create_chat_room!
+
+
+  validates :title, :description, :category_type, :price, presence: true
+  validates :price, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 100 }
+  validate :validate_instructions_presence
+  validate :must_have_at_least_one_media
+
+  def must_have_at_least_one_media
+    # 既存アタッチメント + 新規アップロード分の合計が0ならエラー
+    total_files_count = media_files_attachments.size + Array(media_files).size
+  
+    if total_files_count.zero?
+      errors.add(:media_files, "は最低1つ必要です")
+    end
+  end
+  
 
   # --- クラスメソッド (Class Methods) ---
   # Ransackで検索可能な「属性」を明示
@@ -66,5 +77,18 @@ class Knowhow < ApplicationRecord
 
     # この投稿(Knowhow)に、見つけてきた、あるいは新規作成したタグを関連付ける
     self.tags = new_tags
+  end
+
+  def validate_instructions_presence
+    if instructions.empty? || instructions.all? { |i| i.description.blank? && i.image.blank? }
+      errors.add(:instructions, "少なくとも1つの手順を入力してください")
+    end
+
+    # 各 instruction の個別チェック
+    instructions.each_with_index do |instruction, idx|
+      if instruction.description.blank? && instruction.image.blank?
+        errors.add(:instructions, "STEP#{idx + 1}の説明または画像を入力してください")
+      end
+    end
   end
 end

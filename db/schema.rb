@@ -10,7 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_04_092729) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_29_151745) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -80,6 +82,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_092729) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "category_type", default: 0, null: false
+    t.string "software"
+    t.string "status"
     t.index ["user_id"], name: "index_knowhows_on_user_id"
   end
 
@@ -91,6 +95,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_092729) do
     t.datetime "updated_at", null: false
     t.index ["chat_room_id"], name: "index_messages_on_chat_room_id"
     t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "card_number"
+    t.string "expiry_date"
+    t.string "cvc"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "stripe_customer_id"
+    t.index ["user_id"], name: "index_payments_on_user_id"
   end
 
   create_table "posts", force: :cascade do |t|
@@ -106,6 +121,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_092729) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "stripe_charge_id"
+    t.string "stripe_payment_intent_id"
+    t.string "stripe_payment_method_id"
     t.index ["knowhow_id"], name: "index_purchases_on_knowhow_id"
     t.index ["user_id"], name: "index_purchases_on_user_id"
   end
@@ -139,6 +156,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_04_092729) do
   add_foreign_key "knowhows", "users"
   add_foreign_key "messages", "chat_rooms"
   add_foreign_key "messages", "users"
+  add_foreign_key "payments", "users"
   add_foreign_key "purchases", "knowhows"
   add_foreign_key "purchases", "users"
 end
