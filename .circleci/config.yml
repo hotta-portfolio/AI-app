@@ -5,7 +5,19 @@ orbs:
   node: circleci/node@5.0.2
 
 jobs:
-  build:
+  # ---- 1️⃣ Rubocop ----
+  rubocop:
+    docker:
+      - image: cimg/ruby:3.3.0-node
+    steps:
+      - checkout
+      - ruby/install-deps
+      - run:
+          name: Run Rubocop
+          command: bundle exec rubocop
+
+  # ---- 2️⃣ RSpec ----
+  rspec:
     docker:
       - image: cimg/ruby:3.3.0-node
         environment:
@@ -18,28 +30,43 @@ jobs:
           POSTGRES_PASSWORD: password
     steps:
       - checkout
-
-      # Bundler & gem install
       - ruby/install-deps
-
-      # Yarn install
       - node/install-packages:
           pkg-manager: yarn
-
-      # DB setup
       - run:
           name: Setup Database
           command: |
             bin/rails db:create
             bin/rails db:schema:load
-
-      # RSpec
       - run:
           name: Run RSpec tests
           command: bundle exec rspec
 
+  # ---- 3️⃣ Deploy to Render ----
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Render via API
+          command: |
+            echo "Triggering Render deployment..."
+            curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
+              -H "Authorization: Bearer ${RENDER_API_KEY}" \
+              -H "Content-Type: application/json"
+
 workflows:
   version: 2
-  test:
+  test_and_deploy:
     jobs:
-      - build
+      - rubocop
+      - rspec:
+          requires:
+            - rubocop
+      - deploy:
+          requires:
+            - rspec
+          filters:
+            branches:
+              only: main
