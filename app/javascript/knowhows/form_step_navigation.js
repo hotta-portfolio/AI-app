@@ -78,6 +78,42 @@ document.addEventListener("turbo:load", () => {
     }
   });
 
+  // STEP2の投稿ボタン取得
+  const submitBtn = document.querySelector("#step-2 input[type='submit'][value='投稿する']");
+  if (submitBtn) {
+    submitBtn.addEventListener("click", (e) => {
+      let valid = true;
+      // エラーリセット
+      const existingErrors = document.querySelectorAll(".instruction-error");
+      existingErrors.forEach(error => error.remove());
+
+      // 画像inputのチェック
+      const imageInputs = document.querySelectorAll("input[type='file'][name^='knowhow[instructions_attributes]'][name$='[image]']");
+      imageInputs.forEach((input, _index) => {
+        const block = input.closest(".instruction-block");
+        if (block && getComputedStyle(block).display !== 'none') {
+          const hasExistingImage = block && block.querySelector("img") && block.querySelector("img").src; // 既存画像があるかチェック
+          if (!hasExistingImage) {
+            showInstructionError(`画像を選択してください`, block);
+            valid = false;
+          }
+        }
+      });
+
+      if (!valid) {
+        e.preventDefault(); // 送信を阻止
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+  }
+
+  function showInstructionError(message, targetBlock) {
+    const errorDiv = document.createElement("div");
+    errorDiv.classList.add("alert", "alert-danger", "mt-3", "instruction-error");
+    errorDiv.textContent = message;
+    targetBlock.appendChild(errorDiv);
+  }
+
   backToStep1Btn.addEventListener("click", () => {
     step2.classList.add("d-none");
     step1.classList.remove("d-none");

@@ -44,6 +44,9 @@ document.addEventListener("turbo:load", function () {
 
     // --- 削除処理（親 col を削除） ---
     if (e.target.classList.contains("remove-step")) {
+      const visibleCols = container.querySelectorAll(".col-md-4:not(.d-none)");
+      if (visibleCols.length <= 1) return; // 一つのみなら削除しない
+
       const block = e.target.closest(".instruction-block");
       if (!block) return;
       const col = block.closest(".col-md-4") || block.parentElement;
@@ -54,8 +57,8 @@ document.addEventListener("turbo:load", function () {
         destroyInput.value = "1";
       }
 
-      // DOMから親のcolごと削除（空白列を残さない）
-      col.remove();
+      // DOMから親のcolを隠す（削除すると _destroy が渡らないため削除が機能しない）
+      col.classList.add("d-none");
       renumberSteps();
     }
   });
