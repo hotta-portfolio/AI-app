@@ -2,17 +2,47 @@
   <meta name="stripe-public-key" content="<%= @stripe_public_key %>">
 <% end %>
 
-<h1>決済ページ</h1>
+<h1 class="text-center mb-4">決済ページ</h1>
 
-<p style="background:#f9f9f9; padding:1em; border:1px solid #ddd; margin-bottom:1em;">
+<div class="alert alert-light border mx-auto mb-4" style="max-width: 400px;">
   <strong>【テスト用カード情報】</strong><br>
   カード番号: <code>4242 4242 4242 4242</code><br>
   有効期限: <code>12 / 34</code><br>
   CVC: <code>123</code><br>
-</p>
+</div>
 
-<%= form_with url: knowhow_purchases_path(@knowhow), method: :post, id: "payment-form", local: true do %>
-  <div id="card-element" style="margin-bottom: 1em; min-height: 40px;"></div>
-  <div id="card-errors" style="color: red; margin-bottom: 1em;"></div>
-  <%= submit_tag "購入する" %>
+<%= form_with url: knowhow_purchases_path(@knowhow),
+              method: :post,
+              id: "payment-form",
+              local: true,
+              class: "card shadow-sm p-4 payment-form",
+              data: { knowhow_id: @knowhow.id } do %>
+
+  <h5 class="mb-3 text-center">クレジットカード情報</h5>
+
+  <!-- カード番号 -->
+  <div class="mb-3">
+    <label class="form-label">カード番号</label>
+    <div id="card-number-element" class="form-control"></div>
+  </div>
+
+  <!-- 有効期限 & CVC -->
+  <div class="row mb-3 g-2">
+    <div class="col-6 col-md-6">
+      <label class="form-label">有効期限</label>
+      <div id="card-expiry-element" class="form-control"></div>
+    </div>
+    <div class="col-6 col-md-6">
+      <label class="form-label">セキュリティコード</label>
+      <div id="card-cvc-element" class="form-control"></div>
+    </div>
+  </div>
+
+  <!-- エラー表示 -->
+  <div id="card-errors" class="text-danger mb-3 text-center"></div>
+
+  <!-- 購入ボタン -->
+  <div class="text-center">
+    <%= submit_tag "購入を確定する", class: "btn btn-warning fw-bold px-4" %>
+  </div>
 <% end %>

@@ -76,6 +76,8 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "rspec_junit_formatter"
+  gem "rspec-rails"
+  gem "shoulda-matchers"
 end
 
 gem "devise", "~> 4.9"

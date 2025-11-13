@@ -1,10 +1,52 @@
 <div id="chat-room" data-room-id="<%= @chat_room.id %>"></div>
 
-<div id="messages">
-  <%= render @messages %>
+<!-- 💬 チャット全体をヘッダー下から固定 -->
+<div class="chat-wrapper d-flex flex-column position-fixed start-0 w-100" 
+<%# height: calc(100vh - 90px)：全体から90px分引いた分で残りを構成する %>
+     style="top: 90px; height: calc(100vh - 90px); z-index: 1; background: #f8f9fa;">
+
+  <!-- ✅ 固定ヘッダー（チャット相手情報） -->
+  <div class="chat-header d-flex align-items-center justify-content-center border-bottom bg-white px-3 py-2" style="flex: 0 0 auto;">
+    <div class="d-flex align-items-center">
+      <% if @chat_partner.avatar.attached? %>
+        <%= image_tag @chat_partner.avatar, class: "rounded-circle me-2", style: "width: 40px; height: 40px; object-fit: cover;" %>
+      <% else %>
+        <div class="rounded-circle border" 
+            style="width: 40px; height: 40px; overflow: hidden; background-color: white; border-color: black; border-width: 1px; border-style: solid;">
+          <%= image_tag 'default_avatar.png',
+                style: "width: 55px; height: 55px; object-fit: cover; margin-left: -7.5px; margin-top: -5px;" %>
+        </div>
+      <% end %>
+      <div class="ms-1">
+        <strong><%= @chat_partner.name %></strong><br>
+        <small class="text-muted">@<%= @chat_partner.name %></small>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ メッセージ一覧（スクロール可能） -->
+  <%# flex-grow-1 ：「残りのスペースを伸ばす」のは まだ確保されていないスペース のみ %>
+ <div id="messages" class="flex-grow-1 px-3 py-2 overflow-auto d-flex flex-column" style="scroll-behavior: smooth;">
+    <%= render partial: "messages/grouped_messages", locals: { messages: @messages } %>
+  </div>
+
+  <!-- ✅ 入力フォーム（下部固定） -->
+<%# flex: 0 0 auto：内容の高さに従って自動で決まる %>
+  <div class="chat-input bg-white border-top p-3" style="flex: 0 0 auto;">
+    <%= form_with model: [@chat_room, Message.new], local: false, html: { id: "message_form", class: "d-flex align-items-center gap-2" } do |f| %>
+      <%= f.text_area :content, rows: 1, placeholder: "メッセージを入力...", 
+            class: "form-control flex-grow-1 rounded-pill px-3", style: "resize: none;" %>
+      <%= f.submit "送信", class: "btn btn-dark rounded-pill px-4" %>
+    <% end %>
+  </div>
 </div>
 
-<%= form_with model: [@chat_room, Message.new], local: true do |f| %>
-  <%= f.text_area :content, rows: 2 %>
-  <%= f.submit "Send" %>
-<% end %>
+
+<%# [親高さ: calc(100vh-90px)]
++-------------------------+
+| #messages (flex-grow-1) | ← 残りの高さだけ伸びる
+|                         |
+|                         |
++-------------------------+
+| .chat-input (flex:0 0 auto) | ← 高さ固定
++-------------------------+ %>

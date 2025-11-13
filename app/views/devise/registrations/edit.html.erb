@@ -2,12 +2,12 @@
   <div class="row min-vh-100">
 
     <!-- ✅ 左カラム：サイドメニュー -->
-    <div class="col-md-3 bg-light p-4 border-end">
+    <div class="col-md-3 p-4 border-end">
       <% menu_items = [
         { text: "プロフィールを編集する", path: edit_user_path(current_user) },
-        { text: "お支払い情報", path: "#" },
         { text: "投稿一覧", path: user_path },
-        { text: "購入履歴", path: "#" }
+        { text: "購入履歴", path: purchases_path },
+        { text: "お支払い情報",  path: payment_path }
       ] %>
 
       <% menu_items.each do |item| %>
@@ -18,7 +18,7 @@
     </div>
 
     <!-- ✅ 右カラム：アカウント編集フォーム -->
-    <div class="col-md-9 bg-light p-4 d-flex justify-content-center">
+    <div class="col-md-9 p-4 d-flex justify-content-center">
       <div style="max-width: 900px; width: 100%;">
 
         <!-- タイトル -->

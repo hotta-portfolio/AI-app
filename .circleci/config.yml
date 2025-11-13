@@ -1,31 +1,72 @@
 version: 2.1
 
-executors:
-  ruby-executor:
-    docker:
-      - image: cimg/ruby:3.3.3-node
-    working_directory: ~/repo
+orbs:
+  ruby: circleci/ruby@2.0.1
+  node: circleci/node@5.0.2
 
 jobs:
+  # ---- 1️⃣ Rubocop ----
   rubocop:
-    executor: ruby-executor
+    docker:
+      - image: cimg/ruby:3.3.0-node
     steps:
       - checkout
-      - run: bundle install
-      - run: bundle exec rubocop
+      - ruby/install-deps
+      - run:
+          name: Run Rubocop
+          command: bundle exec rubocop
 
+  # ---- 2️⃣ RSpec ----
   rspec:
-    executor: ruby-executor
+    docker:
+      - image: cimg/ruby:3.3.0-node
+        environment:
+          RAILS_ENV: test
+          DATABASE_URL: "postgres://postgres:password@localhost:5432/test_db"
+      - image: cimg/postgres:14.10
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test_db
+          POSTGRES_PASSWORD: password
     steps:
       - checkout
-      - run: bundle install
-      - run: bundle exec rspec
+      - ruby/install-deps
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          name: Setup Database
+          command: |
+            bin/rails db:create
+            bin/rails db:schema:load
+      - run:
+          name: Run RSpec tests
+          command: bundle exec rspec
+
+  # ---- 3️⃣ Deploy to Render ----
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Render via API
+          command: |
+            echo "Triggering Render deployment..."
+            curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
+              -H "Authorization: Bearer ${RENDER_API_KEY}" \
+              -H "Content-Type: application/json"
 
 workflows:
   version: 2
-  test_only:
+  test_and_deploy:
     jobs:
       - rubocop
       - rspec:
           requires:
             - rubocop
+      - deploy:
+          requires:
+            - rspec
+          filters:
+            branches:
+              only: main

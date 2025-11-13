@@ -1,52 +1,188 @@
-<%= form_with model: @knowhow, local: true, html: { multipart: true } do |f| %>
-  <div>
-    <%= f.label :title %><br>
-    <%= f.text_field :title %>
-  </div>
+<%= form_with model: @knowhow, local: true, multipart: true, data: { turbo: false } do |f| %>
+  <div class="container mt-4">
 
-  <div>
-    <%= f.label :description %><br>
-    <%= f.text_area :description %>
-  </div>
+    <!-- STEP 1: 基本情報 -->
+    <div id="step-1">
+      <div class="d-flex flex-wrap gap-4 justify-content-center">
 
-  <div>
-    <%= f.label :category_type, "カテゴリ" %><br>
-    <%= f.select :category_type,
-          Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
-          { include_blank: "選択してください" } %>
-  </div>
+        <!-- 左カラム：メディア -->
+        <div class="flex-grow-1 d-flex" style="min-width: 300px; max-width: 60%;">
 
-  <div>
-    <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %><br>
-    <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), placeholder: "例: Rails, Ruby, 初心者" %>
-  </div>
-  
-  
-  <div>
-    <%= f.label :price %><br>
-    <%= f.number_field :price %>
-  </div>
-
-  <% if @knowhow.media_files.attached? %>
-    <div>
-      <p>既存のファイル:</p>
-      <ul>
-        <% @knowhow.media_files.each do |file| %>
-          <li>
-            <%= link_to file.filename, url_for(file), target: "_blank" %>
-            <%= link_to '削除', delete_media_knowhow_path(@knowhow, file_id: file.id), data: { turbo_method: :delete, turbo_confirm: '本当に削除しますか？' } %>
-          </li>
+          <!-- 左：サムネイル一覧 -->
+<!-- 左：サムネイル一覧 -->
+<div class="d-flex flex-md-column gap-2 me-3">
+  <% @knowhow.media_files.each_with_index do |file, index| %>
+    <div class="position-relative" style="width: 60px; height: 60px; cursor: pointer;">
+      <div onmouseover="showMedia(<%= index %>)" class="thumbnail-box w-100 h-100">
+        <% if file.image? %>
+          <%= image_tag url_for(file), style: "width: 100%; height: 100%; object-fit: cover;" %>
+        <% elsif file.video? %>
+          <div class="d-flex align-items-center justify-content-center bg-dark text-white w-100 h-100">🎥</div>
+        <% elsif file.audio? %>
+          <div class="d-flex align-items-center justify-content-center bg-light w-100 h-100">🎧</div>
         <% end %>
-      </ul>
+      </div>
+
+      <%= hidden_field_tag 'knowhow[existing_media_file_ids][]', file.id %>
     </div>
   <% end %>
+</div>
 
-  <div>
-    <%= f.label :media_files, "生成物（画像・動画・音声）追加アップロード" %><br>
-    <%= f.file_field :media_files, multiple: true, direct_upload: true %>
-  </div>
 
-  <div>
-    <%= f.submit "保存" %>
+          <!-- 中央：選択されたメディア -->
+          <div class="flex-grow-1 me-md-4" style="max-width: 600px;">
+            <% @knowhow.media_files.each_with_index do |file, index| %>
+              <div id="media-<%= index %>" class="main-media mb-3" style="<%= index == 0 ? '' : 'display: none;' %>">
+                <% if file.image? %>
+                  <%= image_tag url_for(file), class: "img-fluid rounded w-100" %>
+                <% elsif file.video? %>
+                  <video controls class="w-100 rounded">
+                    <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
+                  </video>
+                <% elsif file.audio? %>
+                  <audio controls class="w-100 mt-2">
+                    <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
+                  </audio>
+                <% end %>
+                <div class="mt-2 text-end">
+                  <%= link_to '削除', delete_media_knowhow_path(@knowhow, file_id: file.id),
+                        class: "btn btn-sm btn-outline-danger",
+                        data: { turbo_method: :delete, turbo_confirm: '本当に削除しますか？' } %>
+                </div>
+                <%= hidden_field_tag 'knowhow[existing_media_file_ids][]', file.id %>
+              </div>
+            <% end %>
+
+            <!-- 新規アップロード -->
+            <div data-controller="media-preview">
+              <div id="media-preview-container" class="d-flex flex-wrap gap-3" data-media-preview-target="preview"></div>
+              <div class="mt-3">
+                <label for="media-file-input" class="btn btn-outline-secondary btn-sm">＋アップロードを追加</label>
+              </div>
+              <input type="file"
+                     id="media-file-input"
+                     name="knowhow[media_files][]"
+                     accept="image/*,video/*,audio/*"
+                     multiple
+                     data-media-preview-target="input"
+                     data-action="change->media-preview#previewFiles"
+                     style="display: none;">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 右カラム：基本情報 -->
+        <div style="min-width: 250px; max-width: 35%;">
+          <div class="mb-3">
+            <%= f.label :title, "タイトル" %>
+            <%= f.text_field :title, class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :description, "説明" %>
+            <%= f.text_area :description, class: "form-control", rows: 5 %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :category_type, "カテゴリ" %>
+            <%= f.select :category_type,
+                Knowhow.category_types.keys.map { |k| [t("enum.knowhow.category_type.#{k}"), k] },
+                { include_blank: "選択してください" },
+                class: "form-select" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :price, "価格" %>
+            <%= f.number_field :price, class: "form-control" %>
+          </div>
+          <div class="mb-3">
+            <%= f.label :tag_list, "タグ (カンマ区切りで入力)" %>
+            <%= f.text_field :tag_list, value: @knowhow.tags.map(&:name).join(','), class: "form-control", placeholder: "例: Rails, Ruby, 初心者" %>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-primary" id="go-to-step-2">生成手順の編集</button>
+            <%= f.submit "投稿する", class: "btn btn-primary" %>
+          </div>
+
+          <div class="d-flex justify-content-between mt-3">
+            <button type="button" class="btn btn-secondary" onclick="history.back()">戻る</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STEP 2: 作り方 -->
+    <div id="step-2" class="d-none mt-5">
+      <h3 class="mb-4">生成手順</h3>
+
+      <div class="mb-3">
+        <%= f.label :software, "使用ソフト" %>
+        <%= f.text_field :software, class: "form-control", placeholder: "例: ChatGPT、Adobe Firefly" %>
+      </div>
+
+      <div id="instructions" class="row g-3 mt-3">
+        <%= f.fields_for :instructions do |instruction_form| %>
+          <div class="col-md-4">
+            <div class="instruction-block card position-relative shadow-sm p-3" style="max-width: 350px;">
+              <div class="step-badge" style="z-index: 10;"><%= instruction_form.object.step || 1 %></div>
+                      <div class="dropdown step-menu" style="z-index: 10;">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">⋯</button>
+                        <ul class="dropdown-menu">
+                          <li><button type="button" class="dropdown-item add-step">作り方を追加</button></li>
+                          <li><button type="button" class="dropdown-item remove-step">作り方を削除</button></li>
+                        </ul>
+                      </div>
+
+              <div class="mb-2 text-center">
+                <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
+                      style="width: 100%; aspect-ratio: 16 / 9; cursor: pointer; overflow: hidden;">
+                  <% if instruction_form.object.image.attached? %>
+                    <%= image_tag instruction_form.object.image, class: "img-preview position-absolute top-0 start-0 w-100 h-100 rounded", style: "object-fit: cover;" %>
+                  <% else %>
+                    <i class="fa-solid fa-image fa-2x upload-icon position-absolute top-50 start-50 translate-middle text-muted"></i>
+                  <% end %>
+                  <%= instruction_form.file_field :image, class: "d-none", accept: "image/*", onchange: "previewImage(this)" %>
+                </label>
+              </div>
+
+              <%= instruction_form.text_area :description, rows: 4, class: "form-control mb-2", placeholder: "説明文を入力" %>
+              <%= instruction_form.hidden_field :step, value: instruction_form.object.step || 1 %>
+              <%= instruction_form.hidden_field :_destroy %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <template id="instruction-template">
+        <div class="col-md-4">
+          <div class="instruction-block card position-relative shadow-sm p-3" style="max-width: 350px;">
+            <div class="step-badge" style="z-index: 10;">STEP_NUMBER</div>
+            <div class="dropdown step-menu" style="z-index: 10;">
+              <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">⋯</button>
+              <ul class="dropdown-menu">
+                <li><button type="button" class="dropdown-item add-step">作り方を追加</button></li>
+                <li><button type="button" class="dropdown-item remove-step">作り方を削除</button></li>
+              </ul>
+            </div>
+            <div class="mb-2 text-center">
+              <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
+                     style="width: 100%; aspect-ratio: 16/9; cursor: pointer; overflow: hidden;">
+                <i class="fa-solid fa-image fa-2x upload-icon position-absolute top-50 start-50 translate-middle text-muted"></i>
+                <img class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
+                <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]" class="d-none" accept="image/*" onchange="previewImage(this)">
+              </label>
+            </div>
+            <textarea name="knowhow[instructions_attributes][NEW_INDEX][description]" rows="4" class="form-control mb-2" placeholder="説明文を入力"></textarea>
+            <input type="hidden" name="knowhow[instructions_attributes][NEW_INDEX][step]" value="STEP_NUMBER">
+          </div>
+        </div>
+      </template>
+
+      <div class="d-flex justify-content-between mt-5">
+        <button type="button" class="btn btn-secondary" id="back-to-step-1">戻る</button>
+        <%= f.submit "投稿する", class: "btn btn-primary" %>
+      </div>
+    </div>
+
   </div>
 <% end %>

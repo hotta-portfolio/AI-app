@@ -1,82 +1,86 @@
-# app/controllers/knowhows_controller.rb
 class KnowhowsController < ApplicationController
-  # ログインしていないユーザーは、新規作成や編集はできないようにする
   before_action :authenticate_user!, except: [ :index, :show ]
+  before_action :set_knowhow, only: [ :show, :edit, :update, :destroy, :delete_media, :instructions ]
 
-  # show/edit/update/destroyで共通して使うノウハウ取得処理をまとめる
-  before_action :set_knowhow, only: [ :show, :edit, :update, :destroy, :delete_media ]
+  def index
+    @q = Knowhow.ransack(params[:q])
+    @knowhows = @q.result(distinct: true)
+                  .includes(:user, :tags, media_files_attachments: :blob)
+                  .order(created_at: :desc)
+  end
 
-# ノウハウ一覧ページ
-def index
-  #  検索結果を取得し、N+1問題を考慮してページネーションなどを適用
-  #    order(created_at: :desc) は検索結果に適用
-  @knowhows = @q.result(distinct: true).includes(:user, :tags, media_files_attachments: :blob).order(created_at: :desc)
-end
-
-  # ノウハウ詳細ページ
   def show
     @purchase = current_user&.purchases&.find_by(knowhow_id: @knowhow.id)
     @purchased = @purchase.present?
   end
 
-  # 新規投稿フォーム表示
   def new
-    # 現在ログイン中のユーザーに紐付く新規Knowhowインスタンスを作成
     @knowhow = current_user.knowhows.new
-    @knowhow.instructions.build
+    @knowhow.instructions.build(step: 1) if @knowhow.instructions.empty?
   end
 
-  # 新規投稿処理
   def create
-    @knowhow = current_user.knowhows.new(knowhow_params)
+    @knowhow = current_user.knowhows.new(knowhow_params.except(:media_files))
+    @knowhow.step2_submitted = true # STEP2バリデーションを有効化
+
     if @knowhow.save
+      # media_files は save 後に attach
       if params[:knowhow][:media_files].present?
-        @knowhow.media_files.attach(params[:knowhow][:media_files])
+        params[:knowhow][:media_files].each do |file|
+          @knowhow.media_files.attach(file) if file.present?
+        end
       end
-      redirect_to @knowhow, notice: "ノウハウを投稿しました"
+
+      redirect_to knowhow_path(@knowhow), notice: "投稿が完了しました。"
     else
-      render :new
+      @knowhow.instructions.build if @knowhow.instructions.empty?
+      render :new, status: :unprocessable_entity
     end
   end
-
-  # 編集フォーム表示
   def edit
-    # @knowhowはbefore_actionで取得済み
-    # 投稿者本人しか編集できないように制限するのが望ましい
-    unless @knowhow.user == current_user
-      redirect_to knowhows_path, alert: "編集権限がありません"
-    end
+    authorize_user!
+    @knowhow.instructions.build if @knowhow.instructions.empty?
   end
 
-  # 更新処理
   def update
-    if @knowhow.user != current_user
-      redirect_to knowhows_path, alert: "編集権限がありません"
-      return
+    authorize_user!
+
+    # ActiveStorage 用処理
+    existing_ids = params[:knowhow][:existing_media_file_ids] || []
+    new_files    = params[:knowhow][:media_files] || []
+
+    # 既存ファイルのうち hidden_field に含まれないものは削除
+    @knowhow.media_files.each do |file|
+      file.purge unless existing_ids.include?(file.id.to_s)
     end
 
-    permitted_params = knowhow_params.except(:media_files)
+    # 新規ファイルを attach
+    new_files.each do |file|
+      @knowhow.media_files.attach(file)
+    end
 
-    if @knowhow.update(permitted_params)
-      # 新規ファイルがある場合のみ追加
-      if params[:knowhow][:media_files].present?
-        @knowhow.media_files.attach(params[:knowhow][:media_files])
-      end
-
+    # 他属性を更新
+    if @knowhow.update(knowhow_params.except(:media_files, :existing_media_file_ids))
       redirect_to @knowhow, notice: "ノウハウを更新しました"
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
-  # 削除処理
-  def destroy
-    if @knowhow.user == current_user
-      @knowhow.destroy
-      redirect_to knowhows_path, notice: "ノウハウを削除しました"
-    else
-      redirect_to knowhows_path, alert: "削除権限がありません"
+  def instructions
+    @purchase = current_user&.purchases&.find_by(knowhow_id: @knowhow.id)
+    unless @purchase && @purchase.knowhow.chat_room.present?
+      redirect_to @knowhow, alert: "生成手順を閲覧する権限がありません"
+      return
     end
+    @instructions = @knowhow.instructions.order(:step)
+    @softwares = @instructions.pluck(:software).reject(&:blank?)
+  end
+
+  def destroy
+    authorize_user!
+    @knowhow.destroy
+    redirect_to knowhows_path, notice: "ノウハウを削除しました"
   end
 
   def delete_media
@@ -88,9 +92,7 @@ end
 
   private
 
-  # ストロングパラメータ（フォームから受け取る安全な値だけを許可）
   def knowhow_params
-    # media_files は複数アップロードできるので配列で許可
     params.require(:knowhow).permit(
       :title,
       :description,
@@ -98,13 +100,14 @@ end
       :category_type,
       :tag_list,
       :thumbnail,
+      :software,
       media_files: [],
+      existing_media_file_ids: [],
       tag_ids: [],
       instructions_attributes: [ :id, :step, :description, :image, :_destroy ]
     )
   end
 
-  # 共通で使うノウハウ取得メソッド
   def set_knowhow
     @knowhow = Knowhow.find(params[:id])
   end

@@ -26,12 +26,16 @@
     <%= stylesheet_link_tag "header", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "knowhows", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css", crossorigin: "anonymous" %>
+    <%= stylesheet_link_tag "chat_rooms", "data-turbo-track": "reload" %>
   </head>
 
   <body>
     <% unless devise_controller? && (controller_name == 'sessions' || (controller_name == 'registrations' && action_name == 'new') || controller_name == 'passwords') %>
       <%= render 'layouts/header' %>
     <% end %>
+  <main class="main-content">
     <%= yield %>
+  </main>
+    <%= render 'layouts/footer' %>
   </body>
 </html>

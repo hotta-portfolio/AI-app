@@ -2,12 +2,12 @@
   <div class="row min-vh-100">
 
     <!-- ✅ 左カラム：サイドメニュー -->
-    <div class="col-md-3 bg-light p-4 border-end">
+    <div class="col-md-3 p-4 border-end">
       <% menu_items = [
         { text: "アカウントを編集する", path: edit_user_registration_path },
-        { text: "お支払い情報", path: "#" },
         { text: "投稿一覧", path: user_path },
-        { text: "購入履歴", path: "#" }
+        { text: "購入履歴", path: purchases_path },
+        { text: "お支払い情報", path: payment_path }
       ] %>
 
       <% menu_items.each do |item| %>
@@ -20,7 +20,7 @@
 
 
     <!-- ✅ 右カラム：フォーム本体 -->
-    <div class="col-md-9 bg-light p-4 d-flex justify-content-center">
+    <div class="col-md-9  p-4 d-flex justify-content-center">
       <div style="max-width: 900px; width: 100%;">
 
         <!-- タイトル -->
@@ -46,9 +46,11 @@
               <% if @user.avatar.attached? %>
                 <%= image_tag url_for(@user.avatar.variant(resize_to_fill: [80, 80])), class: "rounded-circle me-3", style: "width: 50px; height: 50px; object-fit: cover;" %>
               <% else %>
-                <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3" style="width: 80px; height: 80px;">
-                  アイコン
-                </div>
+            <div class="rounded-circle border border-white me-3" 
+                style="width: 80px; height: 80px; overflow: hidden; background-color: white;">
+              <%= image_tag 'default_avatar.png',
+                    style: "width: 110px; height: 110px; object-fit: cover; margin-left: -15px; margin-top: -8px;" %>
+            </div>
               <% end %>
               <%= f.file_field :avatar, class: "form-control w-auto" %>
             </div>
@@ -76,11 +78,9 @@
           </div>
 
         <% end %>
-
         <div class="offset-sm-3 col-sm-9 mt-3">
-          <%= link_to "戻る", user_path, class: "text-decoration-underline text-secondary" %>
+          <%= link_to "戻る", user_path, class: "text-decoration-underline text-white" %>
         </div>
-
       </div>
     </div>
   </div>

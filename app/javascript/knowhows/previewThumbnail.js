@@ -1,4 +1,3 @@
-
 document.addEventListener("turbo:load", () => {
   // 左サムネイル
   const thumbnails = document.querySelectorAll(".thumbnail-input");

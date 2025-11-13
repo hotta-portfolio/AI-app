@@ -1,0 +1,41 @@
+<div class="container-fluid">
+  <div class="row min-vh-100">
+
+    <!-- ✅ 左カラム：サイドメニュー -->
+    <div class="col-md-3 p-4 border-end">
+      <% menu_items = [
+        { text: "プロフィールを編集する", path: edit_user_path(current_user) },
+        { text: "アカウントを編集する", path: edit_user_registration_path },
+        { text: "購入履歴", path: purchases_path },
+        { text: "投稿一覧", path: user_path }
+      ] %>
+
+      <% menu_items.each do |item| %>
+        <div class="p-3 mb-3 border rounded shadow-sm bg-white menu-box">
+          <%= link_to item[:text], item[:path], class: "text-decoration-none text-dark fw-bold d-block" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- ✅ 右カラム：お支払い情報 -->
+    <div class="col-md-9 p-4 d-flex justify-content-center">
+      <div class="w-100" style="max-width: 500px;">
+        <h2 class="fw-bold mb-4 text-center">お支払い情報</h2>
+
+        <% if @card_info.present? %>
+          <div class="card p-3 shadow-sm mb-3">
+            <p>カードブランド：<%= @card_info[:brand] %></p>
+            <p>カード番号：**** **** **** <%= @card_info[:last4] %></p>
+            <p>有効期限：<%= @card_info[:exp_month] %>/<%= @card_info[:exp_year] %></p>
+          </div>
+        <% else %>
+          <div class="text-center mt-5">
+            <p>登録済みのカード情報はありません。</p>
+          </div>
+        <% end %>
+
+        <!-- 必要に応じてカード追加フォームやボタンもここに -->
+      </div>
+    </div>
+  </div>
+</div>

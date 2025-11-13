@@ -1,0 +1,33 @@
+<!-- app/views/knowhows/instructions.html.erb -->
+<div class="container px-3 mt-4">
+  <h1 class="fw-bold fs-4 mb-4 text-start"><%= @knowhow.title %> の生成手順</h1>
+
+  <!-- 使用ソフト -->
+<div class="mb-4">
+  <p><strong>使用ソフト:</strong> <%= @knowhow.software.presence || "未記入" %></p>
+</div>
+
+  <div class="row g-3">
+    <% @instructions.each do |instruction| %>
+      <div class="col-md-4">
+        <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 350px;">
+          <div class="step-badge" style="z-index: 20;"><%= instruction.step %></div>
+
+          <div class="mb-2 text-center">
+            <% if instruction.image.attached? %>
+              <%= image_tag url_for(instruction.image), class: "img-fluid rounded w-100",
+                              style: "aspect-ratio:16/9; object-fit:cover;" %>
+            <% else %>
+              <div class="bg-light rounded" style="width:100%; aspect-ratio:16/9;"></div>
+            <% end %>
+          </div>
+
+          <p class="mb-0"><%= instruction.description %></p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="d-flex justify-content-between mt-5">
+    <button type="button" class="btn btn-secondary" onclick="history.back()">戻る</button>
+  </div>  
+</div>

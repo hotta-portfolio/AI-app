@@ -1,5 +1,5 @@
 <% if @knowhow.media_files.attached? %>
-  <div class="container px-3"> <!-- 中央揃え用コンテナ -->
+  <div class="container mt-4"> <!-- 中央揃え用コンテナ -->
     <div class="d-flex flex-column flex-md-row gap-4 mb-4 justify-content-center">
 
       <!-- 左：サムネイル一覧 -->
@@ -65,14 +65,16 @@
 
         <% if @knowhow.user != current_user %>
           <% if @purchased && @purchase.knowhow.chat_room.present? %>
+            <%= link_to "生成手順を見る", instructions_knowhow_path(@knowhow),
+              class: "btn btn-primary me-2" %> 
             <%= link_to "チャットへ", knowhow_chat_room_path(@knowhow, @purchase.knowhow.chat_room),
-                  class: "btn btn-primary me-2" %>
+              class: "btn btn-primary me-2" %>
           <% else %>
             <%= link_to "購入する", new_knowhow_purchase_path(@knowhow),
                   class: "btn btn-success me-2" %>
           <% end %>
         <% else %>
-          <p class="text-muted mb-3">※これはあなたの投稿です。</p>
+          <p class="mb-3">※これはあなたの投稿です。</p>
           <div class="d-flex gap-2">
             <%= link_to '編集', edit_knowhow_path(@knowhow), class: "btn btn-secondary" %>
             <%= link_to '削除', knowhow_path(@knowhow),

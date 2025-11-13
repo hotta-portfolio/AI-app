@@ -1,32 +1,75 @@
-<h1>マイチャット一覧</h1>
-
-<div>
-  <%= link_to "購入者用チャット", chat_rooms_path(role: 'buyer'), class: "btn btn-outline-primary #{params[:role] == 'buyer' ? 'active' : ''}" %>
-  <%= link_to "販売者用チャット", chat_rooms_path(role: 'seller'), class: "btn btn-outline-primary #{params[:role] == 'seller' ? 'active' : ''}" %>
+<!-- 購入者／販売者切替ボタン -->
+<div class="mb-4 d-flex justify-content-center mt-4">
+  <%= link_to "購入したコンテンツ", chat_rooms_path(role: 'buyer'), class: "btn role-btn #{params[:role]=='buyer' ? 'active' : ''} me-2" %>
+  <%= link_to "販売したコンテンツ", chat_rooms_path(role: 'seller'), class: "btn role-btn #{params[:role]=='seller' ? 'active' : ''}" %>
 </div>
 
-<ul class="mt-3">
-  <% @chat_rooms.each do |chat_room| %>
-    <li class="mb-2">
+<div class="container-xl mt-4">
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <% @chat_rooms.each do |chat_room| %>
       <% knowhow = chat_room.knowhow %>
-      <%= link_to "チャットルーム ##{chat_room.id}", chat_room_path(chat_room) %>
-      <% if params[:role] == 'buyer' %>
-        - <%= chat_room.knowhow.title %>
-      <% else %>
-        - ノウハウ: <%= chat_room.knowhow.title %>
-        <%= content_tag(:ul) do %>
-          <% if knowhow.purchases.any? %>
-            <% knowhow.purchases.each do |purchase| %>
-              <%= content_tag(:li) do %>
-                <%# FIXME: 購入したことが当事者以外に伝わってしまう問題を解決する %>
-                購入者: <%= purchase.user.name.presence || purchase.user.email %>
-              <% end %>
+
+      <div class="col">
+        <div class="card h-100 shadow-sm border-0 overflow-hidden position-relative">
+
+          <!-- ✅ サムネイル -->
+          <% if knowhow.media_files.attached? %>
+            <% file = knowhow.media_files.first %>
+            <% if file.image? %>
+              <%= image_tag url_for(file), class: "card-img-top", style: "aspect-ratio: 16 / 9; object-fit: cover;" %>
+            <% elsif file.video? %>
+              <video class="card-img-top" style="aspect-ratio: 16 / 9; object-fit: cover;" muted>
+                <source src="<%= url_for(file) %>" type="<%= file.content_type %>">
+              </video>
             <% end %>
           <% else %>
-          （購入前チャット）
+            <div class="bg-light d-flex align-items-center justify-content-center" style="aspect-ratio: 16 / 9;">
+              <span class="text-muted small">No Image</span>
+            </div>
           <% end %>
+        <!-- ✅ 本文 -->
+        <div class="card-body">
+          <% if params[:role] == 'buyer' %>
+            <!-- 購入者向け：ノウハウ名だけ -->
+            <p class="card-text text-truncate"><strong><%= knowhow.title %></strong></p>
+            <p class="card-text small text-muted description-fixed">
+              <%= knowhow.description %>
+            </p>
+            <div class="small text-muted">
+              <div><strong>販売者: <%= knowhow.user.name %></strong></div>
+            </div>
+          <% else %>
+            <!-- 販売者向け：ノウハウ名＋購入者リスト -->
+            <p class="card-text text-truncate"><strong><%= knowhow.title %></strong></p>
+            <p class="card-text small text-muted description-fixed">
+              <%= knowhow.description %>
+            </p>
+
+    <!-- 購入者リスト -->
+    <% if knowhow.purchases.any? %>
+      <ul class="list-unstyled mb-0 ps-0">
+        <% knowhow.purchases.each do |purchase| %>
+          <li class="small text-muted">
+            <strong>購入者: <%= purchase.user.name.presence || purchase.user.email %></strong>
+          </li>
         <% end %>
-      <% end %>
+      </ul>
     <% end %>
-  </li>
-</ul>
+  <% end %>
+</div>
+
+
+
+          <!-- ✅ オーバーレイ (最初透明、hover時だけ表示) -->
+          <%= link_to chat_room_path(chat_room),
+                class: "overlay-link position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center text-white text-decoration-none",
+                data: { turbo: false } do %>
+            <span class="fw-bold fs-5 overlay-text">チャット画面へ</span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+

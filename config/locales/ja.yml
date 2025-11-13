@@ -6,3 +6,9 @@ ja:
         video: 動画
         image: 画像
         audio: 音声
+
+  time:
+    formats:
+      default: "%Y/%m/%d %H:%M"
+      short: "%Y/%m/%d"
+      long: "%Y年%m月%d日 %H時%M分"

@@ -77,3 +77,10 @@
     right: 8px;
   }
 
+
+  .card.card-custom-border {
+    border: 1.5px solid #00ffe5 !important; /* 太めにして見やすく */
+
+  }
+  
+  

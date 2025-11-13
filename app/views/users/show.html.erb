@@ -2,12 +2,12 @@
   <div class="row min-vh-100">
 
     <!-- ✅ 左カラム：サイドメニュー -->
-    <div class="col-md-3 bg-light p-4 border-end">
+    <div class="col-md-3 p-4 border-end">
       <% menu_items = [
         { text: "プロフィールを編集する", path: edit_user_path(current_user) },
         { text: "アカウントを編集する", path: edit_user_registration_path },
-        { text: "お支払い情報", path: "#" },
-        { text: "購入履歴", path: "#" }
+        { text: "購入履歴", path: purchases_path },
+        { text: "お支払い情報", path: payment_path }
       ] %>
 
       <% menu_items.each do |item| %>
@@ -18,7 +18,7 @@
     </div>
 
     <!-- ✅ 右カラム：ノウハウ一覧 -->
-    <div class="col-md-9 bg-light p-4">
+    <div class="col-md-9 p-4">
       <% if @posted_knowhows.any? %>
         <h2 class="fw-bold mb-4 text-center">自分のノウハウ投稿一覧</h2>
         <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-3">

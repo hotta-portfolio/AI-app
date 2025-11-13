@@ -1,4 +1,4 @@
-<%= form_with model: @knowhow, local: true, multipart: true do |f| %>
+<%= form_with model: @knowhow, local: true, multipart: true, data: { turbo: false } do |f| %>
   <div class="container">
 
     <!-- STEP 1: 基本情報 -->
@@ -6,53 +6,56 @@
       <div class="container" style="max-width: 1140px;">
         <div class="d-flex flex-row flex-wrap gap-5 justify-content-center">
 
-    <!-- 左カラム：メディアアップロード -->
-    <div class="media-section d-flex flex-row flex-nowrap gap-4" style="min-width: 300px; flex: 1;">
-      
-      <!-- サムネイル3つ -->
-      <div class="d-flex flex-column gap-3" id="media-preview-container">
-        <% 3.times do |i| %>
-          <label
-            class="upload-frame border rounded bg-light d-flex justify-content-center align-items-center"
-            style="width: 80px; height: 80px; cursor: pointer; position: relative;"
-            data-index="<%= i %>">
-            <span class="text-muted">＋</span>
-            <%= file_field_tag "knowhow[media_files][]",
-                  accept: "image/*,video/*,audio/*",
-                  class: "d-none thumbnail-input",
-                  id: "upload-input-thumb-#{i}" %>
-          </label>
-        <% end %>
-      </div>
+          <!-- 左カラム：メディアアップロード -->
+          <div class="media-section d-flex flex-row flex-nowrap gap-4" style="min-width: 300px; flex: 1;">
 
-      <!-- メインアップロード -->
-      <div class="flex-grow-1">
-        <label
-          class="upload-frame border rounded bg-light d-flex justify-content-center align-items-center"
-          style="width: 100%; height: 360px; cursor: pointer; position: relative;"
-          id="main-upload-label">
+            <!-- サムネイル3つ -->
+            <div class="d-flex flex-column gap-3" id="media-preview-container">
+              <% 3.times do |i| %>
+                <label
+                  class="upload-frame border rounded bg-light d-flex justify-content-center align-items-center"
+                  style="width: 80px; height: 80px; cursor: pointer; position: relative;"
+                  data-index="<%= i %>">
+                  <span class="text-muted">＋</span>
+                  <%= file_field_tag "knowhow[media_files][]",
+                        accept: "image/*,video/*,audio/*",
+                        class: "d-none thumbnail-input",
+                        id: "upload-input-thumb-#{i}" %>
+                </label>
+              <% end %>
+            </div>
 
-          <span class="text-muted position-absolute top-50 start-50 translate-middle" id="main-upload-placeholder">
-            ＋ メインメディア
-          </span>
+            <!-- メインアップロード -->
+            <div class="flex-grow-1">
+              <label
+                class="upload-frame border rounded bg-light d-flex justify-content-center align-items-center"
+                style="width: 100%; height: 305px; cursor: pointer; position: relative;"
+                id="main-upload-label">
 
-          <%= file_field_tag "knowhow[media_files][]",
-                accept: "image/*,video/*,audio/*",
-                class: "d-none thumbnail-input", id: "main-upload-input" %>
-        </label>
+                <span class="text-muted position-absolute top-50 start-50 translate-middle" id="main-upload-placeholder">
+                  ＋ メインメディア
+                </span>
 
-        <div id="main-preview-content" class="mt-3"></div>
-      </div>
-    </div>
+                <%= file_field_tag "knowhow[media_files][]",
+                      accept: "image/*,video/*,audio/*",
+                      class: "d-none thumbnail-input", id: "main-upload-input" %>
+              </label>
+              <div id="main-media-error" class="invalid-feedback mt-2" style="<%= @knowhow.errors[:media_files].any? ? 'display:block;' : '' %>">
+                メインメディアかサムネイルを選択してください
+              </div>
+
+              <div id="main-preview-content" class="mt-3"></div>
+            </div>
+          </div>
 
           <!-- 右カラム：基本情報 -->
           <div style="min-width: 250px; max-width: 400px; flex: 1;">
             <div class="mb-3">
-              <%= f.label :title %>
+              <%= f.label :タイトル %>
               <%= f.text_field :title, class: "form-control" %>
             </div>
             <div class="mb-3">
-              <%= f.label :description %>
+              <%= f.label :説明 %>
               <%= f.text_area :description, class: "form-control", rows: 5 %>
             </div>
             <div class="mb-3">
@@ -63,7 +66,7 @@
                   class: "form-select" %>
             </div>
             <div class="mb-3">
-              <%= f.label :price %>
+              <%= f.label :価格 %>
               <%= f.number_field :price, class: "form-control" %>
             </div>
             <div class="mb-3">
@@ -84,8 +87,8 @@
       <h3 class="mb-4">生成手順</h3>
 
       <div class="mb-3">
-        <%= label_tag :software, "使用ソフト" %>
-        <%= text_field_tag :software, "", class: "form-control", placeholder: "例: ChatGPT、Adobe Firefly" %>
+        <%= f.label :software, "使用ソフト" %>
+        <%= f.text_field :software, class: "form-control", placeholder: "例: ChatGPT、Adobe Firefly" %>
       </div>
 
       <div id="instructions" class="row g-3 mt-3">
@@ -93,7 +96,7 @@
           <div class="col-md-4">
             <div class="instruction-block card position-relative shadow-sm p-3" style="width: 100%; max-width: 350px;">
               <div class="step-badge" style="z-index: 20;">
-                <%= instruction_form.object.step.presence || 1 %>
+                <%= instruction_form.object.step || 1 %>
               </div>
               <div class="dropdown step-menu" style="z-index: 20;">
                 <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">⋯</button>
@@ -106,12 +109,13 @@
                 <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
                        style="width: 100%; aspect-ratio: 16 / 9; cursor: pointer; overflow: hidden;">
                   <i class="fa-solid fa-image fa-2x upload-icon position-absolute top-50 start-50 translate-middle text-muted"></i>
-                  <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
+                  <img class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
                   <%= instruction_form.file_field :image, class: "d-none", accept: "image/*", onchange: "previewImage(this)" %>
                 </label>
               </div>
               <%= instruction_form.text_area :description, rows: 4, class: "form-control mb-2", placeholder: "説明文を入力" %>
-              <%= instruction_form.hidden_field :step %>
+              <%= instruction_form.hidden_field :step, value: instruction_form.object.step || 1 %>
+              <%= instruction_form.hidden_field :_destroy %>
             </div>
           </div>
         <% end %>
@@ -133,7 +137,7 @@
               <label class="upload-area bg-light rounded d-flex justify-content-center align-items-center position-relative"
                      style="width: 100%; aspect-ratio: 16/ 9; cursor: pointer; overflow: hidden;">
                 <i class="fa-solid fa-image fa-2x upload-icon position-absolute top-50 start-50 translate-middle text-muted"></i>
-                <img src="#" class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
+                <img class="img-preview d-none position-absolute top-0 start-0 w-100 h-100 rounded" style="object-fit: cover;">
                 <input type="file" name="knowhow[instructions_attributes][NEW_INDEX][image]" class="d-none" accept="image/*" onchange="previewImage(this)">
               </label>
             </div>

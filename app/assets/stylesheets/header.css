@@ -1,11 +1,26 @@
 /* ▼ ヘッダー共通スタイル */
 header.navbar {
   font-family: 'Arial Black', 'BIZ UDPGothic', sans-serif;
-  background-color: #fff;
+  background-color: #0b1a46;
+  color: white !important; /* 文字色を強制的に白に */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.075);
   padding: 1rem 1.5rem;
 }
 
+
+/* ヘッダー内のリンク・ボタン */
+header.navbar a,
+header.navbar .btn {
+  color: white !important;
+}
+
+/* ヘッダー内リンク・ボタン ホバー時 */
+header.navbar a:hover,
+header.navbar .btn:hover {
+  color: #f0f0f0 !important;
+}
+
+/* ヘッダー内コンテナ */
 header.navbar .container-fluid {
   display: flex;
   flex-wrap: wrap;
@@ -13,6 +28,7 @@ header.navbar .container-fluid {
   align-items: center;
 }
 
+/* ナビゲーション */
 header.navbar .navbar-nav {
   display: flex !important;
   flex-direction: row !important;
@@ -35,39 +51,40 @@ header.navbar .navbar-nav .btn {
 
 /* ▼ ドロップダウンメニュー全体 */
 .dropdown-menu {
-  background-color: #00695C !important;
-  color: #fff !important;
-  border: none;
+  background-color: #112250;
+  color: white !important; /* ドロップダウン文字も白に */
+  border: 1px solid #fff;  /* 白い境界線 */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   min-width: 220px;
   padding: 0 0 12px 0;
   overflow: hidden;
 }
 
-/* ▼ 各メニュー項目 */
+/* ドロップダウン項目 */
 .dropdown-menu .dropdown-item {
-  color: #fff !important;
+  color: white !important;
   padding: 12px 20px;
   font-size: 0.95rem;
 }
 
-/* ▼ ホバー時 */
+/* ドロップダウン項目 ホバー */
 .dropdown-menu .dropdown-item:hover {
-  background-color: #222 !important;
+  background-color: #222222 !important;
 }
 
-/* ▼ ユーザー名ヘッダー */
+/* ドロップダウン ユーザー名ヘッダー */
 .dropdown-menu .dropdown-header {
   font-weight: bold;
   font-size: 1rem;
-  color: #fff !important;
+  color: white !important;
   padding: 10px 20px;
 }
 
+/* ドロップダウン内のリンク */
 .dropdown-menu .d-flex a {
   white-space: nowrap;
   font-size: 0.9rem;
-  color: #fff !important;
+  color: white !important;
   text-decoration: none;
   flex: 1;
   text-align: center;
@@ -81,7 +98,7 @@ header.navbar .navbar-nav .btn {
   background-color: #222 !important;
 }
 
-/* ▼ ログアウトボタン（白背景・中央・線なし） */
+/* ログアウトボタン（白背景・黒文字） */
 .dropdown-menu .dropdown-item.text-danger {
   background-color: #fff !important;
   color: #000 !important;
@@ -95,7 +112,7 @@ header.navbar .navbar-nav .btn {
   border: none;
 }
 
-/* ▼ ログアウトホバー */
+/* ログアウトボタン ホバー */
 .dropdown-menu .dropdown-item.text-danger:hover {
   background-color: #f2f2f2 !important;
 }

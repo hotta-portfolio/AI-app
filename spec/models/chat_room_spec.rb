@@ -1,40 +1,43 @@
 require 'rails_helper'
 
 RSpec.describe ChatRoom, type: :model do
+  describe 'アソシエーション' do
+    it { should belong_to(:knowhow) }
+    it { should belong_to(:purchase) }
+    it { should have_many(:messages).dependent(:destroy) }
+  end
+
   describe '.rooms_for' do
-    subject { ChatRoom.rooms_for(role, user_1.id) }
+    let(:seller) { create(:user) }
+    let(:buyer)  { create(:user) }
 
-    let(:role) { nil }
-    let(:user_1) { create(:user) }
-    let(:user_2) { create(:user) }
-    let(:user_3) { create(:user) }
-    let!(:knowhow_1) { create(:knowhow, user_id: user_1.id) }
-    let!(:knowhow_2) { create(:knowhow, user_id: user_2.id) }
-    let!(:knowhow_3) { create(:knowhow, user_id: user_3.id) }
-    let!(:knowhow_4) { create(:knowhow, user_id: user_1.id) }
-    let!(:purchase_1) { create(:purchase, user_id: user_2.id, knowhow: knowhow_1) }
-    let!(:purchase_2) { create(:purchase, user_id: user_1.id, knowhow: knowhow_2) }
-    let!(:purchase_3) { create(:purchase, user_id: user_3.id, knowhow: knowhow_3) }
-    let!(:purchase_4) { create(:purchase, user_id: user_1.id, knowhow: knowhow_2) }
+    let!(:knowhow_1) { create(:knowhow, user: seller) }
+    let!(:knowhow_2) { create(:knowhow, user: seller) }
 
-    it '引数ユーザーが購入か登録したノウハウのチャットルームを登録順の降順で取得する' do
-      chat_rooms = subject
-      expect(chat_rooms.map { |c| c.class.name }.uniq).to eq %w[ChatRoom]
-      expect(chat_rooms.ids).to eq [ knowhow_4.chat_room.id, knowhow_2.chat_room.id, knowhow_1.chat_room.id ]
-    end
+    let!(:purchase_1) { create(:purchase, user: buyer, knowhow: knowhow_1) }
+    let!(:purchase_2) { create(:purchase, user: buyer, knowhow: knowhow_2) }
 
-    context '購入者' do
-      let(:role) { 'buyer' }
+    let!(:chat_room_1) { create(:chat_room, knowhow: knowhow_1, purchase: purchase_1) }
+    let!(:chat_room_2) { create(:chat_room, knowhow: knowhow_2, purchase: purchase_2) }
 
-      it '引数ユーザーが購入したノウハウのチャットルームを登録順の降順で取得する' do
-        expect(subject.ids).to eq [ knowhow_2.chat_room.id ]
+    context 'roleがbuyerの場合' do
+      it '購入者に関連するチャットルームのみ返す' do
+        rooms = ChatRoom.rooms_for('buyer', buyer.id)
+        expect(rooms).to contain_exactly(chat_room_1, chat_room_2)
       end
     end
-    context '販売者' do
-      let(:role) { 'seller' }
 
-      it '引数ユーザーが登録したノウハウのチャットルームを登録順の降順で取得する' do
-        expect(subject.ids).to eq [ knowhow_4.chat_room.id, knowhow_1.chat_room.id ]
+    context 'roleがsellerの場合' do
+      it '販売者に関連するチャットルームのみ返す' do
+        rooms = ChatRoom.rooms_for('seller', seller.id)
+        expect(rooms).to contain_exactly(chat_room_1, chat_room_2)
+      end
+    end
+
+    context 'roleがnilまたはその他の場合' do
+      it 'チャットルームを返さない（空）' do
+        expect(ChatRoom.rooms_for(nil, buyer.id)).to be_empty
+        expect(ChatRoom.rooms_for('unknown', buyer.id)).to be_empty
       end
     end
   end
