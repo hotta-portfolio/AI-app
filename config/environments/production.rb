@@ -87,9 +87,5 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-
-  if ENV["RENDER_EXTERNAL_URL"].present?
-    require "uri"
-    Rails.application.config.hosts << URI(ENV["RENDER_EXTERNAL_URL"]).host
-  end
+  config.hosts << "ai-app-1-e53p.onrender.com"
 end
