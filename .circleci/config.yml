@@ -5,6 +5,7 @@ orbs:
   node: circleci/node@5.0.2
 
 jobs:
+  # ---- 1️⃣ Rubocop ----
   rubocop:
     docker:
       - image: cimg/ruby:3.3.0-node
@@ -15,12 +16,15 @@ jobs:
           name: Run Rubocop
           command: bundle exec rubocop
 
+  # ---- 2️⃣ RSpec ----
   rspec:
     docker:
+      # Ruby コンテナ
       - image: cimg/ruby:3.3.0-node
         environment:
           RAILS_ENV: test
           DATABASE_URL: "postgres://postgres:password@db:5432/test_db"
+      # PostgreSQL コンテナ
       - image: cimg/postgres:14.10
         name: db
         environment:
@@ -29,26 +33,31 @@ jobs:
           POSTGRES_PASSWORD: password
     steps:
       - checkout
-      # PostgreSQL 開発ライブラリとビルドツールをインストール
+
+      # 🛠 PostgreSQL 開発用ライブラリをインストール（pg gem 用）
       - run:
-          name: Install dependencies for pg gem
+          name: Install PostgreSQL dev libraries
           command: |
             sudo apt-get update
             sudo apt-get install -y libpq-dev build-essential
-      - run:
-          name: Install gems
-          command: bundle config set --local path 'vendor/bundle' && bundle install
+
+      - ruby/install-deps
       - node/install-packages:
           pkg-manager: yarn
+
+      # データベースセットアップ
       - run:
           name: Setup Database
           command: |
             bin/rails db:create
             bin/rails db:schema:load
+
+      # RSpec 実行
       - run:
           name: Run RSpec Model Specs
           command: bundle exec rspec spec/models
 
+  # ---- 3️⃣ Deploy to Render ----
   deploy:
     docker:
       - image: cimg/base:stable
@@ -61,6 +70,7 @@ jobs:
               echo "Render環境変数が設定されていません"
               exit 1
             fi
+            echo "Triggering Render deployment..."
             curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
               -H "Authorization: Bearer ${RENDER_API_KEY}" \
               -H "Content-Type: application/json"
