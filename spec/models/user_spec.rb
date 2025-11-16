@@ -25,10 +25,12 @@ RSpec.describe User, type: :model do
     let(:user) { build(:user) }
 
     context 'avatar が添付されている場合' do
+      let(:user) { build(:user) } # これだけで OK（すでに avatar 添付済み）
+
       before do
-        # attached? を true に偽装
-        allow(user.avatar).to receive(:attached?).and_return(true)
-        # variant URL を返すよう stub
+        variant_double = double("variant", processed: :processed_image)
+        allow(user.avatar).to receive(:variant).and_return(variant_double)
+
         allow(Rails.application.routes.url_helpers)
           .to receive(:rails_representation_url)
           .and_return('/variant_avatar.png')

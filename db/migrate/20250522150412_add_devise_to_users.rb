@@ -3,7 +3,6 @@
 class AddDeviseToUsers < ActiveRecord::Migration[8.0]
   def self.up
     change_table :users do |t|
-
       ## Recoverable
       t.string   :reset_password_token
       t.datetime :reset_password_sent_at

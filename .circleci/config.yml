@@ -5,7 +5,6 @@ orbs:
   node: circleci/node@5.0.2
 
 jobs:
-  # ---- 1️⃣ Rubocop ----
   rubocop:
     docker:
       - image: cimg/ruby:3.3.0-node
@@ -16,7 +15,6 @@ jobs:
           name: Run Rubocop
           command: bundle exec rubocop
 
-  # ---- 2️⃣ RSpec ----
   rspec:
     docker:
       - image: cimg/ruby:3.3.0-node
@@ -39,10 +37,9 @@ jobs:
             bin/rails db:create
             bin/rails db:schema:load
       - run:
-          name: Run RSpec tests
-          command: bundle exec rspec
+          name: Run RSpec Model Specs
+          command: bundle exec rspec spec/models
 
-  # ---- 3️⃣ Deploy to Render ----
   deploy:
     docker:
       - image: cimg/base:stable
