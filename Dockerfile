@@ -4,8 +4,7 @@
 ARG RUBY_VERSION=3.3.3
 
 # ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-# build ステージと最終イメージに必要な共通のベースイメージ
-# ここにはランタイムに必要なものと、両ステージで共通して必要なビルドツールを含める
+# base ステージ
 # ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
@@ -34,7 +33,6 @@ RUN gem update --system && gem install bundler
 
 # ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 # build ステージ
-# 主にGemのインストールのみを行う
 # ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 FROM base AS build
 
@@ -46,8 +44,16 @@ RUN echo "DEBUG: (build stage) Start, current directory: $(pwd)" >> /tmp/docker_
 
 COPY Gemfile Gemfile.lock ./
 
+# =================================================================
+# 【💥 修正点】pg gem のビルド設定を強制的に上書き
+# Render環境で pg_config のパスを明示し、Homebrewパス参照を防ぐ
+# =================================================================
+RUN bundle config build.pg --with-pg-config=/usr/bin/pg_config && \
+    echo "DEBUG: Bundler config for pg set to /usr/bin/pg_config" >> /tmp/docker_debug.log 2>&1
+
 RUN bundle install --jobs $(nproc) --no-prune --clean && \
-    rm -rf "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \chown -R 1000:1000 "${BUNDLE_PATH}"
+    rm -rf "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+    chown -R 1000:1000 "${BUNDLE_PATH}"
 
 # ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 # 最終イメージ
