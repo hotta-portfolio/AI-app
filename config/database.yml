@@ -19,10 +19,9 @@ test:
   host: db
 
 production:
-  # メインのDB（Supabase）
   primary:
     <<: *default
-    url: <%= ENV['DATABASE_URL'] %> # Supabase の接続URLを Render に設定して使う
+    url: <%= ENV['DATABASE_URL'] %>
 
   # ActionCable用（必要なら同じDBを使える）
   cable:
