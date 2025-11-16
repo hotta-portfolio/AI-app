@@ -50,11 +50,11 @@ jobs:
           command: bundle config
 
       # Gems をインストール（キャッシュ無視）
+      # 【修正点】: pg gem のビルドのために /usr/bin/pg_config を明示的に指定
       - run:
           name: Install Gems
           command: |
-            export PG_CONFIG=/usr/bin/pg_config
-            bundle install --jobs=4 --retry=3 --no-cache
+            bundle install --jobs=4 --retry=3 --no-cache --with-pg-config=/usr/bin/pg_config
 
       # Node パッケージ
       - node/install-packages:

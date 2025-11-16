@@ -473,7 +473,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   kamal
-  pg
+  pg (~> 1.5)
   propshaft
   pry-byebug
   pry-rails
