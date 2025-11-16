@@ -41,7 +41,12 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y libpq-dev build-essential
 
-      # 💎 Bundler で Gems インストール
+      # 💎 古い Bundler 設定を削除（Macパスなど）
+      - run:
+          name: Clear Bundler Config
+          command: bundle config --delete build.pg || true
+
+      # 💎 Bundler で Gems インストール（Linux用 pg_config を指定）
       - run:
           name: Install Gems
           command: |
