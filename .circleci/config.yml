@@ -22,18 +22,21 @@ jobs:
       - image: cimg/ruby:3.3.0-node
         environment:
           RAILS_ENV: test
-          DATABASE_URL: "postgres://postgres:password@localhost:5432/test_db"
+          DATABASE_URL: "postgres://postgres:password@db:5432/test_db"
       - image: cimg/postgres:14.10
+        name: db
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: test_db
           POSTGRES_PASSWORD: password
     steps:
       - checkout
-      # PostgreSQL devライブラリをインストール（pg gem用）
+      # PostgreSQL 開発ライブラリをインストール (pg gem 用)
       - run:
           name: Install PostgreSQL dev libraries
-          command: sudo apt-get update && sudo apt-get install -y libpq-dev
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y libpq-dev
       - ruby/install-deps
       - node/install-packages:
           pkg-manager: yarn
@@ -55,6 +58,10 @@ jobs:
       - run:
           name: Deploy to Render via API
           command: |
+            if [ -z "$RENDER_SERVICE_ID" ] || [ -z "$RENDER_API_KEY" ]; then
+              echo "Render環境変数が設定されていません"
+              exit 1
+            fi
             echo "Triggering Render deployment..."
             curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
               -H "Authorization: Bearer ${RENDER_API_KEY}" \
