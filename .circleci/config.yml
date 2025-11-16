@@ -1,7 +1,6 @@
 version: 2.1
 
 orbs:
-  # rubyオーブは、ここでは参照の目的で残すか、削除を検討
   ruby: circleci/ruby@2.0.1
   node: circleci/node@5.0.2
 
@@ -11,10 +10,6 @@ jobs:
       - image: cimg/ruby:3.3.0-node
     steps:
       - checkout
-      # 【修正点１】: ruby/install-deps を削除
-      # - ruby/install-deps 
-
-      # 【修正点２】: rspecジョブの依存関係インストールロジックを移植
       - run:
           name: Install PostgreSQL dev libraries
           command: |
@@ -29,7 +24,6 @@ jobs:
           name: Install Gems
           command: |
             bundle install --jobs=4 --retry=3 --no-cache --with-pg-config=/usr/bin/pg_config
-
       - run:
           name: Run Rubocop
           command: bundle exec rubocop
@@ -48,51 +42,32 @@ jobs:
           POSTGRES_PASSWORD: password
     steps:
       - checkout
-
-      # PostgreSQL 開発用ライブラリを確実にインストール
       - run:
           name: Install PostgreSQL dev libraries
           command: |
             sudo apt-get update
             sudo apt-get install -y libpq-dev build-essential
-
-      # 古い Bundler 設定を完全削除
-      # 【修正点３】: このステップを残すことで二重の安全策とする
       - run:
           name: Clear Bundler Config
           command: |
             bundle config --delete build.pg || true
             bundle config --delete --local build.pg || true
-
-      # 確認用に Bundler 設定表示
-      # - run:
-      #     name: Show Bundler Config
-      #     command: bundle config
-
-      # Gems をインストール（キャッシュ無視）
-      # 【修正点４】: 正しいパス指定を維持
       - run:
           name: Install Gems
           command: |
             bundle install --jobs=4 --retry=3 --no-cache --with-pg-config=/usr/bin/pg_config
-
-      # Node パッケージ
       - node/install-packages:
           pkg-manager: yarn
-
-      # データベースセットアップ
       - run:
           name: Setup Database
           command: |
             bin/rails db:create
             bin/rails db:schema:load
-
-      # RSpec 実行
       - run:
           name: Run RSpec Model Specs
           command: bundle exec rspec spec/models
 
-deploy:
+  deploy:   # ← ここを jobs: 配下にインデントして入れる
     docker:
       - image: cimg/base:stable
     steps:
