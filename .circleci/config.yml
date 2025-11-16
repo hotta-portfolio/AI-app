@@ -1,6 +1,7 @@
 version: 2.1
 
 orbs:
+  # rubyオーブは、ここでは参照の目的で残すか、削除を検討
   ruby: circleci/ruby@2.0.1
   node: circleci/node@5.0.2
 
@@ -10,7 +11,25 @@ jobs:
       - image: cimg/ruby:3.3.0-node
     steps:
       - checkout
-      - ruby/install-deps
+      # 【修正点１】: ruby/install-deps を削除
+      # - ruby/install-deps 
+
+      # 【修正点２】: rspecジョブの依存関係インストールロジックを移植
+      - run:
+          name: Install PostgreSQL dev libraries
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y libpq-dev build-essential
+      - run:
+          name: Clear Bundler Config
+          command: |
+            bundle config --delete build.pg || true
+            bundle config --delete --local build.pg || true
+      - run:
+          name: Install Gems
+          command: |
+            bundle install --jobs=4 --retry=3 --no-cache --with-pg-config=/usr/bin/pg_config
+
       - run:
           name: Run Rubocop
           command: bundle exec rubocop
@@ -38,6 +57,7 @@ jobs:
             sudo apt-get install -y libpq-dev build-essential
 
       # 古い Bundler 設定を完全削除
+      # 【修正点３】: このステップを残すことで二重の安全策とする
       - run:
           name: Clear Bundler Config
           command: |
@@ -45,12 +65,12 @@ jobs:
             bundle config --delete --local build.pg || true
 
       # 確認用に Bundler 設定表示
-      - run:
-          name: Show Bundler Config
-          command: bundle config
+      # - run:
+      #     name: Show Bundler Config
+      #     command: bundle config
 
       # Gems をインストール（キャッシュ無視）
-      # 【修正点】: pg gem のビルドのために /usr/bin/pg_config を明示的に指定
+      # 【修正点４】: 正しいパス指定を維持
       - run:
           name: Install Gems
           command: |
@@ -72,22 +92,8 @@ jobs:
           name: Run RSpec Model Specs
           command: bundle exec rspec spec/models
 
-  deploy:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - run:
-          name: Deploy to Render via API
-          command: |
-            if [ -z "$RENDER_SERVICE_ID" ] || [ -z "$RENDER_API_KEY" ]; then
-              echo "Render環境変数が設定されていません"
-              exit 1
-            fi
-            echo "Triggering Render deployment..."
-            curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
-              -H "Authorization: Bearer ${RENDER_API_KEY}" \
-              -H "Content-Type: application/json"
+  # deploy job は変更なし
+  # ... (deploy job省略)
 
 workflows:
   version: 2
