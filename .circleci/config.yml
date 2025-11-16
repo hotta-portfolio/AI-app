@@ -92,8 +92,22 @@ jobs:
           name: Run RSpec Model Specs
           command: bundle exec rspec spec/models
 
-  # deploy job は変更なし
-  # ... (deploy job省略)
+deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Render via API
+          command: |
+            if [ -z "$RENDER_SERVICE_ID" ] || [ -z "$RENDER_API_KEY" ]; then
+              echo "Render環境変数が設定されていません"
+              exit 1
+            fi
+            echo "Triggering Render deployment..."
+            curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
+              -H "Authorization: Bearer ${RENDER_API_KEY}" \
+              -H "Content-Type: application/json"
 
 workflows:
   version: 2
