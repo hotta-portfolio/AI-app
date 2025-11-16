@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: ai-app
+    env: ruby
+    plan: starter
+    buildCommand: |
+      bundle install --jobs 4 --retry 3
+      bin/rails db:migrate
+      RAILS_ENV=production bin/rails assets:precompile
+    startCommand: bin/rails server -b 0.0.0.0 -p $PORT
