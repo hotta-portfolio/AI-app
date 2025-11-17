@@ -9,6 +9,7 @@
     <%= csp_meta_tag %>
 
     <%= yield :head %>
+    <script src="https://js.stripe.com/v3/"></script>
 
     <%# PWA manifest はそのままコメントアウト %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>

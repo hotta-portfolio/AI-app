@@ -18,6 +18,7 @@ module AIapp
     config.time_zone = "Tokyo"
     config.i18n.default_locale = :ja
     config.active_job.queue_adapter = :inline
+    config.action_dispatch.default_headers.delete('X-Frame-Options')
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

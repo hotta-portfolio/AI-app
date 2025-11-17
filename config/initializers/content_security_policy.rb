@@ -23,3 +23,21 @@
 #   # Report violations without enforcing the policy.
 #   # config.content_security_policy_report_only = true
 # end
+
+Rails.application.configure do
+  config.content_security_policy do |policy|
+    policy.default_src :self, :https
+    policy.font_src    :self, :https, :data
+    policy.img_src     :self, :https, :data
+    policy.object_src  :none
+
+    # Stripeを許可
+    policy.script_src  :self, :https, "https://js.stripe.com"
+    policy.style_src   :self, :https, :unsafe_inline
+    policy.frame_src   :self, "https://js.stripe.com", "https://hooks.stripe.com"
+  end
+
+  # セッションに基づくnonceを生成（Hotwire/Turboで必要）
+  config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
+  config.content_security_policy_nonce_directives = %w(script-src style-src)
+end
