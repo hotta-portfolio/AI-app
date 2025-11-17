@@ -19,6 +19,10 @@ gem "kamal", require: false
 gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 
+# 追加：Cloudinary + ActiveStorage連携
+gem "cloudinary", "~> 2.4"
+gem "activestorage-cloudinary-service"
+
 # --------------------
 # 認証・決済・検索
 # --------------------
