@@ -12,7 +12,6 @@ class User < ApplicationRecord
   has_one :payment, dependent: :destroy
   has_many :chat_rooms, through: :knowhows
   has_many :messages, dependent: :destroy
-  has_one_attached :avatar
 
   def display_avatar
     if avatar.attached?
@@ -29,14 +28,5 @@ class User < ApplicationRecord
   # 🔒 検索可能なカラムを明示的に指定
   def self.ransackable_attributes(auth_object = nil)
     %w[name email created_at updated_at]
-  end
-
-  # 登録完了後に welcome メール送信
-  after_create :send_welcome_email
-
-  private
-
-  def send_welcome_email
-    UserMailer.welcome_email(self).deliver_later
   end
 end
