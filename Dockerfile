@@ -49,11 +49,18 @@ RUN bundle install --jobs $(nproc) --no-prune --clean && \
 COPY . .
 RUN bundle exec rails assets:precompile
 
+# =========================
+# final ステージ
+# =========================
 FROM base
 
 WORKDIR /rails
 
 COPY --from=build /rails /rails
+
+# 🔥 ここが重要：Rails が必要とするディレクトリを作成して権限付与
+RUN mkdir -p /rails/tmp/pids /rails/tmp/sockets /rails/log && \
+    chown -R 1000:1000 /rails/tmp /rails/log
 
 USER 1000:1000
 
