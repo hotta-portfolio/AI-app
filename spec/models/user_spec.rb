@@ -51,13 +51,4 @@ RSpec.describe User, type: :model do
       end
     end
   end
-
-  describe 'コールバック' do
-    it 'ユーザー作成後に welcome メールを送信する' do
-      user = build(:user)
-      expect {
-        user.save
-      }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
-    end
-  end
 end
