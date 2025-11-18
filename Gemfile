@@ -5,7 +5,7 @@ source "https://rubygems.org"
 # --------------------
 gem "rails", "~> 8.0.2"
 gem "propshaft"             # Modern asset pipeline
-gem "pg", "~> 1.5"          # PostgreSQL
+gem "pg"        # PostgreSQL
 gem "puma", ">= 5.0"        # Webサーバ
 gem "importmap-rails"       # ESM import maps
 gem "turbo-rails"           # Hotwire Turbo

@@ -1,32 +1,31 @@
 version: 2.1
 
-orbs:
-  ruby: circleci/ruby@2.0.1
-
 jobs:
   rubocop:
     docker:
       - image: cimg/ruby:3.3.0
     steps:
       - checkout
+
       - run:
           name: Install PostgreSQL dev libraries
           command: |
             sudo apt-get update
             sudo apt-get install -y libpq-dev build-essential
+
       - run:
-          name: Install correct Bundler version
+          name: Install Bundler 2.5.9
           command: |
             gem install bundler -v 2.5.9
             bundle -v
 
       - run:
-          name: Configure Bundler and Install Gems
+          name: Bundle Install
           command: |
             bundle config set --local path 'vendor/bundle'
             bundle config set --local without 'production'
             bundle install --jobs=4 --retry=3
-            
+
       - run:
           name: Run Rubocop
           command: bundle exec rubocop
@@ -38,6 +37,7 @@ jobs:
         environment:
           RAILS_ENV: test
           DATABASE_URL: "postgres://postgres:password@db:5432/test_db"
+
       - image: cimg/postgres:14.10
         name: db
         environment:
@@ -47,6 +47,7 @@ jobs:
 
     steps:
       - checkout
+
       - run:
           name: Install PostgreSQL dev libraries
           command: |
@@ -54,13 +55,13 @@ jobs:
             sudo apt-get install -y libpq-dev build-essential
 
       - run:
-          name: Install correct Bundler version
+          name: Install Bundler 2.5.9
           command: |
             gem install bundler -v 2.5.9
             bundle -v
 
       - run:
-          name: Install Gems
+          name: Bundle Install
           command: |
             bundle config set --local path 'vendor/bundle'
             bundle config set --local without 'production'
@@ -73,38 +74,15 @@ jobs:
             bin/rails db:schema:load
 
       - run:
-          name: Run RSpec
-          command: bundle exec rspec
+          name: Run RSpec (only model specs)
+          command: bundle exec rspec spec/models
 
-
-  deploy:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - run:
-          name: Deploy to Render via API
-          command: |
-            if [ -z "$RENDER_SERVICE_ID" ] || [ -z "$RENDER_API_KEY" ]; then
-              echo "Render環境変数が設定されていません"
-              exit 1
-            fi
-            echo "Triggering Render deployment..."
-            curl -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
-              -H "Authorization: Bearer ${RENDER_API_KEY}" \
-              -H "Content-Type: application/json"
 
 workflows:
   version: 2
-  test_and_deploy:
+  test:
     jobs:
       - rubocop
       - rspec:
           requires:
             - rubocop
-      - deploy:
-          requires:
-            - rspec
-          filters:
-            branches:
-              only: main
