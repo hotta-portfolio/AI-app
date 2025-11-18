@@ -2,12 +2,11 @@ version: 2.1
 
 orbs:
   ruby: circleci/ruby@2.0.1
-  node: circleci/node@5.0.2
 
 jobs:
   rubocop:
     docker:
-      - image: cimg/ruby:3.3.0-node
+      - image: cimg/ruby:3.3.0
     steps:
       - checkout
       - run:
@@ -16,36 +15,26 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y libpq-dev build-essential
       - run:
-          name: Clear Bundler Config
+          name: Install correct Bundler version
           command: |
-            bundle config --delete build.pg || true
-            bundle config --delete --local build.pg || true
+            gem install bundler -v 2.5.9
+            bundle -v
+
       - run:
           name: Configure Bundler and Install Gems
           command: |
-            # 実行ファイルをプロジェクトの bin/ に生成するように設定 (安定性向上)
             bundle config set --local path 'vendor/bundle'
             bundle config set --local without 'production'
-            bundle config set --local bin 'bin'
+            bundle install --jobs=4 --retry=3
             
-            export PG_CONFIG=/usr/bin/pg_config
-            # ★ --no-cache はそのまま維持
-            bundle install --jobs=4 --retry=3 --no-cache
-      
-      # ★ 追加: インストール後にGemが正しく存在するか確認
-      - run:
-          name: Check Installed Gems
-          command: bundle check
-          
       - run:
           name: Run Rubocop
-          # bin/rubocop が bin/ ディレクトリに生成されているため、
-          # bundle exec をつけて実行することでパスの問題を回避します。
           command: bundle exec rubocop
+
 
   rspec:
     docker:
-      - image: cimg/ruby:3.3.0-node
+      - image: cimg/ruby:3.3.0
         environment:
           RAILS_ENV: test
           DATABASE_URL: "postgres://postgres:password@db:5432/test_db"
@@ -55,6 +44,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: test_db
           POSTGRES_PASSWORD: password
+
     steps:
       - checkout
       - run:
@@ -62,36 +52,30 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get install -y libpq-dev build-essential
+
       - run:
-          name: Clear Bundler Config
+          name: Install correct Bundler version
           command: |
-            bundle config --delete build.pg || true
-            bundle config --delete --local build.pg || true
+            gem install bundler -v 2.5.9
+            bundle -v
+
       - run:
-          name: Configure Bundler and Install Gems
+          name: Install Gems
           command: |
-            # 実行ファイルをプロジェクトの bin/ に生成するように設定 (安定性向上)
             bundle config set --local path 'vendor/bundle'
             bundle config set --local without 'production'
-            bundle config set --local bin 'bin'
-            
-            export PG_CONFIG=/usr/bin/pg_config
-            bundle install --jobs=4 --retry=3 --no-cache
-      
-      - run:
-          name: Check Installed Gems
-          command: bundle check
-          
-      - node/install-packages:
-          pkg-manager: yarn
+            bundle install --jobs=4 --retry=3
+
       - run:
           name: Setup Database
           command: |
             bin/rails db:create
             bin/rails db:schema:load
+
       - run:
-          name: Run RSpec Model Specs
-          command: bundle exec rspec spec/models
+          name: Run RSpec
+          command: bundle exec rspec
+
 
   deploy:
     docker:
