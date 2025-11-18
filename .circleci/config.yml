@@ -21,12 +21,26 @@ jobs:
             bundle config --delete build.pg || true
             bundle config --delete --local build.pg || true
       - run:
-          name: Install Gems
+          name: Configure Bundler and Install Gems
           command: |
+            # 実行ファイルをプロジェクトの bin/ に生成するように設定 (安定性向上)
+            bundle config set --local path 'vendor/bundle'
+            bundle config set --local without 'production'
+            bundle config set --local bin 'bin'
+            
             export PG_CONFIG=/usr/bin/pg_config
+            # ★ --no-cache はそのまま維持
             bundle install --jobs=4 --retry=3 --no-cache
+      
+      # ★ 追加: インストール後にGemが正しく存在するか確認
+      - run:
+          name: Check Installed Gems
+          command: bundle check
+          
       - run:
           name: Run Rubocop
+          # bin/rubocop が bin/ ディレクトリに生成されているため、
+          # bundle exec をつけて実行することでパスの問題を回避します。
           command: bundle exec rubocop
 
   rspec:
@@ -54,10 +68,20 @@ jobs:
             bundle config --delete build.pg || true
             bundle config --delete --local build.pg || true
       - run:
-          name: Install Gems
+          name: Configure Bundler and Install Gems
           command: |
+            # 実行ファイルをプロジェクトの bin/ に生成するように設定 (安定性向上)
+            bundle config set --local path 'vendor/bundle'
+            bundle config set --local without 'production'
+            bundle config set --local bin 'bin'
+            
             export PG_CONFIG=/usr/bin/pg_config
             bundle install --jobs=4 --retry=3 --no-cache
+      
+      - run:
+          name: Check Installed Gems
+          command: bundle check
+          
       - node/install-packages:
           pkg-manager: yarn
       - run:
