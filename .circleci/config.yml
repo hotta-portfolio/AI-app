@@ -7,10 +7,13 @@ jobs:
     steps:
       - checkout
 
-      # bundler バージョンを合わせる
-      - run: gem install bundler -v 2.6.9
+      # Macの設定が残ってた場合の対策（重要）
+      - run: rm -f .bundle/config
 
-      # PostgreSQL ライブラリを入れる（pg gem ビルド用）
+      # bundler バージョン固定
+      - run: gem install bundler -v 2.5.9
+
+      # PostgreSQL ライブラリ
       - run:
           name: Install PostgreSQL dev libraries
           command: |
@@ -42,10 +45,12 @@ jobs:
     steps:
       - checkout
 
-      # bundler バージョン合わせ
-      - run: gem install bundler -v 2.6.9
+      # Macのpg_config設定削除（重要）
+      - run: rm -f .bundle/config
 
-      # pg ビルドに必要
+      - run: gem install bundler -v 2.5.9
+
+      # pgのビルドに必要
       - run:
           name: Install PostgreSQL dev libraries
           command: |
@@ -63,7 +68,6 @@ jobs:
             bundle exec rails db:create
             bundle exec rails db:schema:load
 
-      # RSpec からモデルのみ実行
       - run:
           name: Run RSpec Model Specs
           command: bundle exec rspec spec/models

@@ -1,4 +1,0 @@
----
-BUNDLE_BUILD__PG: "--with-pg-config=/opt/homebrew/opt/libpq/bin/pg_config"
-BUNDLE_DEPLOYMENT: "true"
-BUNDLE_WITHOUT: "development:test"
