@@ -7,23 +7,19 @@ jobs:
     steps:
       - checkout
 
+      # bundler バージョンを合わせる
+      - run: gem install bundler -v 2.6.9
+
+      # PostgreSQL ライブラリを入れる（pg gem ビルド用）
       - run:
           name: Install PostgreSQL dev libraries
           command: |
             sudo apt-get update
-            sudo apt-get install -y libpq-dev build-essential
-
-      - run:
-          name: Install Bundler 2.5.9
-          command: |
-            gem install bundler -v 2.5.9
-            bundle -v
+            sudo apt-get install -y libpq-dev postgresql-client
 
       - run:
           name: Bundle Install
           command: |
-            bundle config set --local path 'vendor/bundle'
-            bundle config set --local without 'production'
             bundle install --jobs=4 --retry=3
 
       - run:
@@ -36,8 +32,6 @@ jobs:
       - image: cimg/ruby:3.3.0
         environment:
           RAILS_ENV: test
-          DATABASE_URL: "postgres://postgres:password@db:5432/test_db"
-
       - image: cimg/postgres:14.10
         name: db
         environment:
@@ -48,33 +42,30 @@ jobs:
     steps:
       - checkout
 
+      # bundler バージョン合わせ
+      - run: gem install bundler -v 2.6.9
+
+      # pg ビルドに必要
       - run:
           name: Install PostgreSQL dev libraries
           command: |
             sudo apt-get update
-            sudo apt-get install -y libpq-dev build-essential
+            sudo apt-get install -y libpq-dev postgresql-client
 
       - run:
-          name: Install Bundler 2.5.9
+          name: Install Gems
           command: |
-            gem install bundler -v 2.5.9
-            bundle -v
-
-      - run:
-          name: Bundle Install
-          command: |
-            bundle config set --local path 'vendor/bundle'
-            bundle config set --local without 'production'
             bundle install --jobs=4 --retry=3
 
       - run:
           name: Setup Database
           command: |
-            bin/rails db:create
-            bin/rails db:schema:load
+            bundle exec rails db:create
+            bundle exec rails db:schema:load
 
+      # RSpec からモデルのみ実行
       - run:
-          name: Run RSpec (only model specs)
+          name: Run RSpec Model Specs
           command: bundle exec rspec spec/models
 
 
