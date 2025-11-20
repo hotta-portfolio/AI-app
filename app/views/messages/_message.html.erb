@@ -1,10 +1,10 @@
+<%# locals で渡された current_user_loc があればそれを使い、なければ current_user を使用 %>
 <% user = local_assigns[:current_user_loc] || current_user %>
 
 <div class="d-flex mb-3 <%= message.user == user ? 'justify-content-end' : 'justify-content-start' %>">
   <div class="flex-shrink-0">
     <% if message.user.avatar.attached? %>
-      <% avatar_url = url_for(message.user.avatar.variant(resize_to_fill: [40, 40])) %>
-      <%= image_tag avatar_url,
+      <%= image_tag message.user.avatar.variant(resize_to_fill: [40, 40]).processed,
                     alt: message.user.name,
                     class: "rounded-circle",
                     style: "width: 40px; height: 40px; object-fit: cover;" %>

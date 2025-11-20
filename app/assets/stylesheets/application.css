@@ -1,0 +1,37 @@
+@charset "UTF-8";
+.menu-box:hover {
+  background-color: #f8f9fa !important;
+}
+
+.menu-box a {
+  transition: color 0.2s ease;
+}
+
+/* app/assets/stylesheets/application.css か scss に追加 */
+.payment-form {
+  max-width: 400px;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body {
+  padding-top: 80px; /* fixed-top ヘッダーの高さ */
+  background-color: #0b1a46;
+  color: white; /* テキストを白にして見やすく */
+}
+
+/* application.css または対応するファイル */
+.main-content {
+  margin-bottom: 100px;
+  background-color: #0b1a46;
+  color: white;
+}
+
+.footer {
+  background-color: #000000;
+}
+
+.card.card-custom-border {
+  border: 1.5px solid #00ffe5 !important;
+}/*# sourceMappingURL=application.css.map */

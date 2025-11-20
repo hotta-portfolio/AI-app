@@ -1,4 +1,3 @@
-# app/controllers/messages_controller.rb
 class MessagesController < ApplicationController
   before_action :authenticate_user!
 
@@ -8,22 +7,25 @@ class MessagesController < ApplicationController
       content: params[:message][:content]
     )
 
-    # ✅ ChatRoomChannel にブロードキャスト
+    # ActionCable broadcast
     ChatRoomChannel.broadcast_to(
       @message.chat_room,
       message: render_message(@message)
     )
 
-    head :ok
+    # Turbo対応: HTML送信ならリダイレクト、fetch(JSON)ならJSONを返す
+    respond_to do |format|
+      format.json { render json: { message: render_message(@message) } }
+      format.html { redirect_to @message.chat_room }
+    end
   end
 
   private
 
-  # メッセージを partial としてレンダリング
   def render_message(message)
     ApplicationController.renderer.render(
       partial: "messages/message",
-      locals: { message: message, current_user_loc: message.user }
+      locals: { message: message, current_user_loc: current_user }
     )
   end
 end
