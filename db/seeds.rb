@@ -12,4 +12,4 @@
 
 # db/seeds.rb
 
-@chat_room = ChatRoom.find_by!(name: "General")
+ChatRoom.find_or_create_by!(name: "General")
