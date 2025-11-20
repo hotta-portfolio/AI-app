@@ -7,11 +7,11 @@ class MessagesController < ApplicationController
       content: params[:message][:content]
     )
 
-    # ActionCable broadcast
-    ChatRoomChannel.broadcast_to(
-      @message.chat_room,
-      message: render_message(@message)
-    )
+    # # ActionCable broadcast
+    # ChatRoomChannel.broadcast_to(
+    #   @message.chat_room,
+    #   message: render_message(@message)
+    # )
 
     # Turbo対応: HTML送信ならリダイレクト、fetch(JSON)ならJSONを返す
     respond_to do |format|
