@@ -93,6 +93,8 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-  config.hosts << "ai-app-1-e53p.onrender.com"
+  # config.hosts << "ai-app-1-e53p.onrender.com"
   config.hosts << "ai-app-2-o7zk.onrender.com"
+  config.action_cable.url = "/cable"
+  config.action_cable.allowed_request_origins = [ /https?:\/\/.*/ ]
 end
