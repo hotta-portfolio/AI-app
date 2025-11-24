@@ -26,7 +26,8 @@ AIの生成ノウハウを売買して共有できるアプリ
 - コンテンツのカード擬似決済機能 (Stripe 使用)
 - チャット機能 (ActionCable使用)
 
-![機能説明](app/assets/images/Feature Description/Feature Description.png)
+![機能説明](./app/assets/images/Feature%20Description/Feature%20Description.png)
+
 ---
 
 ## 技術スタック
